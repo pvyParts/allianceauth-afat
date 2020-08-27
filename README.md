@@ -34,7 +34,7 @@ This app is a plugin for Alliance Auth. If you don't have Alliance Auth running 
 Make sure you are in the virtual environment (venv) of your Alliance Auth installation. Then install the latest version:
 
 ```bash
-pip install afat
+pip install allianceauth-afat
 ```
 
 ### Step 2 - Update your AA settings
@@ -59,7 +59,7 @@ Restart your supervisor services for AA.
 To update your existing installation of ImicusFAT, first enable your virtual environment (venv) of your Alliance Auth installation.
 
 ```bash
-pip install -U afat
+pip install -U allianceauth-afat
 
 python manage.py collectstatic
 python manage.py migrate
