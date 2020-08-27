@@ -1,0 +1,1 @@
+# allianceauth-afat
