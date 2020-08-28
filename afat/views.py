@@ -820,7 +820,11 @@ def click_link(request, token, hash=None):
 
 @login_required()
 @permissions_required(
-    ("afat.manage_afat", "afat.add_afatlink", "afat.change_afatlink",)
+    (
+        "afat.manage_afat",
+        "afat.add_afatlink",
+        "afat.change_afatlink",
+    )
 )
 def edit_link(request, hash=None):
     if hash is None:
