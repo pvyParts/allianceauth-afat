@@ -7,9 +7,6 @@ on:
       - development
     tags-ignore:
       - v*
-  pull_request:
-    branches:
-      - master
 
 jobs:
   black-format:
