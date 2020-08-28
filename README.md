@@ -89,12 +89,12 @@ To import your old FAT data from Alliance Auth's own FAT, you have to disable fo
 
 
 ```
-INSERT INTO afat_afat (id, `system`, shiptype, character_id, afatlink_id) 
-SELECT id,`system`,shiptype,character_id,fatlink_id 
+INSERT INTO afat_afat (id, `system`, `shiptype`, character_id, afatlink_id) 
+SELECT id, `system`, `shiptype`, character_id, fatlink_id 
 FROM fleetactivitytracking_fat;
 
 INSERT INTO afat_afatlink (id, afattime, fleet, `hash`, creator_id) 
-SELECT id,fatdatetime,fleet,hash,creator_id 
+SELECT id, fatdatetime, fleet, `hash`, creator_id 
 FROM fleetactivitytracking_fatlink;
 ```
 
@@ -119,12 +119,12 @@ INSERT INTO afat_afatdellog (id, deltype, `string`, remover_id)
 SELECT id, deltype, `string`, remover_id
 FROM bfat_dellog;
 
-INSERT INTO afat_afat (id, `system`, shiptype, character_id, ifatlink_id)
-SELECT id,`system`,shiptype,character_id,fatlink_id
+INSERT INTO afat_afat (id, `system`, `shiptype`, character_id, ifatlink_id)
+SELECT id, `system`, `shiptype`, character_id, fatlink_id
 FROM bfat_fat;
 
 INSERT INTO afat_afatlink (id, ifattime, fleet, `hash`, creator_id)
-SELECT id,fattime,fleet,hash,creator_id 
+SELECT id, fattime, fleet, hash, creator_id 
 FROM bfat_fatlink;
 
 INSERT INTO afat_manualafat (id, character_id, creator_id, ifatlink_id)
@@ -145,8 +145,8 @@ And then continue installation as normal. You may undo this after successful ins
 To import your old FAT data from ImicusFAT, you have to disable foreign key checks temporarily.
 
 ```
-INSERT INTO afat_afat (id, `system`, shiptype, character_id, afatlink_id, deleted_at)
-SELECT id, `system`, shiptype, character_id, ifatlink_id, deleted_at
+INSERT INTO afat_afat (id, `system`, `shiptype`, character_id, afatlink_id, deleted_at)
+SELECT id, `system`, `shiptype`, character_id, ifatlink_id, deleted_at
 FROM imicusfat_ifat;
 
 INSERT INTO afat_afatdellog (id, deltype, `string`, remover_id)
