@@ -8,13 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout
-      - uses: Ahuge/black-action@v1.0.3
+      - uses: Ahuge/black-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BLACK_ARGS: "."
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Black Code Formatter
-#        uses: lgeiger/black-action@master
-#        with:
-#          args: ". --check"
