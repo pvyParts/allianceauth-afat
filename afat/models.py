@@ -65,7 +65,7 @@ class SoftDeletionQuerySet(QuerySet):
         return self.exclude(deleted_at=None)
 
 
-# Fat Link type (StratOp, ADM, HD etc)
+# AFatLinkType Model (StratOp, ADM, HD etc)
 class AFatLinkType(SoftDeletionModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=254)
@@ -75,7 +75,7 @@ class AFatLinkType(SoftDeletionModel):
         return "{} - {}".format(self.id, self.name)
 
 
-# FatLink Model
+# AFatLink Model
 class AFatLink(SoftDeletionModel):
     afattime = models.DateTimeField(default=timezone.now)
     fleet = models.CharField(max_length=254, null=True)
@@ -100,13 +100,13 @@ class AFatLink(SoftDeletionModel):
         ordering = ("-afattime",)
 
 
-# Clickable Link Duration Model
+# ClickAFatDuration Model
 class ClickAFatDuration(models.Model):
     duration = models.PositiveIntegerField()
     fleet = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
 
 
-# PAP/FAT Model
+# AFat Model
 class AFat(SoftDeletionModel):
     character = models.ForeignKey(EveCharacter, on_delete=models.CASCADE)
     afatlink = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
@@ -121,7 +121,7 @@ class AFat(SoftDeletionModel):
         return "{} - {}".format(self.afatlink, self.character)
 
 
-# Log Model for Manual FAT creation
+# ManualAFat Model
 class ManualAFat(models.Model):
     creator = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
     afatlink = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
@@ -133,7 +133,7 @@ class ManualAFat(models.Model):
         return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
 
 
-# Log Model for Deletion of Fats and FatLinks
+# AFatDelLog Model
 class AFatDelLog(models.Model):
     # 0 for FatLink, 1 for Fat
     deltype = models.BooleanField(default=0)

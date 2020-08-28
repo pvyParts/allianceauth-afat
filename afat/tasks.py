@@ -35,8 +35,10 @@ def get_or_create_char(name: str = None, id: int = None):
         result = esi.client.Search.get_search(
             categories=["character"], search=name, strict=True
         ).result()
+
         if "character" not in result:
             return None
+
         id = result["character"][0]
         qs = EveCharacter.objects.filter(character_id=id)
     elif id:
@@ -53,12 +55,14 @@ def get_or_create_char(name: str = None, id: int = None):
         # Make corp and alliance info objects for future sane
         if character.alliance_id is not None:
             test = EveAllianceInfo.objects.filter(alliance_id=character.alliance_id)
+
             if len(test) == 0:
                 EveAllianceInfo.objects.create_alliance(character.alliance_id)
         else:
             test = EveCorporationInfo.objects.filter(
                 corporation_id=character.corporation_id
             )
+
             if len(test) == 0:
                 EveCorporationInfo.objects.create_corporation(character.corporation_id)
 
@@ -106,7 +110,7 @@ def process_line(line, type_, hash):
         shiptype = line[2]
 
         if character is not None:
-            afat = AFat(
+            AFat(
                 afatlink_id=link.pk,
                 character=character,
                 system=system,
@@ -116,7 +120,7 @@ def process_line(line, type_, hash):
         character = get_or_create_char(name=line.strip(" "))
 
         if character is not None:
-            afat = AFat(afatlink_id=link.pk, character=character).save()
+            AFat(afatlink_id=link.pk, character=character).save()
 
 
 @shared_task
@@ -135,8 +139,7 @@ def process_character(char, hash):
     sol_name = solar_system["name"]
     ship_name = ship["name"]
     character = get_or_create_char(id=char_id)
-    link = AFatLink.objects.get(hash=hash)
-    fat = AFat(
+    AFat(
         afatlink_id=link.pk, character=character, system=sol_name, shiptype=ship_name
     ).save()
 
