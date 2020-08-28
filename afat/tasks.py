@@ -139,8 +139,7 @@ def process_character(char, hash):
     sol_name = solar_system["name"]
     ship_name = ship["name"]
     character = get_or_create_char(id=char_id)
-    link = AFatLink.objects.get(hash=hash)
-    fat = AFat(
+    AFat(
         afatlink_id=link.pk, character=character, system=sol_name, shiptype=ship_name
     ).save()
 

@@ -242,7 +242,6 @@ def stats_corp(request, corpid, month=None, year=None):
                 afatlink__afattime__year=year,
             ).count()
 
-            # if corp_fats is not 0:
             if corp_fats is not 0:
                 months.append((i, corp_fats))
 
