@@ -27,7 +27,8 @@ class Migration(migrations.Migration):
                 (
                     "fleet",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="afat.AFatLink",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="afat.AFatLink",
                     ),
                 ),
             ],

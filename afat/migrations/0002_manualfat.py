@@ -44,7 +44,8 @@ class Migration(migrations.Migration):
                 (
                     "afatlink",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="afat.AFatLink",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="afat.AFatLink",
                     ),
                 ),
             ],
