@@ -1,6 +1,7 @@
 name: Black Code Formatter
 
-on: [push, pull_request]
+#on: [push, pull_request]
+on: [push]
 
 jobs:
   black-format:
