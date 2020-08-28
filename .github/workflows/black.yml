@@ -1,17 +1,12 @@
 name: Black Code Formatter
 
-#on: [push, pull_request]
-#on: [push]
 on:
   push:
     branches:
       - master
       - development
-    branches-ignore:
-      # Push events to branches matching refs/heads/releases/
-      - 'releases/**'
     tags-ignore:
-      - v* 
+      - v*
   pull_request:
     branches:
       - master
