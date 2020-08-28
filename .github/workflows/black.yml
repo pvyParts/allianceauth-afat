@@ -3,9 +3,11 @@ name: Black Code Formatter
 on: [push, pull_request]
 
 jobs:
-  lint:
+  black-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: lgeiger/black-action@v1.0.1
+      - uses: actions/checkout@v1
+      - name: Black Code Formatter
+        uses: lgeiger/black-action@master
+#        with:
+#          args: ". --check"
