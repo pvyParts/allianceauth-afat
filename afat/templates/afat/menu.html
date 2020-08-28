@@ -1,0 +1,34 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load navactive %}
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">{% trans "Toggle navigation" %}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="{% url 'afat:afat_view' %}">{% trans "Fleet Activity Tracking" %}</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="{% navactive request 'afat_stats afat_corp_stats afat_char_stats afat_ally_stats' %}">
+                    <a href="{% url 'afat:stats' %}">{% trans "Statistics" %}</a>
+                </li>
+                <li class="{% navactive request 'afat:links afat:link_edit' %}">
+                    <a href="{% url 'afat:links' %}">{% trans "FAT Links" %}</a>
+                </li>
+                {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
+                    <li class="{% navactive request 'afat:link_add' %}">
+                        <a href="{% url 'afat:link_add' %}">{% trans "Add FAT Link" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
