@@ -6,8 +6,15 @@ jobs:
   black-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Black Code Formatter
-        uses: lgeiger/black-action@master
-        with:
-          args: ". --check"
+      - uses: actions/checkout@v2
+        name: Checkout
+      - uses: Ahuge/black-action@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLACK_ARGS: "."
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Black Code Formatter
+#        uses: lgeiger/black-action@master
+#        with:
+#          args: ". --check"
