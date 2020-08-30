@@ -8,10 +8,6 @@ class AFatLinkForm(forms.Form):
     type = forms.IntegerField(label=_("Type"), required=False)
 
 
-class AFatFlatListForm(forms.Form):
-    flatlist = forms.CharField(widget=forms.Textarea)
-
-
 class AFatManualFatForm(forms.Form):
     character = forms.CharField(label=_("Character Name"), max_length=50)
     system = forms.CharField(label=_("System"), max_length=50)
