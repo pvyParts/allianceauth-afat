@@ -23,7 +23,7 @@ from esi.decorators import token_required
 from esi.models import Token
 
 from . import __title__
-from .forms import AFatLinkForm, AFatManualFatForm, AFatFlatListForm, AFatClickFatForm
+from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm
 from .models import (
     AFat,
     ClickAFatDuration,
@@ -586,9 +586,14 @@ def links(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 def link_add(request):
+    msg = None
+
+    if "msg" in request.session:
+        msg = request.session.pop("msg")
+
     link_types = AFatLinkType.objects.all()
 
-    context = {"link_types": link_types}
+    context = {"link_types": link_types, "msg": msg}
 
     logger.info("Add FAT link view called by %s", request.user)
 
@@ -681,13 +686,33 @@ def link_create_esi(request, token, hash):
 
             return redirect("afat:link_edit", hash=hash)
         except Exception:
-            request.session["{}-creation-code".format(hash)] = 403
+            request.session["msg"] = [
+                "warning",
+                "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
+                "You can create a clickable FAT link and share it, if you like.",
+            ]
 
-            return redirect("afat:link_edit", hash=hash)
+            # since the FAT link has already been created, we need to remove it again
+            link = AFatLink.objects.get(hash=hash)
+            AFat.objects.filter(afatlink_id=link.pk).delete()
+            link.delete()
+
+            # return to "Add FAT Link" view
+            return redirect("afat:link_add")
     except Exception:
-        request.session["{}-creation-code".format(hash)] = 404
+        request.session["msg"] = [
+            "warning",
+            "To use the ESI function, you neeed to be in fleet and you need to be the fleet boss! "
+            "You can create a clickable FAT link and share it, if you like.",
+        ]
 
-        return redirect("afat:link_edit", hash=hash)
+        # since the FAT link has already been created, we need to remove it again
+        link = AFatLink.objects.get(hash=hash)
+        AFat.objects.filter(afatlink_id=link.pk).delete()
+        link.delete()
+
+        # return to "Add FAT Link" view
+        return redirect("afat:link_add")
 
 
 @login_required()
@@ -851,22 +876,14 @@ def edit_link(request, hash=None):
 
         return redirect("afat:afat_view")
 
-    debug = None
-
     if request.method == "POST":
         f1 = AFatLinkForm(request.POST)
-        f2 = AFatFlatListForm(request.POST)
         f3 = AFatManualFatForm(request.POST)
 
         if f1.is_valid():
             link.fleet = request.POST["fleet"]
             link.save()
             request.session["{}-task-code".format(hash)] = 1
-        elif f2.is_valid():
-            flatlist = request.POST["flatlist"]
-            formatted = flatlist.replace("\r", "").split("\n")
-            process_fats.delay(formatted, "flatlist", hash)
-            request.session["{}-task-code".format(hash)] = 2
         elif f3.is_valid():
             form = request.POST
             character_name = form["character"]
@@ -923,7 +940,6 @@ def edit_link(request, hash=None):
         "link": link,
         "fats": fats,
         "flatlist": flatlist,
-        "debug": debug,
     }
 
     logger.info("FAT link %s edited by %s", hash, request.user)
