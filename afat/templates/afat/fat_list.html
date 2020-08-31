@@ -35,8 +35,9 @@
                 <th>{% trans "Creator" %}</th>
                 <th>{% trans "EVE Time" %}</th>
                 <th>{% trans "# of FATs" %}</th>
-                <th>{% trans "Edit" %}</th>
-                <th>{% trans "Delete" %}</th>
+                {% if perms.afat.change_afatlink or perms.afat.delete_afatlink %}
+                    <th>{% trans "Actions" %}</th>
+                {% endif %}
             </thead>
 
             <tbody>
@@ -59,14 +60,15 @@
                         <td>{{ link.creator.profile.main_character.character_name }}</td>
                         <td data-sort='{{ link.afattime|date:"Y-m-d H:i" }}'>{{ link.afattime|date:"Y-M-d, H:i" }}</td>
                         <td>{{ link.number_of_fats }}</td>
-                        <td>
+
+                        {% if perms.afat.change_afatlink or perms.afat.delete_afatlink %}
+                        <td class="no-sort">
                             {% if perms.afat.change_afatlink %}
                             <a class="btn btn-info" href="{% url 'afat:link_edit' link.hash %}">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                             {% endif %}
-                        </td>
-                        <td>
+
                             {% if perms.afat.delete_afatlink %}
                             <a class="btn btn-danger"
                                 data-toggle="modal"
@@ -77,6 +79,7 @@
                             </a>
                             {% endif %}
                         </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
@@ -134,9 +137,16 @@
     $(document).ready(function(){
         $.fn.dataTable.moment('YYYY-MMM-D, HH:mm');
 
-        $('#link-list').DataTable( {
-            "order": [[ 3, "desc" ]]
-        } );
+        $('#link-list').DataTable({
+            "order": [[ 3, "desc" ]],
+            {% if perms.afat.change_afatlink or perms.afat.delete_afatlink %}
+            "columnDefs": [{
+                "targets": 5,
+                "orderable": false,
+                "order": []
+            }]
+            {% endif %}
+        });
     });
 
     $('#deleteModal').on('show.bs.modal', function (event) {
