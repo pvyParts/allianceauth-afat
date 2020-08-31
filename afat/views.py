@@ -13,7 +13,7 @@ from collections import OrderedDict
 
 from datetime import datetime, timedelta
 
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
