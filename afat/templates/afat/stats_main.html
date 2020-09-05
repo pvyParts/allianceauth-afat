@@ -75,7 +75,7 @@
                                                     <td>{{ key|month }}</td>
                                                     <td>{{ value }}</td>
                                                     <td>
-                                                        <a href="/afat/stats/char/{{ char.2 }}/{{ key }}/{{ year }}/" class="btn btn-primary">
+                                                        <a href="{% url 'afat:stats_char' char.2 key year %}" class="btn btn-primary">
                                                             <span class="glyphicon glyphicon-eye-open"></span>
                                                         </a>
                                                     </td>
@@ -115,7 +115,7 @@
                                                 {{ key }}
                                             </a>
 
-                                            <a class="btn btn-primary btn-sm pull-right" href="/afat/stats/ally/{% if key == 'No Alliance' %}000{% else %}{{ value.0 }}{% endif %}/" role="button">
+                                            <a class="btn btn-primary btn-sm pull-right" href="{% url 'afat:stats_ally' %}{% if key == 'No Alliance' %}000{% else %}{{ value.0 }}{% endif %}/" role="button">
                                                 <span class="glyphicon glyphicon-eye-open" style="color: white"></span>
                                             </a>
                                         </h4>
@@ -132,7 +132,7 @@
                                                         <td><img src="{{ corp.0|corporation_logo_url:32 }}" /></td>
                                                         <td>{{ corp.1 }}</td>
                                                         <td>
-                                                            <a class="btn btn-primary" href="/afat/stats/corp/{{ corp.0 }}/">
+                                                            <a class="btn btn-primary" href="{% url 'afat:stats_corp' corp.0 %}">
                                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                                             </a>
                                                         </td>
@@ -152,7 +152,7 @@
                                     <td><img src="{{ data.0.0|corporation_logo_url:32 }}" /> </td>
                                     <td>{{ data.0.1 }}</td>
                                     <td>
-                                        <a class="btn btn-primary" href="/afat/stats/corp/{{ data.0.0 }}/">
+                                        <a class="btn btn-primary" href="{% url 'afat:stats_corp' data.0.0 %}">
                                             <span class="glyphicon glyphicon-eye-open"></span>
                                         </a>
                                     </td>
