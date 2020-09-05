@@ -17,7 +17,6 @@
         <h4>
             {% if month == '1' %}
                 <a class="btn btn-primary" href="{% url 'afat:stats_ally' ally.alliance_id 12 year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
-            {% url 'afat:link_delete' link.hash %}
             {% else %}
                 <a class="btn btn-primary" href="{% url 'afat:stats_ally' ally.alliance_id month_prev year %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
             {% endif %}
