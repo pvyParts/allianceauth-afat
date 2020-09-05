@@ -115,9 +115,11 @@
                                                 {{ key }}
                                             </a>
 
-                                            <a class="btn btn-primary btn-sm pull-right" href="{% url 'afat:stats_ally' %}{% if key == 'No Alliance' %}000{% else %}{{ value.0 }}{% endif %}/" role="button">
+                                            {% if key != 'No Alliance' %}
+                                            <a class="btn btn-primary btn-sm pull-right" href="{% url 'afat:stats_ally' value.0 %}" role="button">
                                                 <span class="glyphicon glyphicon-eye-open" style="color: white"></span>
                                             </a>
+                                            {% endif %}
                                         </h4>
                                     </div>
 
