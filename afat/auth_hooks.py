@@ -19,4 +19,4 @@ def register_menu():
 
 @hooks.register("url_hook")
 def register_url():
-    return UrlHook(urls, "afat", r"^afat/")
+    return UrlHook(urls, "afat", r"^fleetactivitytracking/")
