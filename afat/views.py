@@ -615,7 +615,7 @@ def link_add(request):
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    link_types = AFatLinkType.objects.all()
+    link_types = AFatLinkType.objects.all().order_by("name")
 
     context = {"link_types": link_types, "msg": msg}
 
