@@ -1,5 +1,11 @@
 # Alliance Auth AFAT - Another Fleet Activity Tracker
 
+[![version](https://img.shields.io/pypi/v/allianceauth-afat?label=release)](https://pypi.org/project/allianceauth-imicusfat/)
+[![license](https://img.shields.io/badge/license-GPLv3-green)](https://pypi.org/project/allianceauth-imicusfat/)
+[![python](https://img.shields.io/pypi/pyversions/allianceauth-imicusfat)](https://pypi.org/project/allianceauth-imicusfat/)
+[![django](https://img.shields.io/pypi/djversions/allianceauth-imicusfat?label=django)](https://pypi.org/project/allianceauth-imicusfat/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](http://black.readthedocs.io/en/latest/)
+
 An Improved FAT/PAP System for [Alliance Auth](https://gitlab.com/allianceauth/allianceauth). 
 
 AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pushed when ImicusFAT get updates to keep on par with it.
