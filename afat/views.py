@@ -724,6 +724,7 @@ def link_create_esi(request, token, hash):
             # return to "Add FAT Link" view
             return redirect("afat:link_add")
     except Exception:
+        # Not in a fleet
         request.session["msg"] = [
             "warning",
             "To use the ESI function, you neeed to be in fleet and you need to be the fleet boss! "
@@ -758,7 +759,7 @@ def create_esi_fat(request):
     else:
         request.session["msg"] = [
             "danger",
-            ("Something went wrong when attempting to submit your" " ESI FAT Link."),
+            "Something went wrong when attempting to submit your  ESI FAT Link.",
         ]
 
         return redirect("afat:afat_view")
@@ -777,7 +778,7 @@ def click_link(request, token, hash=None):
     try:
         try:
             fleet = AFatLink.objects.get(hash=hash)
-        except Exception:
+        except AFatLink.DoesNotExist:
             request.session["msg"] = ["warning", "The hash provided is not valid."]
 
             return redirect("afat:afat_view")
@@ -895,7 +896,7 @@ def edit_link(request, hash=None):
 
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 
         return redirect("afat:afat_view")
@@ -964,8 +965,10 @@ def edit_link(request, hash=None):
         now = timezone.now() - timedelta(minutes=dur.duration)
 
         if now >= link.afattime:
+            # link expired
             link_ongoing = False
-    except Exception:
+    except ClickAFatDuration.DoesNotExist:
+        # ESI lnk
         link_ongoing = False
 
     context = {
@@ -993,7 +996,7 @@ def del_link(request, hash=None):
 
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash provided is either invalid or has been deleted.",
@@ -1024,7 +1027,7 @@ def del_link(request, hash=None):
 def del_fat(request, hash, fat):
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash provided is either invalid or has been deleted.",
@@ -1034,7 +1037,7 @@ def del_fat(request, hash, fat):
 
     try:
         fat = AFat.objects.get(pk=fat, afatlink_id=link.pk)
-    except Exception:
+    except AFat.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash and FAT ID do not match.",
@@ -1043,8 +1046,8 @@ def del_fat(request, hash, fat):
         return redirect("afat:afat_view")
 
     fat.delete()
-
     AFatDelLog(remover=request.user, deltype=1, string=fat.__str__())
+
     request.session["msg"] = [
         "success",
         "The FAT from link {0} has been successfully deleted.".format(hash),

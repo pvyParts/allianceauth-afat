@@ -128,7 +128,6 @@ class ManualAFat(models.Model):
     character = models.ForeignKey(EveCharacter, on_delete=models.CASCADE)
 
     # Add property for getting the user for a character.
-
     def __str__(self):
         return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
 
