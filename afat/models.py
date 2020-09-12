@@ -161,5 +161,5 @@ class AFatDelLog(models.Model):
 
     class Meta:
         verbose_name = "Delete Log"
-        verbose_name_plural = "Delete Log"
+        verbose_name_plural = "Delete Logs"
         default_permissions = ()
