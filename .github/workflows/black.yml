@@ -3,7 +3,7 @@ name: Black Code Formatter
 on:
   push:
     branches:
-      - *
+      - '**'
     tags-ignore:
       - v*
 
