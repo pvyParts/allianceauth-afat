@@ -74,6 +74,11 @@ class AFatLinkType(SoftDeletionModel):
     def __str__(self):
         return "{} - {}".format(self.id, self.name)
 
+    class Meta:
+        verbose_name = "FAT Link Type"
+        verbose_name_plural = "FAT Link Types"
+        default_permissions = ()
+
 
 # AFatLink Model
 class AFatLink(SoftDeletionModel):
@@ -88,6 +93,8 @@ class AFatLink(SoftDeletionModel):
         return self.hash[6:]
 
     class Meta:
+        verbose_name = "FAT Link"
+        verbose_name_plural = "FAT Links"
         permissions = (
             ("manage_afat", "Can manage the Another Fleet Activity Tracking module"),
             ("stats_corp_own", "Can see own corp stats"),
@@ -114,11 +121,14 @@ class AFat(SoftDeletionModel):
     shiptype = models.CharField(max_length=100, null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
 
-    class Meta:
-        unique_together = (("character", "afatlink"),)
-
     def __str__(self):
         return "{} - {}".format(self.afatlink, self.character)
+
+    class Meta:
+        verbose_name = "FAT"
+        verbose_name_plural = "FATs"
+        default_permissions = ()
+        unique_together = (("character", "afatlink"),)
 
 
 # ManualAFat Model
@@ -148,3 +158,8 @@ class AFatDelLog(models.Model):
 
     def __str__(self):
         return "{}/{} - {}".format(self.delt_to_str(), self.string, self.remover)
+
+    class Meta:
+        verbose_name = "Delete Log"
+        verbose_name_plural = "Delete Log"
+        default_permissions = ()
