@@ -7,4 +7,4 @@ from . import __version__
 class AfatConfig(AppConfig):
     name = "afat"
     label = "afat"
-    verbose_name = f"AA-FAT Fleet Activity Tracking v{__version__}"
+    verbose_name = f"AFAT - Another Fleet Activity Tracker v{__version__}"
