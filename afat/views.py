@@ -33,7 +33,7 @@ from .models import (
     AFatLinkType,
 )
 from .providers import esi
-from .tasks import get_or_create_char, process_fats
+from .tasks import get_or_create_char, process_fats, get_user_permissions
 from .utils import LoggerAddTag
 
 import random
@@ -45,6 +45,9 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 # Create your views here.
 @login_required()
 def afat_view(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -70,7 +73,7 @@ def afat_view(request):
 
     fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
 
-    context = {"fats": fats, "links": fatlinks, "msg": msg}
+    context = {"fats": fats, "links": fatlinks, "msg": msg, "permissions": permissions}
 
     logger.info("Module called by %s", request.user)
 
@@ -79,6 +82,9 @@ def afat_view(request):
 
 @login_required()
 def stats(request, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if year is None:
         year = datetime.now().year
 
@@ -132,6 +138,7 @@ def stats(request, year=None):
         "charstats": months,
         "year": year,
         "current_year": datetime.now().year,
+        "permissions": permissions,
     }
 
     logger.info("Statistics overview called by %s", request.user)
@@ -141,6 +148,9 @@ def stats(request, year=None):
 
 @login_required()
 def stats_char(request, charid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     character = EveCharacter.objects.get(character_id=charid)
     valid = [
         char.character for char in CharacterOwnership.objects.filter(user=request.user)
@@ -218,6 +228,7 @@ def stats_char(request, charid, month=None, year=None):
         "data_ship_type": data_ship_type,
         "data_time": data_time,
         "fats": fats,
+        "permissions": permissions,
     }
 
     logger.info("Character statistics called by %s", request.user)
@@ -228,6 +239,9 @@ def stats_char(request, charid, month=None, year=None):
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
 def stats_corp(request, corpid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     # Check character has permission to view other corp stats
     if int(request.user.profile.main_character.corporation_id) != int(corpid):
         if not request.user.has_perm("afat.stats_corp_other"):
@@ -261,6 +275,7 @@ def stats_corp(request, corpid, month=None, year=None):
             "corpid": corpid,
             "year": year,
             "type": 0,
+            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -373,6 +388,7 @@ def stats_corp(request, corpid, month=None, year=None):
         "data_time": data_time,
         "data_weekday": data_weekday,
         "chars": chars,
+        "permissions": permissions,
     }
 
     logger.info("Corporation statistics for %s called by %s", corp_name, request.user)
@@ -383,6 +399,9 @@ def stats_corp(request, corpid, month=None, year=None):
 @login_required()
 @permission_required("afat.stats_corp_other")
 def stats_alliance(request, allianceid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if allianceid == "000":
         allianceid = None
 
@@ -413,6 +432,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
             "corpid": allianceid,
             "year": year,
             "type": 1,
+            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -580,6 +600,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
         "data_weekday": data_weekday,
         "corps": corps,
         "data_ship_type": data_ship_type,
+        "permissions": permissions,
     }
 
     logger.info("Alliance statistics for %s called by %s", alliance_name, request.user)
@@ -589,6 +610,9 @@ def stats_alliance(request, allianceid, month=None, year=None):
 
 @login_required()
 def links(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -600,7 +624,7 @@ def links(request):
         .annotate(number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True)))
     )
 
-    context = {"links": fatlinks, "msg": msg}
+    context = {"links": fatlinks, "msg": msg, "permissions": permissions}
 
     logger.info("FAT link list called by %s", request.user)
 
@@ -610,6 +634,9 @@ def links(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 def link_add(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -617,7 +644,7 @@ def link_add(request):
 
     link_types = AFatLinkType.objects.all().order_by("name")
 
-    context = {"link_types": link_types, "msg": msg}
+    context = {"link_types": link_types, "msg": msg, "permissions": permissions}
 
     logger.info("Add FAT link view called by %s", request.user)
 
@@ -889,6 +916,9 @@ def click_link(request, token, hash=None):
     )
 )
 def edit_link(request, hash=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
@@ -979,6 +1009,7 @@ def edit_link(request, hash=None):
         "fats": fats,
         "flatlist": flatlist,
         "link_ongoing": link_ongoing,
+        "permissions": permissions,
     }
 
     logger.info("FAT link %s edited by %s", hash, request.user)
