@@ -23,7 +23,7 @@ from esi.decorators import token_required
 from esi.models import Token
 
 from . import __title__
-from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm
+from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm, FatLinkEditForm
 from .models import (
     AFat,
     ClickAFatDuration,
@@ -937,18 +937,17 @@ def edit_link(request, hash=None):
         return redirect("afat:afat_view")
 
     if request.method == "POST":
-        f1 = AFatLinkForm(request.POST)
+        f1 = FatLinkEditForm(request.POST)
         f3 = AFatManualFatForm(request.POST)
 
         if f1.is_valid():
-            link.fleet = request.POST["fleet"]
+            link.fleet = f1.cleaned_data["fleet"]
             link.save()
             request.session["{}-task-code".format(hash)] = 1
         elif f3.is_valid():
-            form = request.POST
-            character_name = form["character"]
-            system = form["system"]
-            shiptype = form["shiptype"]
+            character_name = f3.cleaned_data["character"]
+            system = f3.cleaned_data["system"]
+            shiptype = f3.cleaned_data["shiptype"]
             creator = request.user
             character = get_or_create_char(name=character_name)
 
