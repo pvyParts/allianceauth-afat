@@ -774,11 +774,16 @@ def create_esi_fat(request):
 
     if form.is_valid():
         link = AFatLink(
-            fleet=form.cleaned_data["name"], creator=request.user, hash=fat_link_hash
+            fleet=form.cleaned_data["name_esi"],
+            creator=request.user,
+            hash=fat_link_hash,
         )
 
-        if form.cleaned_data["type"] is not None and form.cleaned_data["type"] != -1:
-            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type"])
+        if (
+            form.cleaned_data["type_esi"] is not None
+            and form.cleaned_data["type_esi"] != -1
+        ):
+            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
 
         link.save()
 
