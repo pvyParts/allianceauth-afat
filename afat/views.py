@@ -32,8 +32,9 @@ from .models import (
     AFatDelLog,
     AFatLinkType,
 )
+from .permissions import get_user_permissions
 from .providers import esi
-from .tasks import get_or_create_char, process_fats, get_user_permissions
+from .tasks import get_or_create_char, process_fats
 from .utils import LoggerAddTag
 
 import random
