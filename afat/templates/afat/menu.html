@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% load i18n %}
 {% load navactive %}
 
@@ -20,10 +20,12 @@
                 <li class="{% navactive request 'afat_stats afat_corp_stats afat_char_stats afat_ally_stats' %}">
                     <a href="{% url 'afat:stats' %}">{% trans "Statistics" %}</a>
                 </li>
+
                 <li class="{% navactive request 'afat:links afat:link_edit' %}">
                     <a href="{% url 'afat:links' %}">{% trans "FAT Links" %}</a>
                 </li>
-                {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
+
+                {% if permissions.fatlinks.manage or permissions.fatlinks.add %}
                     <li class="{% navactive request 'afat:link_add' %}">
                         <a href="{% url 'afat:link_add' %}">{% trans "Add FAT Link" %}</a>
                     </li>

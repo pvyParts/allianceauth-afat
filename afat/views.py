@@ -23,7 +23,7 @@ from esi.decorators import token_required
 from esi.models import Token
 
 from . import __title__
-from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm
+from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm, FatLinkEditForm
 from .models import (
     AFat,
     ClickAFatDuration,
@@ -32,6 +32,7 @@ from .models import (
     AFatDelLog,
     AFatLinkType,
 )
+from .permissions import get_user_permissions
 from .providers import esi
 from .tasks import get_or_create_char, process_fats
 from .utils import LoggerAddTag
@@ -45,6 +46,9 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 # Create your views here.
 @login_required()
 def afat_view(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -70,7 +74,7 @@ def afat_view(request):
 
     fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
 
-    context = {"fats": fats, "links": fatlinks, "msg": msg}
+    context = {"fats": fats, "links": fatlinks, "msg": msg, "permissions": permissions}
 
     logger.info("Module called by %s", request.user)
 
@@ -79,6 +83,9 @@ def afat_view(request):
 
 @login_required()
 def stats(request, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if year is None:
         year = datetime.now().year
 
@@ -132,6 +139,7 @@ def stats(request, year=None):
         "charstats": months,
         "year": year,
         "current_year": datetime.now().year,
+        "permissions": permissions,
     }
 
     logger.info("Statistics overview called by %s", request.user)
@@ -141,6 +149,9 @@ def stats(request, year=None):
 
 @login_required()
 def stats_char(request, charid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     character = EveCharacter.objects.get(character_id=charid)
     valid = [
         char.character for char in CharacterOwnership.objects.filter(user=request.user)
@@ -218,6 +229,7 @@ def stats_char(request, charid, month=None, year=None):
         "data_ship_type": data_ship_type,
         "data_time": data_time,
         "fats": fats,
+        "permissions": permissions,
     }
 
     logger.info("Character statistics called by %s", request.user)
@@ -228,6 +240,9 @@ def stats_char(request, charid, month=None, year=None):
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
 def stats_corp(request, corpid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     # Check character has permission to view other corp stats
     if int(request.user.profile.main_character.corporation_id) != int(corpid):
         if not request.user.has_perm("afat.stats_corp_other"):
@@ -261,6 +276,7 @@ def stats_corp(request, corpid, month=None, year=None):
             "corpid": corpid,
             "year": year,
             "type": 0,
+            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -373,6 +389,7 @@ def stats_corp(request, corpid, month=None, year=None):
         "data_time": data_time,
         "data_weekday": data_weekday,
         "chars": chars,
+        "permissions": permissions,
     }
 
     logger.info("Corporation statistics for %s called by %s", corp_name, request.user)
@@ -383,6 +400,9 @@ def stats_corp(request, corpid, month=None, year=None):
 @login_required()
 @permission_required("afat.stats_corp_other")
 def stats_alliance(request, allianceid, month=None, year=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if allianceid == "000":
         allianceid = None
 
@@ -413,6 +433,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
             "corpid": allianceid,
             "year": year,
             "type": 1,
+            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -580,6 +601,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
         "data_weekday": data_weekday,
         "corps": corps,
         "data_ship_type": data_ship_type,
+        "permissions": permissions,
     }
 
     logger.info("Alliance statistics for %s called by %s", alliance_name, request.user)
@@ -589,6 +611,9 @@ def stats_alliance(request, allianceid, month=None, year=None):
 
 @login_required()
 def links(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -600,7 +625,7 @@ def links(request):
         .annotate(number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True)))
     )
 
-    context = {"links": fatlinks, "msg": msg}
+    context = {"links": fatlinks, "msg": msg, "permissions": permissions}
 
     logger.info("FAT link list called by %s", request.user)
 
@@ -610,6 +635,9 @@ def links(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 def link_add(request):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     msg = None
 
     if "msg" in request.session:
@@ -617,7 +645,7 @@ def link_add(request):
 
     link_types = AFatLinkType.objects.all().order_by("name")
 
-    context = {"link_types": link_types, "msg": msg}
+    context = {"link_types": link_types, "msg": msg, "permissions": permissions}
 
     logger.info("Add FAT link view called by %s", request.user)
 
@@ -724,6 +752,7 @@ def link_create_esi(request, token, hash):
             # return to "Add FAT Link" view
             return redirect("afat:link_add")
     except Exception:
+        # Not in a fleet
         request.session["msg"] = [
             "warning",
             "To use the ESI function, you neeed to be in fleet and you need to be the fleet boss! "
@@ -746,11 +775,16 @@ def create_esi_fat(request):
 
     if form.is_valid():
         link = AFatLink(
-            fleet=form.cleaned_data["name"], creator=request.user, hash=fat_link_hash
+            fleet=form.cleaned_data["name_esi"],
+            creator=request.user,
+            hash=fat_link_hash,
         )
 
-        if form.cleaned_data["type"] is not None and form.cleaned_data["type"] != -1:
-            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type"])
+        if (
+            form.cleaned_data["type_esi"] is not None
+            and form.cleaned_data["type_esi"] != -1
+        ):
+            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
 
         link.save()
 
@@ -758,7 +792,7 @@ def create_esi_fat(request):
     else:
         request.session["msg"] = [
             "danger",
-            ("Something went wrong when attempting to submit your" " ESI FAT Link."),
+            "Something went wrong when attempting to submit your  ESI FAT Link.",
         ]
 
         return redirect("afat:afat_view")
@@ -777,7 +811,7 @@ def click_link(request, token, hash=None):
     try:
         try:
             fleet = AFatLink.objects.get(hash=hash)
-        except Exception:
+        except AFatLink.DoesNotExist:
             request.session["msg"] = ["warning", "The hash provided is not valid."]
 
             return redirect("afat:afat_view")
@@ -888,6 +922,9 @@ def click_link(request, token, hash=None):
     )
 )
 def edit_link(request, hash=None):
+    # get users permissions
+    permissions = get_user_permissions(request.user)
+
     if hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
@@ -895,24 +932,23 @@ def edit_link(request, hash=None):
 
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 
         return redirect("afat:afat_view")
 
     if request.method == "POST":
-        f1 = AFatLinkForm(request.POST)
-        f3 = AFatManualFatForm(request.POST)
+        fatlink_edit_form = FatLinkEditForm(request.POST)
+        manual_fat_form = AFatManualFatForm(request.POST)
 
-        if f1.is_valid():
-            link.fleet = request.POST["fleet"]
+        if fatlink_edit_form.is_valid():
+            link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
             request.session["{}-task-code".format(hash)] = 1
-        elif f3.is_valid():
-            form = request.POST
-            character_name = form["character"]
-            system = form["system"]
-            shiptype = form["shiptype"]
+        elif manual_fat_form.is_valid():
+            character_name = manual_fat_form.cleaned_data["character"]
+            system = manual_fat_form.cleaned_data["system"]
+            shiptype = manual_fat_form.cleaned_data["shiptype"]
             creator = request.user
             character = get_or_create_char(name=character_name)
 
@@ -964,8 +1000,10 @@ def edit_link(request, hash=None):
         now = timezone.now() - timedelta(minutes=dur.duration)
 
         if now >= link.afattime:
+            # link expired
             link_ongoing = False
-    except Exception:
+    except ClickAFatDuration.DoesNotExist:
+        # ESI lnk
         link_ongoing = False
 
     context = {
@@ -976,6 +1014,7 @@ def edit_link(request, hash=None):
         "fats": fats,
         "flatlist": flatlist,
         "link_ongoing": link_ongoing,
+        "permissions": permissions,
     }
 
     logger.info("FAT link %s edited by %s", hash, request.user)
@@ -993,7 +1032,7 @@ def del_link(request, hash=None):
 
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash provided is either invalid or has been deleted.",
@@ -1024,7 +1063,7 @@ def del_link(request, hash=None):
 def del_fat(request, hash, fat):
     try:
         link = AFatLink.objects.get(hash=hash)
-    except Exception:
+    except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash provided is either invalid or has been deleted.",
@@ -1034,7 +1073,7 @@ def del_fat(request, hash, fat):
 
     try:
         fat = AFat.objects.get(pk=fat, afatlink_id=link.pk)
-    except Exception:
+    except AFat.DoesNotExist:
         request.session["msg"] = [
             "danger",
             "The hash and FAT ID do not match.",
@@ -1043,8 +1082,8 @@ def del_fat(request, hash, fat):
         return redirect("afat:afat_view")
 
     fat.delete()
-
     AFatDelLog(remover=request.user, deltype=1, string=fat.__str__())
+
     request.session["msg"] = [
         "success",
         "The FAT from link {0} has been successfully deleted.".format(hash),

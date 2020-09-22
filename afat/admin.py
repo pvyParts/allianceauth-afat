@@ -5,6 +5,19 @@ from .models import AFat, AFatLink, AFatLinkType
 
 
 # Register your models here.
-admin.site.register(AFatLink)
-admin.site.register(AFat)
-admin.site.register(AFatLinkType)
+@admin.register(AFatLink)
+class AFatLinkAdmin(admin.ModelAdmin):
+    list_display = ("afattime", "creator", "fleet", "link_type", "hash", "deleted_at")
+    ordering = ("-afattime",)
+
+
+@admin.register(AFat)
+class AFatAdmin(admin.ModelAdmin):
+    list_display = ("character", "system", "shiptype", "afatlink", "deleted_at")
+    ordering = ("-character",)
+
+
+@admin.register(AFatLinkType)
+class AFatLinkTypeAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    ordering = ("name",)

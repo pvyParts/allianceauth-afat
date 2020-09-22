@@ -1,6 +1,9 @@
 /build/
 /dist/
-/allianceauth_afat.egg-info/
-/afat/__pycache__/
+/*.egg-info/
 .idea/
-.github/
+*.log
+*.tmp
+*.bak
+*.old
+__pycache__
