@@ -1,5 +1,8 @@
 # coding=utf-8
 
+"""
+creating a user permission hierarchy
+"""
 
 # checking permissions
 def get_user_permissions(user):

@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
+
+"""
+tasks
+"""
+
+from celery import shared_task
+
 from allianceauth.eveonline.models import (
     EveAllianceInfo,
     EveCharacter,
     EveCorporationInfo,
 )
 from allianceauth.services.hooks import get_extension_logger
-from celery import shared_task
 
 from . import __title__
 from .models import AFat, AFatLink
@@ -17,15 +23,20 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
 class NoDataError(Exception):
+    """
+    NoDataError
+    """
+
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
 
 def get_or_create_char(name: str = None, id: int = None):
     """
-    This function takes a name or id of a character and checks to see if the character already exists.
-    If the character does not already exist, it will create the character object, and if needed the corp/alliance
-    objects as well.
+    This function takes a name or id of a character and checks
+    to see if the character already exists.
+    If the character does not already exist, it will create the
+    character object, and if needed the corp/alliance objects as well.
     :param name: str (optional)
     :param id: int (optional)
     :returns character: EveCharacter
@@ -40,14 +51,14 @@ def get_or_create_char(name: str = None, id: int = None):
             return None
 
         id = result["character"][0]
-        qs = EveCharacter.objects.filter(character_id=id)
+        eve_character = EveCharacter.objects.filter(character_id=id)
     elif id:
         # If an ID is passed we can just check the db for it.
-        qs = EveCharacter.objects.filter(character_id=id)
+        eve_character = EveCharacter.objects.filter(character_id=id)
     elif not name and not id:
         raise NoDataError("No character name or id provided.")
 
-    if len(qs) == 0:
+    if len(eve_character) == 0:
         # Create Character
         character = EveCharacter.objects.create_character(id)
         character = EveCharacter.objects.get(pk=character.pk)
@@ -67,7 +78,7 @@ def get_or_create_char(name: str = None, id: int = None):
                 EveCorporationInfo.objects.create_corporation(character.corporation_id)
 
     else:
-        character = qs[0]
+        character = eve_character[0]
 
     logger.info("Processing information for character %s", character.pk)
 
@@ -77,7 +88,8 @@ def get_or_create_char(name: str = None, id: int = None):
 @shared_task
 def process_fats(list, type_, hash):
     """
-    Due to the large possible size of fatlists, this process will be scheduled in order to process flat_lists.
+    Due to the large possible size of fatlists,
+    this process will be scheduled in order to process flat_lists.
     :param list: the list of character info to be processed.
     :param type_: only "eve" for now
     :param hash: the hash from the fat link.
@@ -92,6 +104,14 @@ def process_fats(list, type_, hash):
 
 @shared_task
 def process_line(line, type_, hash):
+    """
+    process_line
+    processing every single character on its own
+    :param line:
+    :param type_:
+    :param hash:
+    :return:
+    """
     link = AFatLink.objects.get(hash=hash)
 
     if type_ == "comp":
@@ -115,6 +135,12 @@ def process_line(line, type_, hash):
 
 @shared_task
 def process_character(char, hash):
+    """
+    process_character
+    :param char:
+    :param hash:
+    :return:
+    """
     link = AFatLink.objects.get(hash=hash)
 
     char_id = char["character_id"]
