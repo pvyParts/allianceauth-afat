@@ -127,8 +127,17 @@ class AFatLinkType(SoftDeletionModel):
     """
 
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=254)
-    deleted_at = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(
+        max_length=254, help_text="Descriptive name of your fleet type"
+    )
+    is_enabled = models.BooleanField(
+        default=True,
+        db_index=True,
+        help_text="Whether this fleettype is active or not",
+    )
+    deleted_at = models.DateTimeField(
+        blank=True, null=True, help_text="Has this been deleted?"
+    )
 
     def __str__(self):
         return "{} - {}".format(self.id, self.name)
@@ -138,8 +147,8 @@ class AFatLinkType(SoftDeletionModel):
         Meta
         """
 
-        verbose_name = "FAT Link Type"
-        verbose_name_plural = "FAT Link Types"
+        verbose_name = "FAT Link Fleet Type"
+        verbose_name_plural = "FAT Link Fleet Types"
         default_permissions = ()
 
 
@@ -149,12 +158,33 @@ class AFatLink(SoftDeletionModel):
     AFatLink
     """
 
-    afattime = models.DateTimeField(default=timezone.now)
-    fleet = models.CharField(max_length=254, null=True)
-    hash = models.CharField(max_length=254)
-    creator = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
-    deleted_at = models.DateTimeField(blank=True, null=True)
-    link_type = models.ForeignKey(AFatLinkType, on_delete=models.CASCADE, null=True)
+    afattime = models.DateTimeField(
+        default=timezone.now, help_text="When was this fatlink created"
+    )
+    fleet = models.CharField(
+        max_length=254,
+        null=True,
+        help_text="The fatlinks fleet name",
+    )
+    hash = models.CharField(max_length=254, help_text="The fatlinks hash")
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET(get_sentinel_user),
+        help_text="Who created the fatlink?",
+    )
+    deleted_at = models.DateTimeField(
+        blank=True, null=True, help_text="Has been deleted or not"
+    )
+    link_type = models.ForeignKey(
+        AFatLinkType,
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="The fatlinks fleet type, if it's set",
+    )
+    is_esilink = models.BooleanField(
+        default=False,
+        help_text="Whether this fatlink was created via ESI or not",
+    )
 
     def __str__(self):
         return self.hash[6:]
@@ -194,11 +224,25 @@ class AFat(SoftDeletionModel):
     AFat
     """
 
-    character = models.ForeignKey(EveCharacter, on_delete=models.CASCADE)
-    afatlink = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
-    system = models.CharField(max_length=100, null=True)
-    shiptype = models.CharField(max_length=100, null=True)
-    deleted_at = models.DateTimeField(blank=True, null=True)
+    character = models.ForeignKey(
+        EveCharacter,
+        on_delete=models.CASCADE,
+        help_text="Character who registered this fat",
+    )
+    afatlink = models.ForeignKey(
+        AFatLink,
+        on_delete=models.CASCADE,
+        help_text="The fatlink the character registered at",
+    )
+    system = models.CharField(
+        max_length=100, null=True, help_text="The system the character is in"
+    )
+    shiptype = models.CharField(
+        max_length=100, null=True, help_text="The ship the character was flying"
+    )
+    deleted_at = models.DateTimeField(
+        blank=True, null=True, help_text="Has been deleted or not"
+    )
 
     def __str__(self):
         return "{} - {}".format(self.afatlink, self.character)
