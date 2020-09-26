@@ -77,6 +77,10 @@
                                                             {% else %}
                                                                 {{ afat.afatlink.hash }}
                                                             {% endif %}
+
+                                                            {% if afat.afatlink.is_esilink %}
+                                                                <i>[via ESI]</i>
+                                                            {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if afat.afatlink.link_type %}
@@ -111,16 +115,26 @@
                             <th>{% trans "Fleet Name" %}</th>
                             <th>{% trans "Creator" %}</th>
                             <th>{% trans "EVE Time" %}</th>
+
                             {% if permissions.fatlinks.manipulate %}
                                 <th>{% trans "Actions" %}</th>
                             {% endif %}
-
                         </thead>
 
                         <tbody>
                             {% for link in links %}
                                 <tr>
-                                    <td>{% if link.fleet %}{{ link.fleet }}{% else %}{{ link.hash }}{% endif %}</td>
+                                    <td>
+                                        {% if link.fleet %}
+                                            {{ link.fleet }}
+                                        {% else %}
+                                            {{ link.hash }}
+                                        {% endif %}
+
+                                        {% if link.is_esilink %}
+                                            <i>[via ESI]</i>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ link.creator.profile.main_character.character_name }}</td>
                                     <td>{{ link.afattime|date:"Y-M-d, H:i" }}</td>
 

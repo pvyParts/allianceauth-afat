@@ -862,6 +862,7 @@ def create_esi_fat(request):
         ):
             link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
 
+        link.is_esilink = True
         link.save()
 
         return redirect("afat:link_create_esi", hash=fat_link_hash)

@@ -16,7 +16,15 @@ class AFatLinkAdmin(admin.ModelAdmin):
     config for fat link model
     """
 
-    list_display = ("afattime", "creator", "fleet", "link_type", "hash", "deleted_at")
+    list_display = (
+        "afattime",
+        "creator",
+        "fleet",
+        "link_type",
+        "is_esilink",
+        "hash",
+        "deleted_at",
+    )
     ordering = ("-afattime",)
 
 
