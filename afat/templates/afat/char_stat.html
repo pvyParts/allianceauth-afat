@@ -107,6 +107,10 @@
                                     {% else %}
                                         {{ fat.afatlink.hash }}
                                     {% endif %}
+
+                                    {% if fat.afatlink.is_esilink %}
+                                        <i>[via ESI]</i>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if fat.afatlink.link_type %}

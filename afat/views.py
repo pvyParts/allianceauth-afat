@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-from allianceauth.authentication.decorators import permissions_required
-from allianceauth.authentication.models import CharacterOwnership
-from allianceauth.eveonline.models import (
-    EveAllianceInfo,
-    EveCharacter,
-    EveCorporationInfo,
-)
-from allianceauth.eveonline.providers import provider
-from allianceauth.services.hooks import get_extension_logger
+
+"""
+the views
+"""
+
+import random
 
 from collections import OrderedDict
 
@@ -21,6 +18,16 @@ from django.utils.crypto import get_random_string
 
 from esi.decorators import token_required
 from esi.models import Token
+
+from allianceauth.authentication.decorators import permissions_required
+from allianceauth.authentication.models import CharacterOwnership
+from allianceauth.eveonline.models import (
+    EveAllianceInfo,
+    EveCharacter,
+    EveCorporationInfo,
+)
+from allianceauth.eveonline.providers import provider
+from allianceauth.services.hooks import get_extension_logger
 
 from . import __title__
 from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm, FatLinkEditForm
@@ -37,15 +44,18 @@ from .providers import esi
 from .tasks import get_or_create_char, process_fats
 from .utils import LoggerAddTag
 
-import random
-
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
-# Create your views here.
 @login_required()
 def afat_view(request):
+    """
+    afat_view
+    :param request:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -83,6 +93,13 @@ def afat_view(request):
 
 @login_required()
 def stats(request, year=None):
+    """
+    statistics main view
+    :param request:
+    :param year:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -149,6 +166,15 @@ def stats(request, year=None):
 
 @login_required()
 def stats_char(request, charid, month=None, year=None):
+    """
+    character statistics view
+    :param request:
+    :param charid:
+    :param month:
+    :param year:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -240,6 +266,15 @@ def stats_char(request, charid, month=None, year=None):
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
 def stats_corp(request, corpid, month=None, year=None):
+    """
+    corp statistics view
+    :param request:
+    :param corpid:
+    :param month:
+    :param year:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -400,6 +435,15 @@ def stats_corp(request, corpid, month=None, year=None):
 @login_required()
 @permission_required("afat.stats_corp_other")
 def stats_alliance(request, allianceid, month=None, year=None):
+    """
+    alliance statistics view
+    :param request:
+    :param allianceid:
+    :param month:
+    :param year:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -611,6 +655,12 @@ def stats_alliance(request, allianceid, month=None, year=None):
 
 @login_required()
 def links(request):
+    """
+    fatlinks view
+    :param request:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -635,6 +685,12 @@ def links(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 def link_add(request):
+    """
+    add fatlink view
+    :param request:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -655,6 +711,12 @@ def link_add(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 def link_create_click(request):
+    """
+    create fatlink helper
+    :param request:
+    :return:
+    """
+
     if request.method == "POST":
         form = AFatClickFatForm(request.POST)
 
@@ -715,6 +777,14 @@ def link_create_click(request):
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
 def link_create_esi(request, token, hash):
+    """
+    create ESI link helper
+    :param request:
+    :param token:
+    :param hash:
+    :return:
+    """
+
     # Check if there is a fleet
     try:
         required_scopes = ["esi-fleets.read_fleet.v1"]
@@ -770,6 +840,12 @@ def link_create_esi(request, token, hash):
 
 @login_required()
 def create_esi_fat(request):
+    """
+    create ESI fat helper
+    :param request:
+    :return:
+    """
+
     form = AFatLinkForm(request.POST)
     fat_link_hash = get_random_string(length=30)
 
@@ -786,6 +862,7 @@ def create_esi_fat(request):
         ):
             link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
 
+        link.is_esilink = True
         link.save()
 
         return redirect("afat:link_create_esi", hash=fat_link_hash)
@@ -803,6 +880,13 @@ def create_esi_fat(request):
     scopes=["esi-location.read_location.v1", "esi-location.read_ship_type.v1"]
 )
 def click_link(request, token, hash=None):
+    """
+    click fatlink helper
+    :param request:
+    :param token:
+    :param hash:
+    :return:
+    """
     if hash is None:
         request.session["msg"] = ["warning", "No FAT link hash provided."]
 
@@ -922,6 +1006,13 @@ def click_link(request, token, hash=None):
     )
 )
 def edit_link(request, hash=None):
+    """
+    edit fatlink view
+    :param request:
+    :param hash:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(request.user)
 
@@ -1025,6 +1116,13 @@ def edit_link(request, hash=None):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afatlink"))
 def del_link(request, hash=None):
+    """
+    delete fatlink helper
+    :param request:
+    :param hash:
+    :return:
+    """
+
     if hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
@@ -1061,6 +1159,14 @@ def del_link(request, hash=None):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
 def del_fat(request, hash, fat):
+    """
+    delete fat helper
+    :param request:
+    :param hash:
+    :param fat:
+    :return:
+    """
+
     try:
         link = AFatLink.objects.get(hash=hash)
     except AFatLink.DoesNotExist:
