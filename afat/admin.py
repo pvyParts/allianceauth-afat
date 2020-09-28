@@ -9,8 +9,31 @@ from django.contrib import admin
 from .models import AFat, AFatLink, AFatLinkType
 
 
-def custom_filter_title(title):
+def custom_filter(title):
+    """
+    defining custom filter titles
+    :param title:
+    :return:
+    """
+
     class Wrapper(admin.FieldListFilter):
+        """
+        Wrapper
+        """
+
+        def expected_parameters(self):
+            """
+            expected parameters
+            """
+            pass
+
+        def choices(self, changelist):
+            """
+            choices
+            :param changelist:
+            """
+            pass
+
         def __new__(cls, *args, **kwargs):
             instance = admin.FieldListFilter.create(*args, **kwargs)
             instance.title = title
@@ -39,7 +62,7 @@ class AFatLinkAdmin(admin.ModelAdmin):
 
     list_filter = (
         "is_esilink",
-        ("link_type__name", custom_filter_title("fleet type")),
+        ("link_type__name", custom_filter(title="fleet type")),
     )
 
     ordering = ("-afattime",)
