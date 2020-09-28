@@ -158,7 +158,6 @@ def stats(request, year=None):
         "year_current": datetime.now().year,
         "year_prev": int(year) - 1,
         "year_next": int(year) + 1,
-        "current_year": datetime.now().year,
         "permissions": permissions,
     }
 
