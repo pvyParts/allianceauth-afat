@@ -165,7 +165,7 @@ def stats(request, year=None):
 
 
 @login_required()
-def stats_char(request, charid, month=None, year=None):
+def stats_char(request, charid, year=None, month=None):
     """
     character statistics view
     :param request:
@@ -265,7 +265,7 @@ def stats_char(request, charid, month=None, year=None):
 
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
-def stats_corp(request, corpid, month=None, year=None):
+def stats_corp(request, corpid, year=None, month=None):
     """
     corp statistics view
     :param request:
@@ -434,7 +434,7 @@ def stats_corp(request, corpid, month=None, year=None):
 
 @login_required()
 @permission_required("afat.stats_corp_other")
-def stats_alliance(request, allianceid, month=None, year=None):
+def stats_alliance(request, allianceid, year=None, month=None):
     """
     alliance statistics view
     :param request:
