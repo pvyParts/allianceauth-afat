@@ -155,6 +155,9 @@ def stats(request, year=None):
         "data": data,
         "charstats": months,
         "year": year,
+        "year_current": datetime.now().year,
+        "year_prev": int(year) - 1,
+        "year_next": int(year) + 1,
         "current_year": datetime.now().year,
         "permissions": permissions,
     }
