@@ -1,7 +1,6 @@
 {% extends 'allianceauth/base.html' %}
 
 {% load i18n %}
-{% load bootstrap %}
 {% load static %}
 
 {% block page_title %}{% trans 'Fleet Activity' %}{% endblock %}
@@ -43,11 +42,11 @@
                     <p>&#9642; {% trans "Clickable FAT Link Created!" %}</p>
                     <p>&#9642; {% trans "Make sure to give your fleet members the following link to click so that they get credit for this fleet." %}</p>
                     {% if link_ongoing %}
-                    <p>&#9642;
-                        Link:
+                    <p>
+                        &#9642; Link:
                         <i>
                             {{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}
-                            <a class="copy-link" href="{% url 'afat:link_click' link.hash %}" class="label label-success"></a>
+                            <a class="label label-success copy-link" href="{% url 'afat:link_click' link.hash %}"></a>
                         </i>
 
                         <button class="copy-btn btn btn-success btn-sm" data-toggle="tooltip" data-html="true" title="Copied!" data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}" style="margin-left: 1rem; background-color: rgba(255,255,255,0.3);">
