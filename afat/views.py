@@ -825,7 +825,7 @@ def link_create_esi(request, token, hash):
                 token=esi_token.valid_access_token(),
             ).result()
 
-            process_fats.delay(esi_fleet_member, "eve", hash)
+            process_fats.delay(data_list=esi_fleet_member, data_source="esi", hash=hash)
 
             request.session["{}-creation-code".format(hash)] = 200
 
