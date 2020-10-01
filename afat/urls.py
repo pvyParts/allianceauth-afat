@@ -23,6 +23,11 @@ urlpatterns = [
         name="stats_corp",
     ),
     url(
+        r"^statistic/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/$",
+        views.stats_corp,
+        name="stats_corp",
+    ),
+    url(
         r"^statistic/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
         views.stats_corp,
         name="stats_corp",
@@ -47,12 +52,18 @@ urlpatterns = [
         name="stats_ally",
     ),
     url(
+        r"^statistic/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/$",
+        views.stats_alliance,
+        name="stats_ally",
+    ),
+    url(
         r"^statistic/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
         views.stats_alliance,
         name="stats_ally",
     ),
     # fat links
     url(r"^links/$", views.links, name="links"),
+    url(r"^links/(?P<year>[0-9]+)/$", views.links, name="links"),
     url(
         r"^links/create/esi/(?P<hash>[a-zA-Z0-9]+)/$",
         views.link_create_esi,
