@@ -297,8 +297,8 @@ class ManualAFat(models.Model):
         Meta
         """
 
-        verbose_name = "Manual FAT"
-        verbose_name_plural = "Manual FATs"
+        verbose_name = "Manual FAT Log"
+        verbose_name_plural = "Manual FAT Logs"
 
 
 # AFatDelLog Model

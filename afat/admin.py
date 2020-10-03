@@ -6,7 +6,7 @@ admin pages configuration
 
 from django.contrib import admin
 
-from .models import AFat, AFatLink, AFatLinkType
+from afat.models import AFat, AFatLink, AFatLinkType, ManualAFat
 
 
 def custom_filter(title):
@@ -167,3 +167,23 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         )
 
     mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
+
+
+@admin.register(ManualAFat)
+class AFatLinkTypeAdmin(admin.ModelAdmin):
+    list_display = (
+        "creator",
+        "character",
+        "afatlink",
+    )
+
+    exclude = (
+        "creator",
+        "character",
+        "afatlink",
+    )
+    readonly_fields = (
+        "creator",
+        "character",
+        "afatlink",
+    )
