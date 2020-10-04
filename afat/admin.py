@@ -171,19 +171,27 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
 
 @admin.register(ManualAFat)
 class AFatLinkTypeAdmin(admin.ModelAdmin):
-    list_display = (
-        "creator",
-        "character",
-        "afatlink",
+    list_display = ("creator", "_character", "_afatlink", "created_at")
+
+    exclude = ("creator", "character", "afatlink", "created_at")
+    readonly_fields = ("creator", "character", "afatlink", "created_at")
+
+    list_filter = (
+        ("creator", admin.RelatedOnlyFieldListFilter),
+        ("character", admin.RelatedOnlyFieldListFilter),
+        ("afatlink", admin.RelatedOnlyFieldListFilter),
     )
 
-    exclude = (
-        "creator",
-        "character",
-        "afatlink",
-    )
-    readonly_fields = (
-        "creator",
-        "character",
-        "afatlink",
-    )
+    def _afatlink(self, obj):
+        return "Fleet: {fleet_name} (FAT link hash: {hash})".format(
+            fleet_name=obj.afatlink.fleet, hash=obj.afatlink.hash
+        )
+
+    _afatlink.short_description = "FAT Link"
+    _afatlink.admin_order_field = "afatlink"
+
+    def _character(self, obj):
+        return obj.character
+
+    _character.short_description = "Pilot added"
+    _character.admin_order_field = "character"

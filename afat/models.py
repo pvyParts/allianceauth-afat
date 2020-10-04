@@ -287,6 +287,9 @@ class ManualAFat(models.Model):
     creator = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
     afatlink = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
     character = models.ForeignKey(EveCharacter, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(
+        blank=True, null=True, help_text="Time this FAT has been added manually"
+    )
 
     # Add property for getting the user for a character.
     def __str__(self):
