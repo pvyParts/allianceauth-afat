@@ -1217,7 +1217,7 @@ def del_fat(request, hash, fat):
         return redirect("afat:afat_view")
 
     fat.delete()
-    AFatDelLog(remover=request.user, deltype=1, string=fat.__str__())
+    AFatDelLog(remover=request.user, deltype=1, string=fat.__str__()).save()
 
     request.session["msg"] = [
         "success",
