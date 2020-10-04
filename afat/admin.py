@@ -171,6 +171,10 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
 
 @admin.register(ManualAFat)
 class ManualAFatAdmin(admin.ModelAdmin):
+    """
+    manual fat log config
+    """
+
     list_display = ("creator", "_character", "_afatlink", "created_at")
 
     exclude = ("creator", "character", "afatlink", "created_at")

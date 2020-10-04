@@ -6,7 +6,7 @@ url configuration
 
 from django.conf.urls import url
 
-from . import views
+from afat import views
 
 app_name: str = "afat"
 

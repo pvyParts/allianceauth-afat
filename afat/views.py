@@ -19,6 +19,26 @@ from django.utils.crypto import get_random_string
 from esi.decorators import token_required
 from esi.models import Token
 
+from afat import __title__
+from afat.forms import (
+    AFatLinkForm,
+    AFatManualFatForm,
+    AFatClickFatForm,
+    FatLinkEditForm,
+)
+from afat.models import (
+    AFat,
+    ClickAFatDuration,
+    AFatLink,
+    ManualAFat,
+    AFatDelLog,
+    AFatLinkType,
+)
+from afat.permissions import get_user_permissions
+from afat.providers import esi
+from afat.tasks import get_or_create_char, process_fats
+from afat.utils import LoggerAddTag
+
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import (
@@ -28,21 +48,6 @@ from allianceauth.eveonline.models import (
 )
 from allianceauth.eveonline.providers import provider
 from allianceauth.services.hooks import get_extension_logger
-
-from . import __title__
-from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm, FatLinkEditForm
-from .models import (
-    AFat,
-    ClickAFatDuration,
-    AFatLink,
-    ManualAFat,
-    AFatDelLog,
-    AFatLinkType,
-)
-from .permissions import get_user_permissions
-from .providers import esi
-from .tasks import get_or_create_char, process_fats
-from .utils import LoggerAddTag
 
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)

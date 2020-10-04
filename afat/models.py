@@ -9,11 +9,11 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.utils import timezone
 
+from afat import __title__
+from afat.utils import LoggerAddTag
+
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
-
-from . import __title__
-from .utils import LoggerAddTag
 
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
