@@ -174,7 +174,10 @@ class ManualAFatAdmin(admin.ModelAdmin):
     list_display = ("creator", "_character", "_afatlink", "created_at")
 
     exclude = ("creator", "character", "afatlink", "created_at")
+
     readonly_fields = ("creator", "character", "afatlink", "created_at")
+
+    ordering = ("-created_at",)
 
     list_filter = (
         ("creator", admin.RelatedOnlyFieldListFilter),
