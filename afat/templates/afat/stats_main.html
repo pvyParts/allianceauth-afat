@@ -13,11 +13,23 @@
 
         <h2>{% trans "Statistics" %}</h2>
 
+        <h4>
+            <a class="btn btn-primary" href="{% url 'afat:stats' year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
+
+            {{ year }}
+
+            {% if year_next <= year_current %}
+                <a class="btn btn-primary" href="{% url 'afat:stats' year_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
+                <a class="btn btn-primary" href="{% url 'afat:stats' year_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+            {% endif %}
+        </h4>
+
         {% if msg %}
             <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="close">
                     <span aria-hidden="true">&times</span>
                 </button>
+
                 <h4>
                     {% if msg.0 == 'danger' %}
                         {% trans "Oh No!" %}
@@ -25,12 +37,14 @@
                         {% trans "Success!" %}
                     {% endif %}
                 </h4>
+
                 <p>{{ msg.1 }}</p>
             </div>
         {% endif %}
 
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#mine">{% trans "My Stats" %}</a></li>
+
             {% if permissions.stats.corp.view_own or permissions.stats.corp.view_other %}
                 <li><a data-toggle="tab" href="#corps">{% trans "Corps" %}</a></li>
             {% endif %}
@@ -70,12 +84,12 @@
                                         </thead>
 
                                         <tbody>
-                                            {% for key, value in char.1.items %}
+                                            {% for month, fatcount in char.1.items %}
                                                 <tr>
-                                                    <td>{{ key|month }}</td>
-                                                    <td>{{ value }}</td>
+                                                    <td>{{ month|month }}</td>
+                                                    <td>{{ fatcount }}</td>
                                                     <td>
-                                                        <a href="{% url 'afat:stats_char' char.2 key year %}" class="btn btn-primary">
+                                                        <a href="{% url 'afat:stats_char' char.2 year month %}" class="btn btn-primary">
                                                             <span class="glyphicon glyphicon-eye-open"></span>
                                                         </a>
                                                     </td>
@@ -117,7 +131,7 @@
                                                 </a>
 
                                                 {% if key != 'No Alliance' %}
-                                                    <a class="btn btn-primary btn-sm pull-right" href="{% url 'afat:stats_ally' value.0 %}" role="button">
+                                                    <a class="btn btn-primary btn-sm pull-right" href="{% url 'afat:stats_ally' value.0 year %}" role="button">
                                                         <span class="glyphicon glyphicon-eye-open" style="color: white"></span>
                                                     </a>
                                                 {% endif %}
@@ -135,7 +149,7 @@
                                                             <td><img src="{{ corp.0|corporation_logo_url:32 }}" /></td>
                                                             <td>{{ corp.1 }}</td>
                                                             <td>
-                                                                <a class="btn btn-primary" href="{% url 'afat:stats_corp' corp.0 %}">
+                                                                <a class="btn btn-primary" href="{% url 'afat:stats_corp' corp.0 year %}">
                                                                     <span class="glyphicon glyphicon-eye-open"></span>
                                                                 </a>
                                                             </td>
@@ -155,7 +169,7 @@
                                         <td><img src="{{ data.0.0|corporation_logo_url:32 }}" /> </td>
                                         <td>{{ data.0.1 }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{% url 'afat:stats_corp' data.0.0 %}">
+                                            <a class="btn btn-primary" href="{% url 'afat:stats_corp' data.0.0 year %}">
                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                             </a>
                                         </td>

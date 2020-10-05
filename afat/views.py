@@ -19,6 +19,26 @@ from django.utils.crypto import get_random_string
 from esi.decorators import token_required
 from esi.models import Token
 
+from afat import __title__
+from afat.forms import (
+    AFatLinkForm,
+    AFatManualFatForm,
+    AFatClickFatForm,
+    FatLinkEditForm,
+)
+from afat.models import (
+    AFat,
+    ClickAFatDuration,
+    AFatLink,
+    ManualAFat,
+    AFatDelLog,
+    AFatLinkType,
+)
+from afat.permissions import get_user_permissions
+from afat.providers import esi
+from afat.tasks import get_or_create_char, process_fats
+from afat.utils import LoggerAddTag
+
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import (
@@ -28,21 +48,6 @@ from allianceauth.eveonline.models import (
 )
 from allianceauth.eveonline.providers import provider
 from allianceauth.services.hooks import get_extension_logger
-
-from . import __title__
-from .forms import AFatLinkForm, AFatManualFatForm, AFatClickFatForm, FatLinkEditForm
-from .models import (
-    AFat,
-    ClickAFatDuration,
-    AFatLink,
-    ManualAFat,
-    AFatDelLog,
-    AFatLinkType,
-)
-from .permissions import get_user_permissions
-from .providers import esi
-from .tasks import get_or_create_char, process_fats
-from .utils import LoggerAddTag
 
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
@@ -155,7 +160,9 @@ def stats(request, year=None):
         "data": data,
         "charstats": months,
         "year": year,
-        "current_year": datetime.now().year,
+        "year_current": datetime.now().year,
+        "year_prev": int(year) - 1,
+        "year_next": int(year) + 1,
         "permissions": permissions,
     }
 
@@ -165,7 +172,7 @@ def stats(request, year=None):
 
 
 @login_required()
-def stats_char(request, charid, month=None, year=None):
+def stats_char(request, charid, year=None, month=None):
     """
     character statistics view
     :param request:
@@ -265,7 +272,7 @@ def stats_char(request, charid, month=None, year=None):
 
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
-def stats_corp(request, corpid, month=None, year=None):
+def stats_corp(request, corpid, year=None, month=None):
     """
     corp statistics view
     :param request:
@@ -277,6 +284,9 @@ def stats_corp(request, corpid, month=None, year=None):
 
     # get users permissions
     permissions = get_user_permissions(request.user)
+
+    if not year:
+        year = datetime.now().year
 
     # Check character has permission to view other corp stats
     if int(request.user.profile.main_character.corporation_id) != int(corpid):
@@ -291,8 +301,7 @@ def stats_corp(request, corpid, month=None, year=None):
     corp = EveCorporationInfo.objects.get(corporation_id=corpid)
     corp_name = corp.corporation_name
 
-    if not month and not year:
-        year = datetime.now().year
+    if not month:
         months = []
 
         for i in range(1, 13):
@@ -310,6 +319,9 @@ def stats_corp(request, corpid, month=None, year=None):
             "months": months,
             "corpid": corpid,
             "year": year,
+            "year_current": datetime.now().year,
+            "year_prev": int(year) - 1,
+            "year_next": int(year) + 1,
             "type": 0,
             "permissions": permissions,
         }
@@ -434,7 +446,7 @@ def stats_corp(request, corpid, month=None, year=None):
 
 @login_required()
 @permission_required("afat.stats_corp_other")
-def stats_alliance(request, allianceid, month=None, year=None):
+def stats_alliance(request, allianceid, year=None, month=None):
     """
     alliance statistics view
     :param request:
@@ -447,6 +459,9 @@ def stats_alliance(request, allianceid, month=None, year=None):
     # get users permissions
     permissions = get_user_permissions(request.user)
 
+    if not year:
+        year = datetime.now().year
+
     if allianceid == "000":
         allianceid = None
 
@@ -457,8 +472,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
         ally = None
         alliance_name = "No Alliance"
 
-    if not month and not year:
-        year = datetime.now().year
+    if not month:
         months = []
 
         for i in range(1, 13):
@@ -476,6 +490,9 @@ def stats_alliance(request, allianceid, month=None, year=None):
             "months": months,
             "corpid": allianceid,
             "year": year,
+            "year_current": datetime.now().year,
+            "year_prev": int(year) - 1,
+            "year_next": int(year) + 1,
             "type": 1,
             "permissions": permissions,
         }
@@ -654,7 +671,7 @@ def stats_alliance(request, allianceid, month=None, year=None):
 
 
 @login_required()
-def links(request):
+def links(request, year=None):
     """
     fatlinks view
     :param request:
@@ -664,18 +681,29 @@ def links(request):
     # get users permissions
     permissions = get_user_permissions(request.user)
 
+    if year is None:
+        year = datetime.now().year
+
     msg = None
 
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
     fatlinks = (
-        AFatLink.objects.all()
+        AFatLink.objects.filter(afattime__year=year)
         .order_by("-afattime")
         .annotate(number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True)))
     )
 
-    context = {"links": fatlinks, "msg": msg, "permissions": permissions}
+    context = {
+        "links": fatlinks,
+        "msg": msg,
+        "year": year,
+        "year_current": datetime.now().year,
+        "year_prev": int(year) - 1,
+        "year_next": int(year) + 1,
+        "permissions": permissions,
+    }
 
     logger.info("FAT link list called by %s", request.user)
 
@@ -802,7 +830,7 @@ def link_create_esi(request, token, hash):
                 token=esi_token.valid_access_token(),
             ).result()
 
-            process_fats.delay(esi_fleet_member, "eve", hash)
+            process_fats.delay(data_list=esi_fleet_member, data_source="esi", hash=hash)
 
             request.session["{}-creation-code".format(hash)] = 200
 
@@ -1044,6 +1072,7 @@ def edit_link(request, hash=None):
             shiptype = manual_fat_form.cleaned_data["shiptype"]
             creator = request.user
             character = get_or_create_char(name=character_name)
+            created_at = timezone.now()
 
             if character is not None:
                 AFat(
@@ -1054,7 +1083,10 @@ def edit_link(request, hash=None):
                 ).save()
 
                 ManualAFat(
-                    afatlink_id=link.pk, creator=creator, character=character
+                    afatlink_id=link.pk,
+                    creator=creator,
+                    character=character,
+                    created_at=created_at,
                 ).save()
 
                 request.session["{}-task-code".format(hash)] = 3
@@ -1190,7 +1222,7 @@ def del_fat(request, hash, fat):
         return redirect("afat:afat_view")
 
     fat.delete()
-    AFatDelLog(remover=request.user, deltype=1, string=fat.__str__())
+    AFatDelLog(remover=request.user, deltype=1, string=fat.__str__()).save()
 
     request.session["msg"] = [
         "success",

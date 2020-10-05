@@ -6,43 +6,64 @@ url configuration
 
 from django.conf.urls import url
 
-from . import views
+from afat import views
 
 app_name: str = "afat"
 
 urlpatterns = [
     url(r"^$", views.afat_view, name="afat_view"),
     # stats main page
-    url(r"^stats/$", views.stats, name="stats"),
-    url(r"^stats/(?P<year>[0-9]+)/$", views.stats, name="stats"),
+    url(r"^statistic/$", views.stats, name="stats"),
+    url(r"^statistic/(?P<year>[0-9]+)/$", views.stats, name="stats"),
     # stats corp
-    url(r"^stats/corp/$", views.stats_corp, name="stats_corp"),
-    url(r"^stats/corp/(?P<corpid>[0-9]+)/$", views.stats_corp, name="stats_corp"),
+    url(r"^statistic/corporation/$", views.stats_corp, name="stats_corp"),
     url(
-        r"^stats/corp/(?P<corpid>[0-9]+)/(?P<month>[0-9]+)/(?P<year>[0-9]+)/$",
+        r"^statistic/corporation/(?P<corpid>[0-9]+)/$",
+        views.stats_corp,
+        name="stats_corp",
+    ),
+    url(
+        r"^statistic/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/$",
+        views.stats_corp,
+        name="stats_corp",
+    ),
+    url(
+        r"^statistic/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
         views.stats_corp,
         name="stats_corp",
     ),
     # stats char
-    url(r"^stats/char/$", views.stats_char, name="stats_char"),
-    url(r"^stats/char/(?P<charid>[0-9]+)/$", views.stats_char, name="stats_char"),
+    url(r"^statistic/character/$", views.stats_char, name="stats_char"),
     url(
-        r"^stats/char/(?P<charid>[0-9]+)/(?P<month>[0-9]+)/(?P<year>[0-9]+)/$",
+        r"^statistic/character/(?P<charid>[0-9]+)/$",
+        views.stats_char,
+        name="stats_char",
+    ),
+    url(
+        r"^statistic/character/(?P<charid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
         views.stats_char,
         name="stats_char",
     ),
     # stats alliance
-    url(r"^stats/ally/$", views.stats_alliance, name="stats_ally"),
+    url(r"^statistic/alliance/$", views.stats_alliance, name="stats_ally"),
     url(
-        r"^stats/ally/(?P<allianceid>[0-9]+)/$", views.stats_alliance, name="stats_ally"
+        r"^statistic/alliance/(?P<allianceid>[0-9]+)/$",
+        views.stats_alliance,
+        name="stats_ally",
     ),
     url(
-        r"^stats/ally/(?P<allianceid>[0-9]+)/(?P<month>[0-9]+)/(?P<year>[0-9]+)/$",
+        r"^statistic/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/$",
+        views.stats_alliance,
+        name="stats_ally",
+    ),
+    url(
+        r"^statistic/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
         views.stats_alliance,
         name="stats_ally",
     ),
     # fat links
     url(r"^links/$", views.links, name="links"),
+    url(r"^links/(?P<year>[0-9]+)/$", views.links, name="links"),
     url(
         r"^links/create/esi/(?P<hash>[a-zA-Z0-9]+)/$",
         views.link_create_esi,

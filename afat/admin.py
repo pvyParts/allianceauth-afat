@@ -6,7 +6,7 @@ admin pages configuration
 
 from django.contrib import admin
 
-from .models import AFat, AFatLink, AFatLinkType
+from afat.models import AFat, AFatLink, AFatLinkType, ManualAFat
 
 
 def custom_filter(title):
@@ -167,3 +167,38 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         )
 
     mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
+
+
+@admin.register(ManualAFat)
+class ManualAFatAdmin(admin.ModelAdmin):
+    """
+    manual fat log config
+    """
+
+    list_display = ("creator", "_character", "_afatlink", "created_at")
+
+    exclude = ("creator", "character", "afatlink", "created_at")
+
+    readonly_fields = ("creator", "character", "afatlink", "created_at")
+
+    ordering = ("-created_at",)
+
+    list_filter = (
+        ("creator", admin.RelatedOnlyFieldListFilter),
+        ("character", admin.RelatedOnlyFieldListFilter),
+        ("afatlink", admin.RelatedOnlyFieldListFilter),
+    )
+
+    def _afatlink(self, obj):
+        return "Fleet: {fleet_name} (FAT link hash: {hash})".format(
+            fleet_name=obj.afatlink.fleet, hash=obj.afatlink.hash
+        )
+
+    _afatlink.short_description = "FAT Link"
+    _afatlink.admin_order_field = "afatlink"
+
+    def _character(self, obj):
+        return obj.character
+
+    _character.short_description = "Pilot added"
+    _character.admin_order_field = "character"

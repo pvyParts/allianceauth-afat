@@ -6,17 +6,17 @@ tasks
 
 from celery import shared_task
 
+from afat import __title__
+from afat.models import AFat, AFatLink
+from afat.providers import esi
+from afat.utils import LoggerAddTag
+
 from allianceauth.eveonline.models import (
     EveAllianceInfo,
     EveCharacter,
     EveCorporationInfo,
 )
 from allianceauth.services.hooks import get_extension_logger
-
-from . import __title__
-from .models import AFat, AFatLink
-from .providers import esi
-from .utils import LoggerAddTag
 
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
@@ -86,19 +86,20 @@ def get_or_create_char(name: str = None, id: int = None):
 
 
 @shared_task
-def process_fats(list, type_, hash):
+def process_fats(data_list, data_source, hash):
     """
     Due to the large possible size of fatlists,
-    this process will be scheduled in order to process flat_lists.
-    :param list: the list of character info to be processed.
-    :param type_: only "eve" for now
+    this process will be scheduled in order to process esi data
+    and possible other sources in the future.
+    :param data_list: the list of character info to be processed.
+    :param data_source: the source type (only "esi" for now)
     :param hash: the hash from the fat link.
     :return:
     """
     logger.info("Processing FAT %s", hash)
 
-    if type_ == "eve":
-        for char in list:
+    if data_source == "esi":
+        for char in data_list:
             process_character.delay(char, hash)
 
 
