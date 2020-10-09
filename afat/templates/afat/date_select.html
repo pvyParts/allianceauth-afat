@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load filters %}
+{% load static %}
 
 {% block page_title %}{{ corporation }} {% trans "Fleet Activity" %}{% endblock %}
 
@@ -13,13 +14,13 @@
         <h2>{{ corporation }} {% trans "Fleet Activity" %}</h2>
 
         <h4>
-            <a class="btn btn-primary" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_prev }}/" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
+            <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_prev }}/" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
 
-            {{ year }}
+            <span class="afat-label-statistics">{{ year }}</span>
 
             {% if year_next <= year_current %}
-                <a class="btn btn-primary" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_next }}/" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_current }}/" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_next }}/" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_current }}/" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
             {% endif %}
         </h4>
 
@@ -37,7 +38,7 @@
                         <td>{{ month.1 }}</td>
                         <td>
                             {% if corporation != 'No Alliance' %}
-                            <a href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year }}/{{ month.0 }}/" class="btn btn-primary">
+                            <a href="{% url 'afat:stats' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year }}/{{ month.0 }}/" class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                             </a>
                             {% endif %}
@@ -47,4 +48,8 @@
             </tbody>
         </table>
     </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}

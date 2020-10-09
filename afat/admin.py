@@ -96,8 +96,6 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
     config for fatlinktype model
     """
 
-    # list_select_related = True
-
     list_display = (
         "id",
         "_name",

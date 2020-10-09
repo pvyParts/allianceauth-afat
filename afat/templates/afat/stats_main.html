@@ -3,6 +3,7 @@
 {% load evelinks %}
 {% load filters %}
 {% load i18n %}
+{% load static %}
 
 {% block page_title %}{% trans 'Fleet Activity' %}{% endblock %}
 
@@ -14,13 +15,13 @@
         <h2>{% trans "Statistics" %}</h2>
 
         <h4>
-            <a class="btn btn-primary" href="{% url 'afat:stats' year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
+            <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
 
-            {{ year }}
+            <span class="afat-label-statistics">{{ year }}</span>
 
             {% if year_next <= year_current %}
-                <a class="btn btn-primary" href="{% url 'afat:stats' year_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary" href="{% url 'afat:stats' year_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' year_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats' year_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
             {% endif %}
         </h4>
 
@@ -89,7 +90,7 @@
                                                     <td>{{ month|month }}</td>
                                                     <td>{{ fatcount }}</td>
                                                     <td>
-                                                        <a href="{% url 'afat:stats_char' char.2 year month %}" class="btn btn-primary">
+                                                        <a href="{% url 'afat:stats_char' char.2 year month %}" class="btn btn-primary btn-sm">
                                                             <span class="glyphicon glyphicon-eye-open"></span>
                                                         </a>
                                                     </td>
@@ -149,7 +150,7 @@
                                                             <td><img src="{{ corp.0|corporation_logo_url:32 }}" /></td>
                                                             <td>{{ corp.1 }}</td>
                                                             <td>
-                                                                <a class="btn btn-primary" href="{% url 'afat:stats_corp' corp.0 year %}">
+                                                                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.0 year %}">
                                                                     <span class="glyphicon glyphicon-eye-open"></span>
                                                                 </a>
                                                             </td>
@@ -169,7 +170,7 @@
                                         <td><img src="{{ data.0.0|corporation_logo_url:32 }}" /> </td>
                                         <td>{{ data.0.1 }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{% url 'afat:stats_corp' data.0.0 year %}">
+                                            <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' data.0.0 year %}">
                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                             </a>
                                         </td>
@@ -182,4 +183,8 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}

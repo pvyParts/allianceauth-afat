@@ -142,13 +142,13 @@
                                     {% if permissions.fatlinks.manipulate %}
                                         <td>
                                             {% if permissions.fatlinks.change %}
-                                                <a class="btn btn-info" href="{% url 'afat:link_edit' link.hash %}">
+                                                <a class="btn btn-info btn-sm" href="{% url 'afat:link_edit' link.hash %}">
                                                     <span class="glyphicon glyphicon-pencil"></span>
                                                 </a>
                                             {% endif %}
 
                                             {% if permissions.fatlinks.delete %}
-                                                <a class="btn btn-danger"
+                                                <a class="btn btn-danger btn-sm"
                                                     data-toggle="modal"
                                                     data-target="#deleteModal"
                                                     data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_delete' link.hash %}"
@@ -182,8 +182,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
-                    <a id="fat-link" class="btn btn-danger" role="button" href="">{% trans "Delete" %}</a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <a id="fat-link" class="btn btn-danger btn-sm" role="button" href="">{% trans "Delete" %}</a>
                 </div>
             </div>
         </div>
