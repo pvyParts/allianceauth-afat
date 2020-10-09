@@ -17,7 +17,8 @@ AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pus
 - Graphical Statistics Views
 - Many Core Functionality Improvements and Fixes
 
-AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT. However data does not share, but you can migrate their data to AFAT, for more information see below.
+AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT. 
+However data does not share, but you can migrate their data to AFAT, for more information see below.
 
 ## Contents
 
@@ -32,13 +33,16 @@ AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT. How
 ## Installation
 
 ### Important
-This app is a plugin for Alliance Auth. If you don't have Alliance Auth running already, please install it first before proceeding. (see the official [AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html) for details)
+This app is a plugin for Alliance Auth. If you don't have Alliance Auth running already, 
+please install it first before proceeding. 
+(see the official [AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html) for details)
 
 **For users migrating from one of the other FAT systems, please read the specific instructions FIRST.**
 
 ### Step 1 - Install app
 
-Make sure you are in the virtual environment (venv) of your Alliance Auth installation. Then install the latest version:
+Make sure you are in the virtual environment (venv) of your Alliance Auth installation. 
+Then install the latest version:
 
 ```bash
 pip install allianceauth-afat
@@ -63,7 +67,8 @@ Restart your supervisor services for AA.
 
 ## Updating
 
-To update your existing installation of ImicusFAT, first enable your virtual environment (venv) of your Alliance Auth installation.
+To update your existing installation of ImicusFAT, first enable your 
+virtual environment (venv) of your Alliance Auth installation.
 
 ```bash
 pip install -U allianceauth-afat
@@ -74,9 +79,11 @@ python manage.py migrate
 
 Finally restart your supervisor services for AA
 
-## Data Migration
+## Data Migration 
 
-Right after the **initial** installation and running migrations, you can import the data from Alliance Auth's native FAT system, from bFAT or from ImicusFAT if you have used one of these until now.
+Right after the **initial** installation and running migrations,
+you can import the data from Alliance Auth's native FAT system,
+from bFAT or from ImicusFAT if you have used one of these until now.
 
 **!!IMPORTANT!!**
 
@@ -92,7 +99,8 @@ And then continue installation as normal. You may undo this after successful ins
 
 #### Import from native FAT
 
-To import your old FAT data from Alliance Auth's own FAT, you have to disable foreign key checks temporarily.
+To import your old FAT data from Alliance Auth's own FAT, 
+you have to disable foreign key checks temporarily.
 
 
 ```
@@ -161,7 +169,7 @@ SELECT id, deltype, `string`, remover_id
 FROM imicusfat_dellog;
 
 INSERT INTO afat_afatlink (id, afattime, fleet, `hash`, creator_id, creator_id, deleted_at, link_type_id)
-SELECT id, afattime, fleet, `hash`, creator_id, creator_id, deleted_at, link_type_id
+SELECT id, ifattime, fleet, `hash`, creator_id, creator_id, deleted_at, link_type_id
 FROM imicusfat_ifatlink;
 
 INSERT INTO afat_afatlinktype (id, `name`, deleted_at)
@@ -178,4 +186,6 @@ FROM imicusfat_manualifat;
 ```
 
 ## Credits
-• AFAT • Privately maintained by @ppfeufer is a whitelabel of [ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained by @exiom with @Aproia and @ppfeufer • Based on [allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
+• AFAT • Privately maintained by @ppfeufer is a whitelabel of 
+[ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained by @exiom with @Aproia and @ppfeufer
+• Based on [allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
