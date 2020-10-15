@@ -831,36 +831,6 @@ def link_create_esi(request, token, fatlink_hash):
         fleet_from_esi = esi.client.Fleets.get_characters_character_id_fleet(
             character_id=token.character_id, token=esi_token.valid_access_token()
         ).result()
-
-        try:
-            esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
-                fleet_id=fleet_from_esi["fleet_id"],
-                token=esi_token.valid_access_token(),
-            ).result()
-
-            process_fats.delay(
-                data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
-            )
-
-            request.session["{}-creation-code".format(fatlink_hash)] = 200
-
-            logger.info("ESI FAT link %s created by %s", fatlink_hash, request.user)
-
-            return redirect("afat:link_edit", hash=fatlink_hash)
-        except Exception:
-            request.session["msg"] = [
-                "warning",
-                "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
-                "You can create a clickable FAT link and share it, if you like.",
-            ]
-
-            # since the FAT link has already been created, we need to remove it again
-            link = AFatLink.objects.get(hash=fatlink_hash)
-            AFat.objects.filter(afatlink_id=link.pk).delete()
-            link.delete()
-
-            # return to "Add FAT Link" view
-            return redirect("afat:link_add")
     except Exception:
         # Not in a fleet
         request.session["msg"] = [
@@ -869,13 +839,63 @@ def link_create_esi(request, token, fatlink_hash):
             "You can create a clickable FAT link and share it, if you like.",
         ]
 
-        # since the FAT link has already been created, we need to remove it again
-        link = AFatLink.objects.get(hash=fatlink_hash)
-        AFat.objects.filter(afatlink_id=link.pk).delete()
-        link.delete()
+        # return to "Add FAT Link" view
+        return redirect("afat:link_add")
+
+    # Check if we deal with the fleet boss here
+    try:
+        esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
+            fleet_id=fleet_from_esi["fleet_id"],
+            token=esi_token.valid_access_token(),
+        ).result()
+    except Exception:
+        request.session["msg"] = [
+            "warning",
+            "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
+            "You can create a clickable FAT link and share it, if you like.",
+        ]
 
         # return to "Add FAT Link" view
         return redirect("afat:link_add")
+
+    # create the fatlink
+    fatlink = AFatLink(
+        fleet=request.session["fatlink_form__name"],
+        creator=request.user,
+        hash=fatlink_hash,
+    )
+
+    # add fleet type if there is any
+    if (
+        request.session["fatlink_form__type"] is not None
+        and request.session["fatlink_form__type"] != -1
+    ):
+        fatlink.link_type = AFatLinkType.objects.get(
+            id=request.session["fatlink_form__type"]
+        )
+
+    # it's en ESI fatlink
+    fatlink.is_esilink = True
+
+    # save it
+    fatlink.save()
+
+    # clear session
+    # request.session["fatlink_form__name"] = None
+    # request.session["fatlink_form__type"] = None
+    del request.session["fatlink_form__name"]
+    del request.session["fatlink_form__type"]
+
+    # process fleet members
+    process_fats.delay(
+        data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
+    )
+
+    request.session["{}-creation-code".format(fatlink_hash)] = 200
+
+    logger.info("ESI FAT link %s created by %s", fatlink_hash, request.user)
+
+    return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
 
 
 @login_required()
@@ -886,26 +906,15 @@ def create_esi_fat(request):
     :return:
     """
 
-    form = AFatLinkForm(request.POST)
-    fatlink_hash = get_random_string(length=30)
+    fatlink_form = AFatLinkForm(request.POST)
 
-    if form.is_valid():
-        link = AFatLink(
-            fleet=form.cleaned_data["name_esi"],
-            creator=request.user,
-            hash=fatlink_hash,
-        )
+    if fatlink_form.is_valid():
+        fatlink_hash = get_random_string(length=30)
 
-        if (
-            form.cleaned_data["type_esi"] is not None
-            and form.cleaned_data["type_esi"] != -1
-        ):
-            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
+        request.session["fatlink_form__name"] = fatlink_form.cleaned_data["name_esi"]
+        request.session["fatlink_form__type"] = fatlink_form.cleaned_data["type_esi"]
 
-        link.is_esilink = True
-        link.save()
-
-        return redirect("afat:link_create_esi", hash=fatlink_hash)
+        return redirect("afat:link_create_esi", fatlink_hash=fatlink_hash)
     else:
         request.session["msg"] = [
             "danger",
