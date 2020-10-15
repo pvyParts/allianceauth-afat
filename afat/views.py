@@ -315,8 +315,10 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
                 afatlink__afattime__year=year,
             ).count()
 
+            avg_fats = corp_fats / corp.member_count
+
             if corp_fats is not 0:
-                months.append((i, corp_fats))
+                months.append((i, corp_fats, round(avg_fats, 2)))
 
         context = {
             "corporation": corp.corporation_name,
