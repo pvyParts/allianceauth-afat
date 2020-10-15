@@ -54,6 +54,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
 @login_required()
+@permission_required("afat.basic_access")
 def afat_view(request):
     """
     afat_view
@@ -97,6 +98,7 @@ def afat_view(request):
 
 
 @login_required()
+@permission_required("afat.basic_access")
 def stats(request, year: int = None):
     """
     statistics main view
@@ -173,6 +175,7 @@ def stats(request, year: int = None):
 
 
 @login_required()
+@permission_required("afat.basic_access")
 def stats_char(request, charid: int, year: int = None, month: int = None):
     """
     character statistics view
@@ -672,6 +675,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
 
 
 @login_required()
+@permission_required("afat.basic_access")
 def links(request, year: int = None):
     """
     fatlinks view
@@ -910,6 +914,7 @@ def create_esi_fat(request):
 
 
 @login_required()
+@permission_required("afat.basic_access")
 @token_required(
     scopes=["esi-location.read_location.v1", "esi-location.read_ship_type.v1"]
 )
