@@ -107,7 +107,7 @@ python myauth/manage.py afat_import_from_bfat
 #### Import from ImicusFAT
 
 ```bash
-python myauth/manage.py afat_import_from_bfat
+python myauth/manage.py afat_import_from_imicusfat
 ```
 
 ## Credits
