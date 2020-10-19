@@ -65,7 +65,7 @@ urlpatterns = [
     url(r"^links/$", views.links, name="links"),
     url(r"^links/(?P<year>[0-9]+)/$", views.links, name="links"),
     url(
-        r"^links/create/esi/(?P<hash>[a-zA-Z0-9]+)/$",
+        r"^links/create/esi/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         views.link_create_esi,
         name="link_create_esi",
     ),
@@ -73,12 +73,24 @@ urlpatterns = [
     url(r"^links/create/click/$", views.link_create_click, name="link_create_click"),
     url(r"^links/add/$", views.link_add, name="link_add"),
     url(r"^links/edit/$", views.edit_link, name="link_edit"),
-    url(r"^links/(?P<hash>[a-zA-Z0-9]+)/edit/$", views.edit_link, name="link_edit"),
-    url(r"^links/(?P<hash>[a-zA-Z0-9]+)/click/$", views.click_link, name="link_click"),
-    url(r"^links/del/$", views.del_link, name="link_delete"),
-    url(r"^links/(?P<hash>[a-zA-Z0-9]+)/del/$", views.del_link, name="link_delete"),
     url(
-        r"^links/(?P<hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/del/$",
+        r"^links/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
+        views.edit_link,
+        name="link_edit",
+    ),
+    url(
+        r"^links/(?P<fatlink_hash>[a-zA-Z0-9]+)/click/$",
+        views.click_link,
+        name="link_click",
+    ),
+    url(r"^links/del/$", views.del_link, name="link_delete"),
+    url(
+        r"^links/(?P<fatlink_hash>[a-zA-Z0-9]+)/del/$",
+        views.del_link,
+        name="link_delete",
+    ),
+    url(
+        r"^links/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/del/$",
         views.del_fat,
         name="fat_delete",
     ),

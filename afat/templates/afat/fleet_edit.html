@@ -173,7 +173,7 @@
                                         <td>{{ fat.shiptype }}</td>
                                         <td>
                                             {% if permissions.fats.delete %}
-                                            <a class="btn btn-danger"
+                                            <a class="btn btn-danger btn-sm"
                                                 data-toggle="modal" data-target="#deleteModal"
                                                 data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:fat_delete' link.hash fat.id %}"
                                                 data-name="{% if fat.character.character_name %}{{ fat.character.character_name }}{% else %}this pilot{% endif %}">
@@ -230,7 +230,9 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary btn-block" type="submit" name="manual_fat">{% trans "Add Manual FAT" %}</button>
+                            <div class="form-group text-right">
+                                <button class="btn btn-primary" type="submit" name="manual_fat">{% trans "Add Manual FAT" %}</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -253,9 +255,9 @@
                 <div class="modal-body"></div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Cancel" %}</button>
 
-                    <a id="fat-link" class="btn btn-danger" role="button" href="">{% trans "Delete" %}</a>
+                    <a id="fat-link" class="btn btn-danger btn-sm" role="button" href="">{% trans "Delete" %}</a>
                 </div>
             </div>
         </div>

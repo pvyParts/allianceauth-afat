@@ -54,6 +54,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
 @login_required()
+@permission_required("afat.basic_access")
 def afat_view(request):
     """
     afat_view
@@ -81,11 +82,12 @@ def afat_view(request):
 
         char_1 = [char.character.character_name]
 
-        for f in fat:
-            char_1.append(f)
+        if fat.count() > 0:
+            for f in fat:
+                char_1.append(f)
 
-        char_1.append(char.character.character_id)
-        fats.append(char_1)
+            char_1.append(char.character.character_id)
+            fats.append(char_1)
 
     fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
 
@@ -97,9 +99,11 @@ def afat_view(request):
 
 
 @login_required()
-def stats(request, year=None):
+@permission_required("afat.basic_access")
+def stats(request, year: int = None):
     """
     statistics main view
+    :type year: string
     :param request:
     :param year:
     :return:
@@ -145,12 +149,14 @@ def stats(request, year=None):
         char_stats = {}
 
         for i in range(1, 13):
-            char_fat = char_fats.filter(afatlink__afattime__month=i).filter(
-                character__id=char.character.id
+            char_fat_count = (
+                char_fats.filter(afatlink__afattime__month=i)
+                .filter(character__id=char.character.id)
+                .count()
             )
 
-            if len(char_fat) is not 0:
-                char_stats[str(i)] = char_fat.count()
+            if char_fat_count > 0:
+                char_stats[str(i)] = char_fat_count
 
         char_l.append(char_stats)
         char_l.append(char.character.character_id)
@@ -172,7 +178,8 @@ def stats(request, year=None):
 
 
 @login_required()
-def stats_char(request, charid, year=None, month=None):
+@permission_required("afat.basic_access")
+def stats_char(request, charid: int, year: int = None, month: int = None):
     """
     character statistics view
     :param request:
@@ -215,8 +222,8 @@ def stats_char(request, charid, year=None, month=None):
     for fat in fats:
         if fat.shiptype in data_ship_type.keys():
             continue
-        else:
-            data_ship_type[fat.shiptype] = fats.filter(shiptype=fat.shiptype).count()
+
+        data_ship_type[fat.shiptype] = fats.filter(shiptype=fat.shiptype).count()
 
     colors = []
 
@@ -272,7 +279,7 @@ def stats_char(request, charid, year=None, month=None):
 
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
-def stats_corp(request, corpid, year=None, month=None):
+def stats_corp(request, corpid: int, year: int = None, month: int = None):
     """
     corp statistics view
     :param request:
@@ -311,8 +318,10 @@ def stats_corp(request, corpid, year=None, month=None):
                 afatlink__afattime__year=year,
             ).count()
 
-            if corp_fats is not 0:
-                months.append((i, corp_fats))
+            avg_fats = corp_fats / corp.member_count
+
+            if corp_fats > 0:
+                months.append((i, corp_fats, round(avg_fats, 2)))
 
         context = {
             "corporation": corp.corporation_name,
@@ -343,16 +352,16 @@ def stats_corp(request, corpid, year=None, month=None):
     for fat in fats:
         if fat.shiptype in data.keys():
             continue
-        else:
-            data[fat.shiptype] = {}
+
+        data[fat.shiptype] = {}
 
     chars = []
 
     for fat in fats:
         if fat.character.character_name in chars:
             continue
-        else:
-            chars.append(fat.character.character_name)
+
+        chars.append(fat.character.character_name)
 
     for key, ship_type in data.items():
         for char in chars:
@@ -446,7 +455,7 @@ def stats_corp(request, corpid, year=None, month=None):
 
 @login_required()
 @permission_required("afat.stats_corp_other")
-def stats_alliance(request, allianceid, year=None, month=None):
+def stats_alliance(request, allianceid: int, year: int = None, month: int = None):
     """
     alliance statistics view
     :param request:
@@ -482,7 +491,7 @@ def stats_alliance(request, allianceid, year=None, month=None):
                 afatlink__afattime__year=year,
             ).count()
 
-            if ally_fats is not 0:
+            if ally_fats > 0:
                 months.append((i, ally_fats))
 
         context = {
@@ -518,8 +527,8 @@ def stats_alliance(request, allianceid, year=None, month=None):
     for fat in fats:
         if fat.shiptype in data_ship_type.keys():
             continue
-        else:
-            data_ship_type[fat.shiptype] = fats.filter(shiptype=fat.shiptype).count()
+
+        data_ship_type[fat.shiptype] = fats.filter(shiptype=fat.shiptype).count()
 
     colors = []
 
@@ -542,16 +551,16 @@ def stats_alliance(request, allianceid, year=None, month=None):
     for fat in fats:
         if fat.shiptype in data.keys():
             continue
-        else:
-            data[fat.shiptype] = {}
+
+        data[fat.shiptype] = {}
 
     corps = []
 
     for fat in fats:
         if fat.character.corporation_name in corps:
             continue
-        else:
-            corps.append(fat.character.corporation_name)
+
+        corps.append(fat.character.corporation_name)
 
     for key, ship_type in data.items():
         for corp in corps:
@@ -671,9 +680,11 @@ def stats_alliance(request, allianceid, year=None, month=None):
 
 
 @login_required()
-def links(request, year=None):
+@permission_required("afat.basic_access")
+def links(request, year: int = None):
     """
     fatlinks view
+    :param year:
     :param request:
     :return:
     """
@@ -751,7 +762,7 @@ def link_create_click(request):
         form = AFatClickFatForm(request.POST)
 
         if form.is_valid():
-            fatlinkhash = get_random_string(length=30)
+            fatlink_hash = get_random_string(length=30)
 
             link = AFatLink()
             link.fleet = form.cleaned_data["name"]
@@ -763,55 +774,55 @@ def link_create_click(request):
                 link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type"])
 
             link.creator = request.user
-            link.hash = fatlinkhash
+            link.hash = fatlink_hash
             link.save()
 
             dur = ClickAFatDuration()
-            dur.fleet = AFatLink.objects.get(hash=fatlinkhash)
+            dur.fleet = AFatLink.objects.get(hash=fatlink_hash)
             dur.duration = form.cleaned_data["duration"]
             dur.save()
 
-            request.session["{}-creation-code".format(fatlinkhash)] = 202
+            request.session["{}-creation-code".format(fatlink_hash)] = 202
 
             logger.info(
                 "FAT link %s with name %s and a duration of %s minutes was created by %s",
-                fatlinkhash,
+                fatlink_hash,
                 form.cleaned_data["name"],
                 form.cleaned_data["duration"],
                 request.user,
             )
 
-            return redirect("afat:link_edit", hash=fatlinkhash)
-        else:
-            request.session["msg"] = [
-                "danger",
-                (
-                    "Something went wrong when attempting to submit your"
-                    " clickable FAT Link."
-                ),
-            ]
-            return redirect("afat:afat_view")
-    else:
+            return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
+
         request.session["msg"] = [
-            "warning",
+            "danger",
             (
-                'You must fill out the form on the "Add FAT Link" '
-                "page to create a clickable FAT Link"
+                "Something went wrong when attempting to submit your"
+                " clickable FAT Link."
             ),
         ]
-
         return redirect("afat:afat_view")
+
+    request.session["msg"] = [
+        "warning",
+        (
+            'You must fill out the form on the "Add FAT Link" '
+            "page to create a clickable FAT Link"
+        ),
+    ]
+
+    return redirect("afat:afat_view")
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
-def link_create_esi(request, token, hash):
+def link_create_esi(request, token, fatlink_hash):
     """
     create ESI link helper
     :param request:
     :param token:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
 
@@ -823,34 +834,6 @@ def link_create_esi(request, token, hash):
         fleet_from_esi = esi.client.Fleets.get_characters_character_id_fleet(
             character_id=token.character_id, token=esi_token.valid_access_token()
         ).result()
-
-        try:
-            esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
-                fleet_id=fleet_from_esi["fleet_id"],
-                token=esi_token.valid_access_token(),
-            ).result()
-
-            process_fats.delay(data_list=esi_fleet_member, data_source="esi", hash=hash)
-
-            request.session["{}-creation-code".format(hash)] = 200
-
-            logger.info("ESI FAT link %s created by %s", hash, request.user)
-
-            return redirect("afat:link_edit", hash=hash)
-        except Exception:
-            request.session["msg"] = [
-                "warning",
-                "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
-                "You can create a clickable FAT link and share it, if you like.",
-            ]
-
-            # since the FAT link has already been created, we need to remove it again
-            link = AFatLink.objects.get(hash=hash)
-            AFat.objects.filter(afatlink_id=link.pk).delete()
-            link.delete()
-
-            # return to "Add FAT Link" view
-            return redirect("afat:link_add")
     except Exception:
         # Not in a fleet
         request.session["msg"] = [
@@ -859,13 +842,63 @@ def link_create_esi(request, token, hash):
             "You can create a clickable FAT link and share it, if you like.",
         ]
 
-        # since the FAT link has already been created, we need to remove it again
-        link = AFatLink.objects.get(hash=hash)
-        AFat.objects.filter(afatlink_id=link.pk).delete()
-        link.delete()
+        # return to "Add FAT Link" view
+        return redirect("afat:link_add")
+
+    # Check if we deal with the fleet boss here
+    try:
+        esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
+            fleet_id=fleet_from_esi["fleet_id"],
+            token=esi_token.valid_access_token(),
+        ).result()
+    except Exception:
+        request.session["msg"] = [
+            "warning",
+            "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
+            "You can create a clickable FAT link and share it, if you like.",
+        ]
 
         # return to "Add FAT Link" view
         return redirect("afat:link_add")
+
+    # create the fatlink
+    fatlink = AFatLink(
+        fleet=request.session["fatlink_form__name"],
+        creator=request.user,
+        hash=fatlink_hash,
+    )
+
+    # add fleet type if there is any
+    if (
+        request.session["fatlink_form__type"] is not None
+        and request.session["fatlink_form__type"] != -1
+    ):
+        fatlink.link_type = AFatLinkType.objects.get(
+            id=request.session["fatlink_form__type"]
+        )
+
+    # it's en ESI fatlink
+    fatlink.is_esilink = True
+
+    # save it
+    fatlink.save()
+
+    # clear session
+    # request.session["fatlink_form__name"] = None
+    # request.session["fatlink_form__type"] = None
+    del request.session["fatlink_form__name"]
+    del request.session["fatlink_form__type"]
+
+    # process fleet members
+    process_fats.delay(
+        data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
+    )
+
+    request.session["{}-creation-code".format(fatlink_hash)] = 200
+
+    logger.info("ESI FAT link %s created by %s", fatlink_hash, request.user)
+
+    return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
 
 
 @login_required()
@@ -876,55 +909,49 @@ def create_esi_fat(request):
     :return:
     """
 
-    form = AFatLinkForm(request.POST)
-    fat_link_hash = get_random_string(length=30)
+    fatlink_form = AFatLinkForm(request.POST)
 
-    if form.is_valid():
-        link = AFatLink(
-            fleet=form.cleaned_data["name_esi"],
-            creator=request.user,
-            hash=fat_link_hash,
-        )
+    if fatlink_form.is_valid():
+        fatlink_hash = get_random_string(length=30)
 
-        if (
-            form.cleaned_data["type_esi"] is not None
-            and form.cleaned_data["type_esi"] != -1
-        ):
-            link.link_type = AFatLinkType.objects.get(id=form.cleaned_data["type_esi"])
+        request.session["fatlink_form__name"] = fatlink_form.cleaned_data["name_esi"]
+        request.session["fatlink_form__type"] = fatlink_form.cleaned_data["type_esi"]
 
-        link.is_esilink = True
-        link.save()
+        return redirect("afat:link_create_esi", fatlink_hash=fatlink_hash)
 
-        return redirect("afat:link_create_esi", hash=fat_link_hash)
-    else:
-        request.session["msg"] = [
-            "danger",
-            "Something went wrong when attempting to submit your  ESI FAT Link.",
-        ]
+    request.session["msg"] = [
+        "danger",
+        "Something went wrong when attempting to submit your  ESI FAT Link.",
+    ]
 
-        return redirect("afat:afat_view")
+    return redirect("afat:afat_view")
 
 
 @login_required()
+@permission_required("afat.basic_access")
 @token_required(
-    scopes=["esi-location.read_location.v1", "esi-location.read_ship_type.v1"]
+    scopes=[
+        "esi-location.read_location.v1",
+        "esi-location.read_ship_type.v1",
+        "esi-location.read_online.v1",
+    ]
 )
-def click_link(request, token, hash=None):
+def click_link(request, token, fatlink_hash: str = None):
     """
     click fatlink helper
     :param request:
     :param token:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
-    if hash is None:
+    if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT link hash provided."]
 
         return redirect("afat:afat_view")
 
     try:
         try:
-            fleet = AFatLink.objects.get(hash=hash)
+            fleet = AFatLink.objects.get(hash=fatlink_hash)
         except AFatLink.DoesNotExist:
             request.session["msg"] = ["warning", "The hash provided is not valid."]
 
@@ -949,65 +976,87 @@ def click_link(request, token, hash=None):
         try:
             required_scopes = [
                 "esi-location.read_location.v1",
+                "esi-location.read_online.v1",
                 "esi-location.read_ship_type.v1",
             ]
             esi_token = Token.get_token(token.character_id, required_scopes)
 
-            # character location
-            location = esi.client.Location.get_characters_character_id_location(
+            # check if character is online
+            character_online = esi.client.Location.get_characters_character_id_online(
                 character_id=token.character_id, token=esi_token.valid_access_token()
             ).result()
 
-            # current ship
-            ship = esi.client.Location.get_characters_character_id_ship(
-                character_id=token.character_id, token=esi_token.valid_access_token()
-            ).result()
+            if character_online["online"] is True:
+                # character location
+                location = esi.client.Location.get_characters_character_id_location(
+                    character_id=token.character_id,
+                    token=esi_token.valid_access_token(),
+                ).result()
 
-            # system information
-            system = esi.client.Universe.get_universe_systems_system_id(
-                system_id=location["solar_system_id"]
-            ).result()["name"]
+                # current ship
+                ship = esi.client.Location.get_characters_character_id_ship(
+                    character_id=token.character_id,
+                    token=esi_token.valid_access_token(),
+                ).result()
 
-            ship_name = provider.get_itemtype(ship["ship_type_id"]).name
+                # system information
+                system = esi.client.Universe.get_universe_systems_system_id(
+                    system_id=location["solar_system_id"]
+                ).result()["name"]
 
-            try:
-                fat = AFat(
-                    afatlink=fleet,
-                    character=character,
-                    system=system,
-                    shiptype=ship_name,
-                )
-                fat.save()
+                ship_name = provider.get_itemtype(ship["ship_type_id"]).name
 
-                if fleet.fleet is not None:
-                    name = fleet.fleet
-                else:
-                    name = fleet.hash
+                try:
+                    fat = AFat(
+                        afatlink=fleet,
+                        character=character,
+                        system=system,
+                        shiptype=ship_name,
+                    )
+                    fat.save()
 
+                    if fleet.fleet is not None:
+                        name = fleet.fleet
+                    else:
+                        name = fleet.hash
+
+                    request.session["msg"] = [
+                        "success",
+                        (
+                            "FAT registered for {} at {}".format(
+                                character.character_name, name
+                            )
+                        ),
+                    ]
+
+                    logger.info(
+                        "Fleetparticipation for fleet %s registered for pilot %s",
+                        name,
+                        character.character_name,
+                    )
+
+                    return redirect("afat:afat_view")
+                except Exception:
+                    request.session["msg"] = [
+                        "warning",
+                        (
+                            "A FAT already exists for the selected character ({}) and fleet"
+                            " combination.".format(character.character_name)
+                        ),
+                    ]
+
+                    return redirect("afat:afat_view")
+            else:
                 request.session["msg"] = [
-                    "success",
+                    "warning",
                     (
-                        "FAT registered for {} at {}".format(
-                            character.character_name, name
+                        "Cannot register the fleet participation for {character}. "
+                        "The character needs to be online.".format(
+                            character=character.character_name
                         )
                     ),
                 ]
 
-                logger.info(
-                    "Fleetparticipation for fleet %s registered for pilot %s",
-                    name,
-                    character.character_name,
-                )
-
-                return redirect("afat:afat_view")
-            except Exception:
-                request.session["msg"] = [
-                    "warning",
-                    (
-                        "A FAT already exists for the selected character ({}) and fleet"
-                        " combination.".format(character.character_name)
-                    ),
-                ]
                 return redirect("afat:afat_view")
         except Exception:
             request.session["msg"] = [
@@ -1017,6 +1066,7 @@ def click_link(request, token, hash=None):
                     " Please try again.".format(character.character_name)
                 ),
             ]
+
             return redirect("afat:afat_view")
     except Exception:
         request.session["msg"] = [
@@ -1035,24 +1085,24 @@ def click_link(request, token, hash=None):
         "afat.change_afatlink",
     )
 )
-def edit_link(request, hash=None):
+def edit_link(request, fatlink_hash: str = None):
     """
     edit fatlink view
     :param request:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
 
     # get users permissions
     permissions = get_user_permissions(request.user)
 
-    if hash is None:
+    if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
         return redirect("afat:afat_view")
 
     try:
-        link = AFatLink.objects.get(hash=hash)
+        link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 
@@ -1065,7 +1115,7 @@ def edit_link(request, hash=None):
         if fatlink_edit_form.is_valid():
             link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
-            request.session["{}-task-code".format(hash)] = 1
+            request.session["{}-task-code".format(fatlink_hash)] = 1
         elif manual_fat_form.is_valid():
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
@@ -1089,11 +1139,11 @@ def edit_link(request, hash=None):
                     created_at=created_at,
                 ).save()
 
-                request.session["{}-task-code".format(hash)] = 3
+                request.session["{}-task-code".format(fatlink_hash)] = 3
             else:
-                request.session["{}-task-code".format(hash)] = 4
+                request.session["{}-task-code".format(fatlink_hash)] = 4
         else:
-            request.session["{}-task-code".format(hash)] = 0
+            request.session["{}-task-code".format(fatlink_hash)] = 0
 
     msg_code = None
     message = None
@@ -1101,10 +1151,10 @@ def edit_link(request, hash=None):
     if "msg" in request.session:
         msg_code = 999
         message = request.session.pop("msg")
-    elif "{}-creation-code".format(hash) in request.session:
-        msg_code = request.session.pop("{}-creation-code".format(hash))
-    elif "{}-task-code".format(hash) in request.session:
-        msg_code = request.session.pop("{}-task-code".format(hash))
+    elif "{}-creation-code".format(fatlink_hash) in request.session:
+        msg_code = request.session.pop("{}-creation-code".format(fatlink_hash))
+    elif "{}-task-code".format(fatlink_hash) in request.session:
+        msg_code = request.session.pop("{}-task-code".format(fatlink_hash))
 
     fats = AFat.objects.filter(afatlink=link)
     flatlist = None
@@ -1142,32 +1192,33 @@ def edit_link(request, hash=None):
         "permissions": permissions,
     }
 
-    logger.info("FAT link %s edited by %s", hash, request.user)
+    logger.info("FAT link %s edited by %s", fatlink_hash, request.user)
 
     return render(request, "afat/fleet_edit.html", context)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afatlink"))
-def del_link(request, hash=None):
+def del_link(request, fatlink_hash: str = None):
     """
     delete fatlink helper
     :param request:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
 
-    if hash is None:
+    if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
         return redirect("afat:afat_view")
 
     try:
-        link = AFatLink.objects.get(hash=hash)
+        link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
-            "The hash provided is either invalid or has been deleted.",
+            "The fatlink hash provided is either invalid or "
+            "the fatlink has already been deleted.",
         ]
 
         return redirect("afat:afat_view")
@@ -1181,28 +1232,28 @@ def del_link(request, hash=None):
     request.session["msg"] = [
         "success",
         "The FAT Link ({0}) and all associated FATs have been successfully deleted.".format(
-            hash
+            fatlink_hash
         ),
     ]
 
-    logger.info("FAT link %s deleted by %s", hash, request.user)
+    logger.info("FAT link %s deleted by %s", fatlink_hash, request.user)
 
     return redirect("afat:links")
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
-def del_fat(request, hash, fat):
+def del_fat(request, fatlink_hash, fat):
     """
     delete fat helper
     :param request:
-    :param hash:
+    :param fatlink_hash:
     :param fat:
     :return:
     """
 
     try:
-        link = AFatLink.objects.get(hash=hash)
+        link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = [
             "danger",
@@ -1226,9 +1277,9 @@ def del_fat(request, hash, fat):
 
     request.session["msg"] = [
         "success",
-        "The FAT from link {0} has been successfully deleted.".format(hash),
+        "The FAT from link {0} has been successfully deleted.".format(fatlink_hash),
     ]
 
     logger.info("FAT %s deleted by %s", fat, request.user)
 
-    return redirect("afat:link_edit", hash=hash)
+    return redirect("afat:link_edit", fatlink_hash=fatlink_hash)

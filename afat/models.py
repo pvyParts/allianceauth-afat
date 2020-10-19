@@ -28,6 +28,18 @@ def get_sentinel_user():
     return User.objects.get_or_create(username="deleted")[0]
 
 
+class AaAfat(models.Model):
+    """Meta model for app permissions"""
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        """AaAfat :: Meta"""
+
+        managed = False
+        permissions = (("basic_access", "Can access the Alliance Auth AFAT module"),)
+        default_permissions = ()
+        verbose_name = "Alliance Auth AFAT"
+
+
 # Abstract model to allow for soft deletion
 class SoftDeletionManager(models.Manager):
     """

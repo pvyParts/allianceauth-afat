@@ -31,14 +31,14 @@ class NoDataError(Exception):
         Exception.__init__(self, msg)
 
 
-def get_or_create_char(name: str = None, id: int = None):
+def get_or_create_char(name: str = None, character_id: int = None):
     """
     This function takes a name or id of a character and checks
     to see if the character already exists.
     If the character does not already exist, it will create the
     character object, and if needed the corp/alliance objects as well.
     :param name: str (optional)
-    :param id: int (optional)
+    :param character_id: int (optional)
     :returns character: EveCharacter
     """
     if name:
@@ -50,17 +50,17 @@ def get_or_create_char(name: str = None, id: int = None):
         if "character" not in result:
             return None
 
-        id = result["character"][0]
-        eve_character = EveCharacter.objects.filter(character_id=id)
-    elif id:
+        character_id = result["character"][0]
+        eve_character = EveCharacter.objects.filter(character_id=character_id)
+    elif character_id:
         # If an ID is passed we can just check the db for it.
-        eve_character = EveCharacter.objects.filter(character_id=id)
-    elif not name and not id:
-        raise NoDataError("No character name or id provided.")
+        eve_character = EveCharacter.objects.filter(character_id=character_id)
+    elif not name and not character_id:
+        raise NoDataError("No character name or character id provided.")
 
     if len(eve_character) == 0:
         # Create Character
-        character = EveCharacter.objects.create_character(id)
+        character = EveCharacter.objects.create_character(character_id)
         character = EveCharacter.objects.get(pk=character.pk)
 
         # Make corp and alliance info objects for future sane
@@ -86,34 +86,34 @@ def get_or_create_char(name: str = None, id: int = None):
 
 
 @shared_task
-def process_fats(data_list, data_source, hash):
+def process_fats(data_list, data_source, fatlink_hash):
     """
     Due to the large possible size of fatlists,
     this process will be scheduled in order to process esi data
     and possible other sources in the future.
     :param data_list: the list of character info to be processed.
     :param data_source: the source type (only "esi" for now)
-    :param hash: the hash from the fat link.
+    :param fatlink_hash: the hash from the fat link.
     :return:
     """
-    logger.info("Processing FAT %s", hash)
+    logger.info("Processing FAT %s", fatlink_hash)
 
     if data_source == "esi":
         for char in data_list:
-            process_character.delay(char, hash)
+            process_character.delay(char, fatlink_hash)
 
 
 @shared_task
-def process_line(line, type_, hash):
+def process_line(line, type_, fatlink_hash):
     """
     process_line
     processing every single character on its own
     :param line:
     :param type_:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
-    link = AFatLink.objects.get(hash=hash)
+    link = AFatLink.objects.get(hash=fatlink_hash)
 
     if type_ == "comp":
         character = get_or_create_char(name=line[0].strip(" "))
@@ -135,14 +135,14 @@ def process_line(line, type_, hash):
 
 
 @shared_task
-def process_character(char, hash):
+def process_character(char, fatlink_hash):
     """
     process_character
     :param char:
-    :param hash:
+    :param fatlink_hash:
     :return:
     """
-    link = AFatLink.objects.get(hash=hash)
+    link = AFatLink.objects.get(hash=fatlink_hash)
 
     char_id = char["character_id"]
     sol_id = char["solar_system_id"]
@@ -155,7 +155,7 @@ def process_character(char, hash):
 
     sol_name = solar_system["name"]
     ship_name = ship["name"]
-    character = get_or_create_char(id=char_id)
+    character = get_or_create_char(character_id=char_id)
     AFat(
         afatlink_id=link.pk, character=character, system=sol_name, shiptype=ship_name
     ).save()

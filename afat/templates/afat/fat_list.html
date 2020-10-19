@@ -13,13 +13,13 @@
         <h2>{% trans "All FAT Links" %}</h2>
 
         <h4>
-            <a class="btn btn-primary" href="{% url 'afat:links' year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
+            <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
 
-            {{ year }}
+            <span class="afat-label-statistics">{{ year }}</span>
 
             {% if year_next <= year_current %}
-                <a class="btn btn-primary" href="{% url 'afat:links' year_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary" href="{% url 'afat:links' year_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
+                <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
             {% endif %}
         </h4>
 
@@ -79,13 +79,13 @@
                         {% if permissions.fatlinks.manipulate %}
                             <td class="no-sort">
                                 {% if permissions.fatlinks.change %}
-                                    <a class="btn btn-info" href="{% url 'afat:link_edit' link.hash %}">
+                                    <a class="btn btn-info btn-sm" href="{% url 'afat:link_edit' link.hash %}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
                                 {% endif %}
 
                                 {% if permissions.fatlinks.delete %}
-                                    <a class="btn btn-danger"
+                                    <a class="btn btn-danger btn-sm"
                                         data-toggle="modal"
                                         data-target="#deleteModal"
                                         data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_delete' link.hash %}"
@@ -115,8 +115,8 @@
                 <div class="modal-body"></div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
-                    <a id="fat-link" class="btn btn-danger" role="button" href="">{% trans "Delete" %}</a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <a id="fat-link" class="btn btn-danger btn-sm" role="button" href="">{% trans "Delete" %}</a>
                 </div>
             </div>
         </div>

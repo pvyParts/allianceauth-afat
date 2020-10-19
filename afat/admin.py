@@ -96,8 +96,6 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
     config for fatlinktype model
     """
 
-    # list_select_related = True
-
     list_display = (
         "id",
         "_name",
@@ -190,8 +188,8 @@ class ManualAFatAdmin(admin.ModelAdmin):
     )
 
     def _afatlink(self, obj):
-        return "Fleet: {fleet_name} (FAT link hash: {hash})".format(
-            fleet_name=obj.afatlink.fleet, hash=obj.afatlink.hash
+        return "Fleet: {fleet_name} (FAT link hash: {fatlink_hash})".format(
+            fleet_name=obj.afatlink.fleet, fatlink_hash=obj.afatlink.hash
         )
 
     _afatlink.short_description = "FAT Link"
