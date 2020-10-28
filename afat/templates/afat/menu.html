@@ -17,7 +17,7 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="{% navactive request 'afat_stats afat_corp_stats afat_char_stats afat_ally_stats' %}">
+                <li class="{% navactive request 'afat:stats afat:stats_corp afat:stats_char afat:stats_ally' %}">
                     <a href="{% url 'afat:stats' %}">{% trans "Statistics" %}</a>
                 </li>
 
