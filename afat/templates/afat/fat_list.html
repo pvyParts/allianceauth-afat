@@ -24,19 +24,21 @@
         </h4>
 
         {% if msg %}
-        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                <span aria-hidden="true">&times</span>
-            </button>
-            <h4>
-                {% if msg.0 == 'danger' %}
-                    {% trans "Oh No!" %}
-                {% elif msg.0 == 'success' %}
-                    {% trans "Success!" %}
-                {% endif %}
-            </h4>
-            <p>{{ msg.1 }}</p>
-        </div>
+            <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true">&times</span>
+                </button>
+
+                <h4>
+                    {% if msg.0 == 'danger' %}
+                        {% trans "Oh No!" %}
+                    {% elif msg.0 == 'success' %}
+                        {% trans "Success!" %}
+                    {% endif %}
+                </h4>
+
+                <p>{{ msg.1 }}</p>
+            </div>
         {% endif %}
 
         <table class="table" id="link-list">
@@ -46,86 +48,26 @@
                 <th>{% trans "Creator" %}</th>
                 <th>{% trans "EVE Time" %}</th>
                 <th>{% trans "# of FATs" %}</th>
+
                 {% if permissions.fatlinks.manipulate %}
                     <th>{% trans "Actions" %}</th>
                 {% endif %}
             </thead>
 
-            <tbody>
-                {% for link in links %}
-                    <tr>
-                        <td>
-                            {% if link.fleet %}
-                                {{ link.fleet }}
-                            {% else %}
-                                {{ link.hash }}
-                            {% endif %}
-
-                            {% if link.is_esilink %}
-                                <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if link.link_type %}
-                                {{ link.link_type.name }}
-                            {% endif %}
-                        </td>
-
-                        <td>{{ link.creator.profile.main_character.character_name }}</td>
-                        <td data-sort='{{ link.afattime|date:"Y-m-d H:i" }}'>{{ link.afattime|date:"Y-M-d, H:i" }}</td>
-                        <td>{{ link.number_of_fats }}</td>
-
-                        {% if permissions.fatlinks.manipulate %}
-                            <td class="no-sort">
-                                {% if permissions.fatlinks.change %}
-                                    <a class="btn btn-info btn-sm" href="{% url 'afat:link_edit' link.hash %}">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                {% endif %}
-
-                                {% if permissions.fatlinks.delete %}
-                                    <a class="btn btn-danger btn-sm"
-                                        data-toggle="modal"
-                                        data-target="#deleteModal"
-                                        data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_delete' link.hash %}"
-                                        data-name="{% if link.fleet %}{{ link.fleet }}{% else %}{{ link.hash }}{% endif %}">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                            {% endif %}
-                        </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
-    <!-- Delete FAT link Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLongTitle">{% trans "Delete FAT Link" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body"></div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Cancel" %}</button>
-                    <a id="fat-link" class="btn btn-danger btn-sm" role="button" href="">{% trans "Delete" %}</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include "afat/modals/delete-fat-link.html" %}
 {% endblock %}
 
 {% block extra_javascript %}
     {% include 'bundles/datatables-js.html' %}
-    {% include 'bundles/moment-js.html' %}
+    {% include 'bundles/moment-js.html' with locale=True %}
+
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/dataTables.rowGroup.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/datetime.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
 {% endblock %}
 
 {% block extra_css %}
@@ -135,34 +77,57 @@
 {% endblock %}
 
 {% block extra_script %}
-    $.fn.dataTable.moment = function(format, locale) {
-        var types = $.fn.dataTable.ext.type;
-
-        // Add type detection
-        types.detect.unshift(function(d) {
-            return moment(d, format, locale, true).isValid() ?
-                'moment-'+format :
-                null;
-        } );
-
-        // Add sorting method - use an integer for the sorting
-        types.order[ 'moment-'+format+'-pre' ] = function(d) {
-            return moment(d, format, locale, true).unix();
-        };
-    };
-
-    $(document).ready(function(){
-        $.fn.dataTable.moment('YYYY-MMM-D, HH:mm');
+    $(document).ready(function() {
+        const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
 
         $('#link-list').DataTable({
-            "order": [[ 3, "desc" ]],
+            ajax: {
+                url: "{% url 'afat:links_data' year %}",
+                dataSrc: '',
+                cache: false
+            },
+            columns: [
+                {data: 'fatlink_fleet'},
+                {data: 'link_type'},
+                {data: 'creator'},
+                {
+                    data: 'time',
+                    render: $.fn.dataTable.render.moment( moment.ISO_8601, DATETIME_FORMAT )
+                },
+                {data: 'fats_number'},
+
+                {% if permissions.fatlinks.manipulate %}
+                    {data: 'actions'}
+                {% endif %}
+            ],
+
             {% if permissions.fatlinks.manipulate %}
-            "columnDefs": [{
-                "targets": 5,
-                "orderable": false,
-                "order": []
-            }]
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [5]
+                    }
+                ],
             {% endif %}
+
+            order: [
+                [3, "desc"]
+            ],
+
+            filterDropDown: {
+                columns: [
+                    {
+                        idx: 1,
+                        title: "{% translate 'Fleet Type' %}"
+                    },
+                    {
+                        idx: 2,
+                        title: "{% translate 'Creator' %}"
+                    },
+                ],
+                autoSize: true,
+                bootstrap: true
+            },
         });
     });
 
