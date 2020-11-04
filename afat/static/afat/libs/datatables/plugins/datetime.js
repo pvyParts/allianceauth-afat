@@ -14,9 +14,9 @@
  *
  * It accepts one, two or three parameters:
  *
- * * `$.fn.dataTable.render.moment( to );`
- * * `$.fn.dataTable.render.moment( from, to );`
- * * `$.fn.dataTable.render.moment( from, to, locale );`
+ * * `$.fn.dataTable.render.moment(to);`
+ * * `$.fn.dataTable.render.moment(from, to);`
+ * * `$.fn.dataTable.render.moment(from, to, locale);`
  *
  * Where:
  *
@@ -33,90 +33,83 @@
  *
  *  @example
  *    // Convert ISO8601 dates into a simple human readable format
- *    $('#example').DataTable( {
- *      columnDefs: [ {
+ *    $('#example').DataTable({
+ *      columnDefs: [{
  *        targets: 1,
- *        render: $.fn.dataTable.render.moment( 'Do MMM YYYY' )
- *      } ]
- *    } );
+ *        render: $.fn.dataTable.render.moment('Do MMM YYYY')
+ *      }]
+ *    });
  *
  *  @example
  *    // Specify a source format - in this case a unix timestamp
- *    $('#example').DataTable( {
- *      columnDefs: [ {
+ *    $('#example').DataTable({
+ *      columnDefs: [{
  *        targets: 2,
- *        render: $.fn.dataTable.render.moment( 'X', 'Do MMM YY' )
- *      } ]
- *    } );
+ *        render: $.fn.dataTable.render.moment('X', 'Do MMM YY')
+ *      }]
+ *    });
  *
  *  @example
  *    // Specify a source format and locale
- *    $('#example').DataTable( {
- *      columnDefs: [ {
+ *    $('#example').DataTable({
+ *      columnDefs: [{
  *        targets: 2,
- *        render: $.fn.dataTable.render.moment( 'YYYY/MM/DD', 'Do MMM YY', 'fr' )
- *      } ]
- *    } );
+ *        render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'Do MMM YY', 'fr')
+ *      }]
+ *    });
  */
 
-
 // UMD
-(function( factory ) {
-	"use strict";
+(function(factory) {
+    "use strict";
 
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( ['jquery'], function ( $ ) {
-			return factory( $, window, document );
-		} );
-	}
-	else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = function (root, $) {
-			if ( ! root ) {
-				root = window;
-			}
+    if(typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery'], function($) {
+            return factory($, window, document);
+        });
+    } else if(typeof exports === 'object') {
+        // CommonJS
+        module.exports = function(root, $) {
+            if(!root) {
+                root = window;
+            }
 
-			if ( ! $ ) {
-				$ = typeof window !== 'undefined' ?
-					require('jquery') :
-					require('jquery')( root );
-			}
+            if(!$) {
+                $ = typeof window !== 'undefined' ?
+                    require('jquery') :
+                    require('jquery')(root);
+            }
 
-			return factory( $, root, root.document );
-		};
-	}
-	else {
-		// Browser
-		factory( jQuery, window, document );
-	}
+            return factory($, root, root.document);
+        };
+    } else {
+        // Browser
+        factory(jQuery, window, document);
+    }
 }
-(function( $, window, document ) {
 
+(function($, window, document) {
+    $.fn.dataTable.render.moment = function(from, to, locale) {
+        // Argument shifting
+        if(arguments.length === 1) {
+            locale = 'en';
+            to = from;
+            from = 'YYYY-MM-DD';
+        } else if(arguments.length === 2) {
+            locale = 'en';
+        }
 
-$.fn.dataTable.render.moment = function ( from, to, locale ) {
-	// Argument shifting
-	if ( arguments.length === 1 ) {
-		locale = 'en';
-		to = from;
-		from = 'YYYY-MM-DD';
-	}
-	else if ( arguments.length === 2 ) {
-		locale = 'en';
-	}
+        return function(d, type, row) {
+            if(!d) {
+                return type === 'sort' || type === 'type' ? 0 : d;
+            }
 
-	return function ( d, type, row ) {
-		if (! d) {
-			return type === 'sort' || type === 'type' ? 0 : d;
-		}
+            var m = window.moment(d, from, locale, true);
 
-		var m = window.moment( d, from, locale, true );
-
-		// Order and type get a number value from Moment, everything else
-		// sees the rendered value
-		return m.format( type === 'sort' || type === 'type' ? 'x' : to );
-	};
-};
-
-
+            // Order and type get a number value from Moment, everything else
+            // sees the rendered value
+            return m.format(type === 'sort' || type === 'type' ? 'x' : to);
+        };
+    };
 }));
