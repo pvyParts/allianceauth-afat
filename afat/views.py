@@ -747,8 +747,10 @@ def links_data(request, year: int = None) -> JsonResponse:
             fatlink_fleet = fatlink.fleet
 
         esi_fleet_marker = ""
+        via_esi = "No"
         if fatlink.is_esilink:
             esi_fleet_marker += '<span class="label label-success afat-label afat-label-via-esi">via ESI</span>'
+            via_esi = "Yes"
 
         fatlink_type = ""
         if fatlink.link_type:
@@ -790,6 +792,7 @@ def links_data(request, year: int = None) -> JsonResponse:
                 "time": time,
                 "fats_number": fats_number,
                 "actions": actions,
+                "via_esi": via_esi,
             }
         )
 

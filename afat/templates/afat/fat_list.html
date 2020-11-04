@@ -80,6 +80,12 @@
     $(document).ready(function() {
         const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
 
+        {% if permissions.fatlinks.manipulate %}
+            var esi_column = 6;
+        {% else %}
+            var esi_column = 5;
+        {% endif %}
+
         $('#link-list').DataTable({
             ajax: {
                 url: "{% url 'afat:links_data' year %}",
@@ -97,18 +103,23 @@
                 {data: 'fats_number'},
 
                 {% if permissions.fatlinks.manipulate %}
-                    {data: 'actions'}
+                    {data: 'actions'},
                 {% endif %}
+
+                // hidden column
+                {data: 'via_esi'},
             ],
 
-            {% if permissions.fatlinks.manipulate %}
-                columnDefs: [
-                    {
-                        orderable: false,
-                        targets: [5]
-                    }
-                ],
-            {% endif %}
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: [5]
+                },
+                {
+                    visible: false,
+                    targets: [esi_column]
+                }
+            ],
 
             order: [
                 [3, "desc"]
@@ -122,6 +133,10 @@
 //                    {
 //                        idx: 2,
 //                    },
+                    {
+                        idx: esi_column,
+                        title: "{% trans 'via ESI' %}"
+                    },
                 ],
                 autoSize: false,
                 bootstrap: true
