@@ -4,10 +4,11 @@
 import FAT data from ImicusFAT module
 """
 
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat import __version__ as afat_version
+from afat import __version__ as afat_version_installed
 
 from afat.models import (
     AFat,
@@ -37,8 +38,10 @@ def imicusfat_installed() -> bool:
 
 
 if imicusfat_installed():
-    from imicusfat import __version__ as ifat_version
+    import requests
+    import sys
 
+    from imicusfat import __version__ as ifat_version_installed
     from imicusfat.models import (
         IFat,
         IFatLink,
@@ -48,6 +51,9 @@ if imicusfat_installed():
         ManualIFat,
     )
 
+    from packaging.specifiers import SpecifierSet
+    from packaging.version import parse as version_parse
+
 
 class Command(BaseCommand):
     """
@@ -55,6 +61,74 @@ class Command(BaseCommand):
     """
 
     help = "Imports FAT data from ImicusFAT module"
+
+    def latest_version_available(self, package_name):
+        """
+        checking for the latest available version of a package on Pypi
+        :param package_name:
+        :return:
+        """
+
+        current_python_version = version_parse(
+            f"{sys.version_info.major}.{sys.version_info.minor}"
+            f".{sys.version_info.micro}"
+        )
+
+        current_version = version_parse(ifat_version_installed)
+        current_is_prerelease = (
+            str(current_version) == str(ifat_version_installed)
+            and current_version.is_prerelease
+        )
+
+        result = requests.get(
+            f"https://pypi.org/pypi/{package_name}/json", timeout=(5, 30)
+        )
+
+        latest = None
+
+        if result.status_code == requests.codes.ok:
+            pypi_info = result.json()
+
+            for release, release_details in pypi_info["releases"].items():
+                release_detail = (
+                    release_details[-1] if len(release_details) > 0 else None
+                )
+                if not release_detail or (
+                    not release_detail["yanked"]
+                    and (
+                        "requires_python" not in release_detail
+                        or not release_detail["requires_python"]
+                        or current_python_version
+                        in SpecifierSet(release_detail["requires_python"])
+                    )
+                ):
+                    my_release = version_parse(release)
+
+                    if str(my_release) == str(release) and (
+                        current_is_prerelease or not my_release.is_prerelease
+                    ):
+                        latest = release
+
+            if not latest:
+                self.stdout.write(
+                    self.style.WARNING(
+                        "Could not find a suitable release of '{package_name}'".format(
+                            package_name=package_name
+                        )
+                    )
+                )
+
+            return latest
+
+        self.stdout.write(
+            self.style.WARNING(
+                "Package '{package_name}' is not registered in PyPI".format(
+                    package_name=package_name
+                )
+            )
+        )
+
+        return None
 
     def _import_from_imicusfat(self) -> None:
         # first we check if the target tables are really empty ...
@@ -216,59 +290,99 @@ class Command(BaseCommand):
         """
 
         if imicusfat_installed():
+            has_conflict = False
+
             self.stdout.write(
                 self.style.SUCCESS("ImicusFAT module is active, let's go!")
             )
 
-            self.stdout.write(
-                "Importing all FAT/FAT link data from ImicusFAT module. "
-                "This can only be done once during the very first installation. "
-                "As soon as you have data collected with your AFAT module, this import will fail!"
+            self.stdout.write("Checking for potentially available updates ...")
+
+            ifat_version_available = self.latest_version_available(
+                package_name="allianceauth-imicusfat"
             )
 
-            user_input = get_input("Are you sure you want to proceed? (yes/no)?")
+            afat_version_available = self.latest_version_available(
+                package_name="allianceauth-afat"
+            )
 
-            if user_input == "yes":
-                no_conflict = True
-                self.stdout.write("Checking versions. Please stand by.")
+            # check if updates for ImicusFAT are available
+            if ifat_version_available is not None:
+                if version_parse(ifat_version_installed) < version_parse(
+                    ifat_version_available
+                ):
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "ImicusFAT is outdated. "
+                            "Please update to the latest ImicusFAT version first."
+                        )
+                    )
 
-                if ifat_version != afat_version:
-                    if ifat_version < afat_version:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                "ImicusFAT is outdated. "
-                                "Please check if there is a newer version available first, "
-                                "before attempting to import."
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "ImicusFAT version installed: {ifat_version_installed}".format(
+                                ifat_version_installed=ifat_version_installed
                             )
                         )
+                    )
 
-                        user_input_version_conflict = get_input(
-                            "Do you want to start the import anyways? (yes/no)?"
-                        )
-
-                        if user_input_version_conflict == "no":
-                            self.stdout.write(self.style.WARNING("Aborted."))
-                            no_conflict = False
-
-                    if ifat_version > afat_version:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                "aFAT seems to be outdated. "
-                                "Please check if there is a newer version available first, "
-                                "before attempting to import. "
-                                "The import cannot be done from a ImicusFAT version "
-                                "that is newer than your installed aFAT version."
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "ImicusFAT version available: {ifat_version_available}".format(
+                                ifat_version_available=ifat_version_available
                             )
                         )
+                    )
 
-                        self.stdout.write(self.style.WARNING("Aborted."))
-
-                        no_conflict = False
-
-                if no_conflict is True:
-                    self._start_import()
+                    has_conflict = True
             else:
-                self.stdout.write(self.style.WARNING("Aborted."))
+                has_conflict = True
+
+            # check if updates for aFAT are available
+            if afat_version_available is not None:
+                if version_parse(afat_version_installed) < version_parse(
+                    afat_version_available
+                ):
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "aFAT is outdated. "
+                            "Please update to the latest aFAT version first."
+                        )
+                    )
+
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "aFAT version installed: {afat_version_installed}".format(
+                                afat_version_installed=afat_version_installed
+                            )
+                        )
+                    )
+
+                    self.stdout.write(
+                        self.style.WARNING(
+                            "aFAT version available: {afat_version_available}".format(
+                                afat_version_available=afat_version_available
+                            )
+                        )
+                    )
+
+                    has_conflict = True
+            else:
+                has_conflict = True
+
+            if has_conflict is False:
+                self.stdout.write(
+                    "Importing all FAT/FAT link data from ImicusFAT module. "
+                    "This can only be done once during the very first installation. "
+                    "As soon as you have data collected with your AFAT module, this import will fail!"
+                )
+
+                user_input = get_input("Are you sure you want to proceed? (yes/no)?")
+
+                if user_input == "yes":
+                    self._start_import()
+                else:
+                    self.stdout.write(self.style.WARNING("Aborted."))
         else:
             self.stdout.write(
                 self.style.WARNING(
