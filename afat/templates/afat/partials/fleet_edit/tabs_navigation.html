@@ -1,0 +1,8 @@
+
+{% load i18n %}
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" class="tab" href="#fats">{% trans "FATs" %}</a></li>
+    <li>{% if permissions.fats.add %}<a data-toggle="tab" class="tab" href="#manualfat">{% trans "Manual FAT" %}</a>{% endif %}</li>
+    <li><a data-toggle="tab" class="tab" href="#flatlist">{% trans "Raw Data" %}</a></li>
+</ul>

@@ -10,122 +10,16 @@
 
     <div class="col-lg-12">
         <br>
-        {% include 'afat/menu.html' %}
+        {% include 'afat/partials/menu.html' %}
 
         <h2>{{ character.character_name }} {% trans "Statistics" %}</h2>
-        <h4>
-            {% if month == '1' %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year_prev 12 %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year month_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
-            {% endif %}
 
-            <span class="afat-label-statistics">{{ month|month }} {{ year }}</span>
-
-            {% if month_next > month_current and year_next > year_current %}
-            {% elif month == '12' %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year_next 1 %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year_current month_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year month_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' character.character_id year_current month_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-            {% endif %}
-        </h4>
-
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#graphs">{% trans "Graphs" %}</a></li>
-            <li><a data-toggle="tab" href="#rawdata">{% trans "Raw Data" %}</a></li>
-        </ul>
+        {% include 'afat/partials/char_stat/month_navigation.html' %}
+        {% include 'afat/partials/char_stat/tabs_navigation.html' %}
 
         <div class="tab-content">
-            <div id="graphs" class="tab-pane fade in active panel-default">
-                <div class="panel-body">
-                    <div class="col-md-4">
-                        <h4>{% trans "FATs by Ship Type" %}</h4>
-                        <canvas style="width: 400px; max-width: 100%; height: 400px;" id="pie-ship"></canvas>
-
-                        <script>
-                            var shipPieChart = new Chart(document.getElementById("pie-ship"), {
-                                type: "pie",
-                                data: {
-                                    datasets: [{
-                                        data: {{ data_ship_type.1|safe }},
-                                        backgroundColor: {{ data_ship_type.2|safe }}
-                                    }],
-                                    labels: {{ data_ship_type.0|safe }}
-                                },
-                                options: {
-                                    responsive: false
-                                }
-                            })
-                        </script>
-                    </div>
-
-                    <div class="col-md-8">
-                        <h4>{% trans "FATs by Time of Day" %}</h4>
-                        <canvas style="width: 100%; height: 400px;" id="line-time"></canvas>
-
-                        <script>
-                            var FATLineChart = new Chart(document.getElementById("line-time"),{
-                                type: "line",
-                                data: {
-                                    datasets: [{
-                                        label: '{% trans "# of FATs" %}',
-                                        data: {{ data_time.1|safe }},
-                                        backgroundColor: {{ data_time.2|safe }}
-                                    }],
-                                    labels: {{ data_time.0|safe }}
-                                },
-                                options: {
-                                    responsive: false
-                                }
-                            })
-                        </script>
-                    </div>
-                </div>
-            </div>
-
-            <div id="rawdata" class="tab-pane fade panel-default">
-                <div class="panel-body">
-                    <h4>{% trans "FATs for" %} {{ character.character_name }}</h4>
-
-                    <table class="table" id="raw-data">
-                        <thead>
-                            <th>{% trans "Name" %}</th>
-                            <th>{% trans "Fleet Type" %}</th>
-                            <th>{% trans "Location" %}</th>
-                            <th>{% trans "Ship" %}</th>
-                            <th>{% trans "EVE Time" %}</th>
-                        </thead>
-
-                        <tbody>
-                        {% for fat in fats %}
-                            <tr>
-                                <td>
-                                    {% if fat.afatlink.fleet %}
-                                        {{ fat.afatlink.fleet }}
-                                    {% else %}
-                                        {{ fat.afatlink.hash }}
-                                    {% endif %}
-
-                                    {% if fat.afatlink.is_esilink %}
-                                        <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if fat.afatlink.link_type %}
-                                        {{ fat.afatlink.link_type.name }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ fat.system }}</td>
-                                <td>{{ fat.shiptype }}</td>
-                                <td data-sort='{{ fat.afatlink.afattime|date:"Y-m-d H:i" }}'>{{ fat.afatlink.afattime|date:"Y-M-d, H:i" }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {% include 'afat/partials/char_stat/tabs/graphs.html' %}
+            {% include 'afat/partials/char_stat/tabs/raw_data.html' %}
         </div>
     </div>
 {% endblock %}
