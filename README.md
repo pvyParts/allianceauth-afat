@@ -7,7 +7,7 @@
 [![PyPI Downloads](https://img.shields.io/pypi/dm/allianceauth-afat)](https://pypi.org/project/allianceauth-afat/)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](http://black.readthedocs.io/en/latest/)
 
-An Improved FAT/PAP System for [Alliance Auth](https://gitlab.com/allianceauth/allianceauth). 
+An Improved FAT/PAP System for [Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
 
 AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pushed when ImicusFAT get updates to keep on par with it.
 
@@ -17,7 +17,7 @@ AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pus
 - Graphical Statistics Views
 - Many Core Functionality Improvements and Fixes
 
-AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT. 
+AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However data does not share, but you can migrate their data to AFAT, for more information see below.
 
 ## Contents
@@ -33,15 +33,15 @@ However data does not share, but you can migrate their data to AFAT, for more in
 ## Installation
 
 ### Important
-This app is a plugin for Alliance Auth. If you don't have Alliance Auth running already, 
-please install it first before proceeding. 
+This app is a plugin for Alliance Auth. If you don't have Alliance Auth running already,
+please install it first before proceeding.
 (see the official [AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html) for details)
 
 **For users migrating from one of the other FAT systems, please read the specific instructions FIRST.**
 
 ### Step 1 - Install app
 
-Make sure you are in the virtual environment (venv) of your Alliance Auth installation. 
+Make sure you are in the virtual environment (venv) of your Alliance Auth installation.
 Then install the latest version:
 
 ```bash
@@ -67,7 +67,7 @@ Restart your supervisor services for AA.
 
 ## Updating
 
-To update your existing installation of ImicusFAT, first enable your 
+To update your existing installation of ImicusFAT, first enable your
 virtual environment (venv) of your Alliance Auth installation.
 
 ```bash
@@ -79,7 +79,7 @@ python manage.py migrate
 
 Finally restart your supervisor services for AA
 
-## Data Migration 
+## Data Migration
 
 Right after the **initial** installation and running migrations,
 you can import the data from Alliance Auth's native FAT system,
@@ -111,6 +111,6 @@ python myauth/manage.py afat_import_from_imicusfat
 ```
 
 ## Credits
-• AFAT • Privately maintained by @ppfeufer is a whitelabel of 
+• AFAT • Privately maintained by @ppfeufer is a whitelabel of
 [ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained by @exiom with @Aproia and @ppfeufer
 • Based on [allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
