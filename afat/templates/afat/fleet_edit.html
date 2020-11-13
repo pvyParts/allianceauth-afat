@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block page_title %}{% trans 'Fleet Activity' %}{% endblock %}
+{% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
 
 {% block content %}
         <div class="col-lg-12">
@@ -11,7 +11,7 @@
             {% include "afat/partials/menu.html" %}
             {% include "afat/partials/fleet_edit/message.html" %}
 
-            <h2>{% trans "Edit FAT Link" %}</h2>
+            <h2>{% translate "Edit FAT Link" %}</h2>
 
             {% include "afat/partials/fleet_edit/fatlink_name_form.html" %}
 
@@ -56,7 +56,7 @@
 
             var modal = $(this)
             modal.find('#fat-link').attr("href", url)
-            modal.find('.modal-body').text('{% trans "Are you sure you want to delete" %} ' + name + '?');
+            modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
         });
     });
 {% endblock %}

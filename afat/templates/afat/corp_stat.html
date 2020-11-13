@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block page_title %}{{ corporation }} {% trans "Statistics" %}{% endblock %}
+{% block page_title %}{{ corporation }} {% translate "Statistics" %}{% endblock %}
 
 {% block content %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
@@ -12,7 +12,7 @@
         <br>
         {% include 'afat/partials/menu.html' %}
 
-        <h2>{{ corporation }} {% trans "Statistics" %}</h2>
+        <h2>{{ corporation }} {% translate "Statistics" %}</h2>
 
         {% include 'afat/partials/corp_stat/month_navigation.html' %}
         {% include 'afat/partials/corp_stat/tabs_navigation.html' %}

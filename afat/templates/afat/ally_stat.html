@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block page_title %}{{ alliance }} {% trans "Statistics" %}{% endblock %}
+{% block page_title %}{{ alliance }} {% translate "Statistics" %}{% endblock %}
 
 {% block content %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
@@ -13,7 +13,7 @@
         <br>
         {% include 'afat/partials/menu.html' %}
 
-        <h2>{{ alliance }} {% trans "Statistics" %}</h2>
+        <h2>{{ alliance }} {% translate "Statistics" %}</h2>
 
         {% include 'afat/partials/ally_stat/month_navigation.html' %}
         {% include 'afat/partials/ally_stat/tabs_navigation.html' %}

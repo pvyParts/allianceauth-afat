@@ -4,9 +4,9 @@
 
 <div id="fats" class="tab-pane fade in active panel-default">
     <div class="panel-body">
-        <h4>{% trans "Your Most Recent FATs" %}</h4>
+        <h4>{% translate "Your Most Recent FATs" %}</h4>
 
-        <p>{% trans "Only charaters that have recent FATs are shown." %}</p>
+        <p>{% translate "Only charaters that have recent FATs are shown." %}</p>
 
         {% if fats %}
             <ul class="nav nav-pills">
@@ -61,7 +61,7 @@
                                 </table>
                             {% else %}
                                 <div class="alert alert-warning" role="alert">
-                                    <p>{% trans "No FATs for" %} {{ char.0 }}</p>
+                                    <p>{% translate "No FATs for" %} {{ char.0 }}</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -70,7 +70,7 @@
             </div>
         {% else %}
             <p>
-                {% trans "No recent FAT activity registered for any of your characters." %}
+                {% translate "No recent FAT activity registered for any of your characters." %}
             </p>
         {% endif %}
     </div>

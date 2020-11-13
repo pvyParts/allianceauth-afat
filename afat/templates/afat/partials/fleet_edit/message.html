@@ -7,10 +7,10 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Success!" %}</h4>
+        <h4>{% translate "Success!" %}</h4>
 
-        <p>&#9642; {% trans "FAT Link Created!" %}</p>
-        <p>&#9642; {% trans "FATs have been queued, they may take a few mins to show up." %}</p>
+        <p>&#9642; {% translate "FAT Link Created!" %}</p>
+        <p>&#9642; {% translate "FATs have been queued, they may take a few mins to show up." %}</p>
     </div>
 {% elif msg_code == 0 %}
     <div class="alert alert-danger alert-dismissible" role="alert">
@@ -18,9 +18,9 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Oh No!" %}</h4>
+        <h4>{% translate "Oh No!" %}</h4>
 
-        <p>{% trans "Something went wrong!" %}</p>
+        <p>{% translate "Something went wrong!" %}</p>
     </div>
 {% elif msg_code == 202 %}
     <div class="alert alert-success alert-dismissible" role="alert">
@@ -28,10 +28,10 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Success!" %}</h4>
+        <h4>{% translate "Success!" %}</h4>
 
-        <p>&#9642; {% trans "Clickable FAT Link Created!" %}</p>
-        <p>&#9642; {% trans "Make sure to give your fleet members the following link to click so that they get credit for this fleet." %}</p>
+        <p>&#9642; {% translate "Clickable FAT Link Created!" %}</p>
+        <p>&#9642; {% translate "Make sure to give your fleet members the following link to click so that they get credit for this fleet." %}</p>
         {% if link_ongoing %}
         <p>
             &#9642; Link:
@@ -52,9 +52,9 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Success!" %}</h4>
+        <h4>{% translate "Success!" %}</h4>
 
-        <p>{% trans "Fleet name successfully changed." %}</p>
+        <p>{% translate "Fleet name successfully changed." %}</p>
     </div>
 {% elif msg_code == 3 %}
     <div class="alert alert-success alert-dismissible" role="alert">
@@ -62,9 +62,9 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Success!" %}</h4>
+        <h4>{% translate "Success!" %}</h4>
 
-        <p>{% trans "Manual FAT processed." %}</p>
+        <p>{% translate "Manual FAT processed." %}</p>
     </div>
 {% elif msg_code == 4 %}
     <div class="alert alert-danger alert-dismissible" role="alert">
@@ -72,9 +72,9 @@
             <span aria-hidden="true">&times</span>
         </button>
 
-        <h4>{% trans "Oh No!" %}</h4>
+        <h4>{% translate "Oh No!" %}</h4>
 
-        <p>{% trans "Manual FAT processing failed! The character name you entered was not found." %}</p>
+        <p>{% translate "Manual FAT processing failed! The character name you entered was not found." %}</p>
     </div>
 {% elif msg_code == 999 %}
     <div class="alert alert-{{ message.0 }} alert-dismissible" role="alert">
@@ -83,9 +83,9 @@
         </button>
         <h4>
             {% if msg.0 == 'danger' %}
-                {% trans "Oh No!" %}
+                {% translate "Oh No!" %}
             {% elif msg.0 == 'success' %}
-                {% trans "Success!" %}
+                {% translate "Success!" %}
             {% endif %}
         </h4>
         <p>{{ message.1 }}</p>

@@ -3,16 +3,16 @@
 
 <div id="fatlinks" class="tab-pane fade panel-default">
     <div class="panel-body">
-        <h4>{% trans "Most Recent FAT Links" %}</h4>
+        <h4>{% translate "Most Recent FAT Links" %}</h4>
 
         <table class="table">
             <thead>
-                <th>{% trans "Fleet Name" %}</th>
-                <th>{% trans "Creator" %}</th>
-                <th>{% trans "EVE Time" %}</th>
+                <th>{% translate "Fleet Name" %}</th>
+                <th>{% translate "Creator" %}</th>
+                <th>{% translate "EVE Time" %}</th>
 
                 {% if permissions.fatlinks.manipulate %}
-                    <th>{% trans "Actions" %}</th>
+                    <th>{% translate "Actions" %}</th>
                 {% endif %}
             </thead>
 

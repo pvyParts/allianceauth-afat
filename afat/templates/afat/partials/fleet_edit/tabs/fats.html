@@ -3,16 +3,16 @@
 
 <div id="fats" class="tab-pane fade in active panel-default">
     <div class="panel-body">
-         <h4>{% trans "FATs for this FAT Link" %}</h4>
+         <h4>{% translate "FATs for this FAT Link" %}</h4>
 
          <table class="table" id="fat-chars">
              <thead>
-                <th>{% trans "Character" %}</th>
-                <th>{% trans "Location" %}</th>
-                <th>{% trans "Ship Type" %}</th>
+                <th>{% translate "Character" %}</th>
+                <th>{% translate "Location" %}</th>
+                <th>{% translate "Ship Type" %}</th>
 
                 {% if permissions.fats.manage %}
-                    <th>{% trans "Actions" %}</th>
+                    <th>{% translate "Actions" %}</th>
                 {% endif %}
              </thead>
 

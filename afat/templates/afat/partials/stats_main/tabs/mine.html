@@ -4,9 +4,9 @@
 
 <div id="mine" class="tab-pane fade in active panel-default">
     <div class="panel-body">
-        <h4>{% trans "Your monthly stats" %}</h4>
+        <h4>{% translate "Your monthly stats" %}</h4>
 
-        <p>{% trans "Only months with FAT data of the current year are shown." %}</p>
+        <p>{% translate "Only months with FAT data of the current year are shown." %}</p>
 
         <ul class="nav nav-pills">
             {% for char in charstats %}
@@ -29,8 +29,8 @@
                     {% if char.1|length > 0 %}
                         <table class="table">
                             <thead>
-                                <th>{% trans "Month" %}</th>
-                                <th>{% trans "FAT Count" %}</th>
+                                <th>{% translate "Month" %}</th>
+                                <th>{% translate "FAT Count" %}</th>
                                 <th></th>
                             </thead>
 
@@ -50,7 +50,7 @@
                         </table>
                     {% else %}
                         <div class="alert alert-warning" role="alert">
-                            <p>{% trans "No FATs for" %} {{ char.0 }}</p>
+                            <p>{% translate "No FATs for" %} {{ char.0 }}</p>
                         </div>
                     {% endif %}
                     </div>

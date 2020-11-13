@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block page_title %}{{ character.character_name }} {% trans "FAT Statistics" %}{% endblock %}
+{% block page_title %}{{ character.character_name }} {% translate "FAT Statistics" %}{% endblock %}
 
 {% block content %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
@@ -12,7 +12,7 @@
         <br>
         {% include 'afat/partials/menu.html' %}
 
-        <h2>{{ character.character_name }} {% trans "Statistics" %}</h2>
+        <h2>{{ character.character_name }} {% translate "Statistics" %}</h2>
 
         {% include 'afat/partials/char_stat/month_navigation.html' %}
         {% include 'afat/partials/char_stat/tabs_navigation.html' %}
