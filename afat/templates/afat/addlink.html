@@ -1,37 +1,42 @@
-{% extends 'allianceauth/base.html' %}
+{% extends 'afat/base.html' %}
 
+{% load static %}
 {% load i18n %}
 
 {% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
 
-{% block content %}
-    <div class="col-lg-12">
-        <br>
-        {% include "afat/partials/menu.html" %}
+{% block afat_header %}
+    <br>
+    {% include "afat/partials/menu.html" %}
 
-        <h2>{% translate "Create a FAT Link" %}</h2>
+    <h2>{% translate "Create a FAT Link" %}</h2>
+{% endblock %}
 
-        {% if msg %}
-            <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                    <span aria-hidden="true">&times</span>
-                </button>
+{% block afat_body %}
+    {% if msg %}
+        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times</span>
+            </button>
 
-                <h4>
-                    {% if msg.0 == 'danger' %}
-                        {% translate "Oh No!" %}
-                    {% elif msg.0 == 'success' %}
-                        {% translate "Success!" %}
-                    {% endif %}
-                </h4>
+            <h4>
+                {% if msg.0 == 'danger' %}
+                    {% translate "Oh No!" %}
+                {% elif msg.0 == 'success' %}
+                    {% translate "Success!" %}
+                {% endif %}
+            </h4>
 
-                <p>{{ msg.1 }}</p>
-            </div>
-        {% endif %}
-
-        <div class="row">
-            {% include "afat/partials/addlink/esi_link.html" %}
-            {% include "afat/partials/addlink/clickable_link.html" %}
+            <p>{{ msg.1 }}</p>
         </div>
+    {% endif %}
+
+    <div class="row">
+        {% include "afat/partials/addlink/esi_link.html" %}
+        {% include "afat/partials/addlink/clickable_link.html" %}
     </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
 {% endblock %}
