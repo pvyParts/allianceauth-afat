@@ -1,0 +1,40 @@
+
+{% load i18n %}
+
+<div id="fats" class="tab-pane fade in active panel-default">
+    <div class="panel-body">
+         <h4>{% translate "FATs for this FAT Link" %}</h4>
+
+         <table class="table" id="fat-chars">
+             <thead>
+                <th>{% translate "Character" %}</th>
+                <th>{% translate "Location" %}</th>
+                <th>{% translate "Ship Type" %}</th>
+
+                {% if permissions.fats.manage %}
+                    <th>{% translate "Actions" %}</th>
+                {% endif %}
+             </thead>
+
+             <tbody>
+                {% for fat in fats %}
+                    <tr>
+                        <td>{{ fat.character.character_name }}</td>
+                        <td>{{ fat.system }}</td>
+                        <td>{{ fat.shiptype }}</td>
+                        <td>
+                            {% if permissions.fats.delete %}
+                            <a class="btn btn-danger btn-sm"
+                                data-toggle="modal" data-target="#deleteModal"
+                                data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:fat_delete' link.hash fat.id %}"
+                                data-name="{% if fat.character.character_name %}{{ fat.character.character_name }}{% else %}this pilot{% endif %}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+             </tbody>
+         </table>
+    </div>
+</div>

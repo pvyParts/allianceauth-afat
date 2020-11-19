@@ -1,0 +1,41 @@
+
+{% load i18n %}
+
+<div class="col-md-12">
+    <div class="row">
+        <form class="form" role="form" action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder='{% translate "Fleet Name" %}' name="fleet" {% if link.fleet %}value="{{ link.fleet }}" {% endif %}>
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit" name="set_name">{% translate "Set Name" %}</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <p>&nbsp;</p>
+
+        <div class="col-md-2">{% translate "Creator:" %} {{ link.creator.profile.main_character.character_name }}</div>
+        <div class="col-md-2 col-md-offset-8">{% translate "Time:" %} {{ link.afattime }}</div>
+
+        {% if link_ongoing %}
+            <div class="col-md-10">
+                <p>Link:
+                    <i>
+                        {{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}
+                        <a class="copy-link" href="{% url 'afat:link_click' link.hash %}" class="label label-success"></a>
+                    </i>
+
+                    <button class="copy-btn btn btn-success btn-sm" data-toggle="tooltip" data-html="true" title='{% translate "Copied!" %}' data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}" style="margin-left: 1rem;" >
+                        {% translate "Copy me!" %}
+                    </button>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,44 @@
+
+{% load i18n %}
+
+<div id="rawdata" class="tab-pane fade panel-default">
+    <div class="panel-body">
+        <h4>{% translate "FATs for" %} {{ character.character_name }}</h4>
+
+        <table class="table" id="raw-data">
+            <thead>
+                <th>{% translate "Name" %}</th>
+                <th>{% translate "Fleet Type" %}</th>
+                <th>{% translate "Location" %}</th>
+                <th>{% translate "Ship" %}</th>
+                <th>{% translate "EVE Time" %}</th>
+            </thead>
+
+            <tbody>
+            {% for fat in fats %}
+                <tr>
+                    <td>
+                        {% if fat.afatlink.fleet %}
+                            {{ fat.afatlink.fleet }}
+                        {% else %}
+                            {{ fat.afatlink.hash }}
+                        {% endif %}
+
+                        {% if fat.afatlink.is_esilink %}
+                            <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if fat.afatlink.link_type %}
+                            {{ fat.afatlink.link_type.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ fat.system }}</td>
+                    <td>{{ fat.shiptype }}</td>
+                    <td data-sort='{{ fat.afatlink.afattime|date:"Y-m-d H:i" }}'>{{ fat.afatlink.afattime|date:"Y-M-d, H:i" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

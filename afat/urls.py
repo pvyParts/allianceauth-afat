@@ -11,6 +11,7 @@ from afat import views
 app_name: str = "afat"
 
 urlpatterns = [
+    # dashboard
     url(r"^$", views.afat_view, name="afat_view"),
     # stats main page
     url(r"^statistic/$", views.stats, name="stats"),
@@ -94,4 +95,7 @@ urlpatterns = [
         views.del_fat,
         name="fat_delete",
     ),
+    # ajax calls
+    url(r"^links_data/$", views.links_data, name="links_data"),
+    url(r"^links_data/(?P<year>[0-9]+)/$", views.links_data, name="links_data"),
 ]

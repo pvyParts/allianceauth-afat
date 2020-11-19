@@ -1,0 +1,12 @@
+
+{% load i18n %}
+
+<div id="flatlist" class="tab-pane fade in panel-default">
+    <div class="panel-body">
+        <h4>{% translate "FAT Link Raw Data" %}</h4>
+
+        <div class="form-group">
+            <textarea class="form-control" name="flatlist" rows="10" readonly>{% if flatlist %}{{ flatlist }}{% endif %}</textarea>
+        </div>
+    </div>
+</div>

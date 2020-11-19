@@ -1,0 +1,41 @@
+
+{% load i18n %}
+
+<div id="manualfat" class="tab-pane fade in panel-default">
+    <div class="panel-body">
+        <h4>{% translate "Manual FAT" %}</h4>
+
+        <p>
+            {% translate "Is someone missing from the list of FATs? Use this form to add them." %}
+            <br />
+            <strong>{% translate "Note:" %}</strong> {% translate "This action is logged!" %}
+        </p>
+
+        <form class="form" role="form" action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="character" placeholder='{% translate "Character Name" %}' required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="system" placeholder='{% translate "System" %}'>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="shiptype" placeholder='{% translate "Ship Type" %}'>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-right">
+                <button class="btn btn-primary" type="submit" name="manual_fat">{% translate "Add Manual FAT" %}</button>
+            </div>
+        </form>
+    </div>
+</div>

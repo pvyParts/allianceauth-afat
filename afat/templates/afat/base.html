@@ -1,0 +1,18 @@
+{% extends 'allianceauth/base.html' %}
+
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
+
+{% block content %}
+    <div class="allianceauth-afat">
+        <div class="allianceauth-afat-header">
+            {% block afat_header %}{% endblock %}
+        </div>
+
+        <div class="allianceauth-afat-body">
+            {% block afat_body %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

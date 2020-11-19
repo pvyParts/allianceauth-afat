@@ -1,0 +1,33 @@
+
+{% load evelinks %}
+{% load i18n %}
+
+<div class="tab-pane fade in panel-default" id="members">
+    <div class="panel-body">
+        <h3>{{ alliance }} {% translate "Member Corps" %}</h3>
+
+        <table class="table" id="member-corps">
+            <thead>
+                <th>{% translate "Corporation" %}</th>
+                <th>{% translate "FATs" %}</th>
+                <th>{% translate "Avg FATs" %}</th>
+                <th>{% translate "Corporation Stats" %}</th>
+            </thead>
+
+            <tbody>
+                {% for key, value in corps.items %}
+                    <tr>
+                        <td><img src="{{ value.0|corporation_logo_url:32 }}" style="margin-right: 1rem;" />{{ key }}</td>
+                        <td>{{ value.1 }}</td>
+                        <td>{{ value.2 }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' value.0 year month %}">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

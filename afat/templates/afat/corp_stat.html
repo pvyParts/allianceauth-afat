@@ -1,168 +1,26 @@
-{% extends 'allianceauth/base.html' %}
+{% extends 'afat/base.html' %}
 
-{% load i18n %}
 {% load static %}
+{% load i18n %}
 
-{% block page_title %}{{ corporation }} {% trans "Statistics" %}{% endblock %}
+{% block page_title %}{{ corporation }} {% translate "Statistics" %}{% endblock %}
 
-{% block content %}
+{% block afat_header %}
+    <br>
+    {% include 'afat/partials/menu.html' %}
+
+    <h2>{{ corporation }} {% translate "Statistics" %}</h2>
+{% endblock %}
+
+{% block afat_body %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
 
-    <div class="col-lg-12">
-        <br>
-        {% include 'afat/menu.html' %}
+    {% include 'afat/partials/corp_stat/month_navigation.html' %}
+    {% include 'afat/partials/corp_stat/tabs_navigation.html' %}
 
-        <h2>{{ corporation }} {% trans "Statistics" %}</h2>
-        <h4>
-            {% if month == '1' %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year_prev 12 %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year month_prev %}" title='{% trans "Previous Month" %}'><i class="fas fa-backward"></i></a>
-            {% endif %}
-
-            <span class="afat-label-statistics">{{ month|month }} {{ year }}</span>
-
-            {% if month_next > month_current and year_next > year_current %}
-            {% elif month == '12' %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year_next 1 %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year_current month_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year month_next %}" title='{% trans "Next Month" %}'><i class="fas fa-forward"></i></a>
-                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.corporation_id year_current month_current %}" title='{% trans "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-            {% endif %}
-        </h4>
-
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#graphs">{% trans "Graphs" %}</a></li>
-            <li><a data-toggle="tab" href="#members">{% trans "Members" %}</a></li>
-        </ul>
-
-        <div class="tab-content">
-            <div id="graphs" class="tab-pane fade in active panel-default">
-                <div class="panel-body">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a data-toggle="tab" href="#fatsbyship">{% trans "FATs By Ship Type" %}</a></li>
-                        <li><a data-toggle="tab" href="#fatsbytime">{% trans "FATs By Time" %}</a></li>
-                        <li><a data-toggle="tab" href="#fatsbyweek">{% trans "FATs By Weekday" %}</a></li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active panel-default" id="fatsbyship">
-                            <div class="panel-body">
-                                <h3>{% trans "FATs By Ship Type" %}</h3>
-
-                                <canvas id="ship-bar-stacked" width="800" height="500"></canvas>
-                                <script>
-                                var corpShipTypeBarChart = new Chart(document.getElementById('ship-bar-stacked'), {
-                                    type: "bar",
-                                    data: {
-                                        datasets: [{% for set in data_stacked.1 %}
-                                                {
-                                                  label: '{{ set.0|escapejs }}',
-                                                  backgroundColor: '{{ set.1|safe }}',
-                                                  data: {{ set.2 }}
-                                                },
-                                            {% endfor %}],
-                                        labels: {{ data_stacked.0|safe }}
-                                    },
-                                    options: {
-                                        responsive: false,
-                                        scales: {
-                                            xAxes: [{
-                                                stacked: true,
-                                                ticks: {
-                                                    autoSkip: false
-                                                }
-                                            }],
-                                            yAxes: [{
-                                                stacked: true
-                                            }]
-                                        }
-                                    }
-                                })
-                                </script>
-                            </div>
-                        </div>
-
-                        <div id="fatsbytime" class="tab-pane fade in panel-default">
-                            <div class="panel-body">
-                                <h3>{% trans "FATs By Time" %}</h3>
-
-                                <canvas id="time-line" width="800" height="500"></canvas>
-                                <script>
-                                    var timeLineChart = new Chart(document.getElementById("time-line"), {
-                                        type: 'line',
-                                        data: {
-                                            datasets: [{
-                                                label: '# of FATs',
-                                                backgroundColor: {{ data_time.2|safe }},
-                                                data: {{ data_time.1 }}
-                                            }],
-                                            labels: {{ data_time.0|safe }}
-                                        },
-                                        options: {
-                                            responsive: false
-                                        }
-                                    })
-                                </script>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade in panel-default" id="fatsbyweek">
-                            <div class="panel-body">
-                                <h3>{% trans "FATs By Weekday" %}</h3>
-
-                                <canvas id="weekday-line" width="800" height="500"></canvas>
-                                <script>
-                                    var weekdayLineChart = new Chart(document.getElementById('weekday-line'), {
-                                        type: 'line',
-                                        data:{
-                                            datasets: [{
-                                                label: '# of FATs',
-                                                backgroundColor: {{ data_weekday.2|safe }},
-                                                data: {{ data_weekday.1 }}
-                                            }],
-                                            labels: {{ data_weekday.0|safe }}
-                                        },
-                                        options: {
-                                            responsive: false
-                                        }
-                                    })
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade in panel-default" id="members">
-                <div class="panel-body">
-                    <h3>{{ corporation }} {% trans "Members" %}</h3>
-
-                    <table class="table" id="corp-members">
-                        <thead>
-                            <th>{% trans "Character" %}</th>
-                            <th>{% trans "FATs" %}</th>
-                            <th>{% trans "Character Stats" %}</th>
-                        </thead>
-
-                        <tbody>
-                            {% for key, value in chars.items %}
-                                <tr>
-                                    <td>{{ key }}</td>
-                                    <td>{{ value.0 }}</td>
-                                    <td>
-                                        <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' value.1 year month %}">
-                                            <span class="glyphicon glyphicon-eye-open"></span>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div class="tab-content">
+        {% include 'afat/partials/corp_stat/tabs/graphs.html' %}
+        {% include 'afat/partials/corp_stat/tabs/member.html' %}
     </div>
 {% endblock %}
 
@@ -174,6 +32,7 @@
 {% block extra_css %}
     {% include 'bundles/datatables-css.html' %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
 

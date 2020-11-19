@@ -1,0 +1,77 @@
+
+{% load evelinks %}
+{% load i18n %}
+
+<div id="fats" class="tab-pane fade in active panel-default">
+    <div class="panel-body">
+        <h4>{% translate "Your Most Recent FATs" %}</h4>
+
+        <p>{% translate "Only charaters that have recent FATs are shown." %}</p>
+
+        {% if fats %}
+            <ul class="nav nav-pills">
+                {% for char in fats %}
+                    {% if forloop.first %}
+                        <li class="active"><a data-toggle="tab" href="#{{ char|last }}"><img class="img-circle" src="{{ char|last|character_portrait_url:32 }}"/>  {{ char.0 }}</a></li>
+                    {% else %}
+                        <li><a data-toggle="tab" href="#{{ char|last }}"><img class="img-circle" src="{{ char|last|character_portrait_url:32 }}"/>  {{ char.0 }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content">
+                {% for char in fats %}
+                    <div id="{{ char|last }}" class="tab-pane fade in panel-default{% if forloop.first %} active{% endif %}">
+                        <div class="panel-body">
+                            {% if char|slice:"1:-1"|length > 0 %}
+                                <table class="table">
+                                    <thead>
+                                        <th>Fleet Name</th>
+                                        <th>Fleet Type</th>
+                                        <th>Location</th>
+                                        <th>Ship</th>
+                                        <th>EVE Time</th>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for afat in char|slice:"1:" %}
+                                            <tr>
+                                                <td>
+                                                    {% if afat.afatlink.fleet %}
+                                                        {{ afat.afatlink.fleet }}
+                                                    {% else %}
+                                                        {{ afat.afatlink.hash }}
+                                                    {% endif %}
+
+                                                    {% if afat.afatlink.is_esilink %}
+                                                        <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if afat.afatlink.link_type %}
+                                                        {{ afat.afatlink.link_type.name }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ afat.system }}</td>
+                                                <td>{{ afat.shiptype }}</td>
+                                                <td>{{ afat.afatlink.afattime|date:"Y-M-d, H:i" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <div class="alert alert-warning" role="alert">
+                                    <p>{% translate "No FATs for" %} {{ char.0 }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>
+                {% translate "No recent FAT activity registered for any of your characters." %}
+            </p>
+        {% endif %}
+    </div>
+</div>

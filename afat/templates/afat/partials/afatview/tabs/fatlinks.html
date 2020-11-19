@@ -1,0 +1,60 @@
+
+{% load i18n %}
+
+<div id="fatlinks" class="tab-pane fade panel-default">
+    <div class="panel-body">
+        <h4>{% translate "Most Recent FAT Links" %}</h4>
+
+        <table class="table">
+            <thead>
+                <th>{% translate "Fleet Name" %}</th>
+                <th>{% translate "Creator" %}</th>
+                <th>{% translate "EVE Time" %}</th>
+
+                {% if permissions.fatlinks.manipulate %}
+                    <th>{% translate "Actions" %}</th>
+                {% endif %}
+            </thead>
+
+            <tbody>
+                {% for link in links %}
+                    <tr>
+                        <td>
+                            {% if link.fleet %}
+                                {{ link.fleet }}
+                            {% else %}
+                                {{ link.hash }}
+                            {% endif %}
+
+                            {% if link.is_esilink %}
+                                <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ link.creator.profile.main_character.character_name }}</td>
+                        <td>{{ link.afattime|date:"Y-M-d, H:i" }}</td>
+
+                        {% if permissions.fatlinks.manipulate %}
+                            <td>
+                                {% if permissions.fatlinks.change %}
+                                    <a class="btn btn-info btn-sm" href="{% url 'afat:link_edit' link.hash %}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                {% endif %}
+
+                                {% if permissions.fatlinks.delete %}
+                                    <a class="btn btn-danger btn-sm"
+                                        data-toggle="modal"
+                                        data-target="#deleteModal"
+                                        data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_delete' link.hash %}"
+                                        data-name="{% if link.fleet %}{{ link.fleet }}{% else %}{{ link.hash }}{% endif %}">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
