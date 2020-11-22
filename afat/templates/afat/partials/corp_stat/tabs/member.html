@@ -5,11 +5,11 @@
     <div class="panel-body">
         <h3>{{ corporation }} {% translate "Members" %}</h3>
 
-        <table class="table" id="corp-members">
+        <table class="table table-striped" id="corp-members" style="width: 100%;">
             <thead>
                 <th>{% translate "Character" %}</th>
                 <th>{% translate "FATs" %}</th>
-                <th>{% translate "Character Stats" %}</th>
+                <th><!-- {% translate "Character Stats" %} --></th>
             </thead>
 
             <tbody>
@@ -17,7 +17,7 @@
                     <tr>
                         <td>{{ key }}</td>
                         <td>{{ value.0 }}</td>
-                        <td>
+                        <td class="text-right">
                             <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_char' value.1 year month %}">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                             </a>
