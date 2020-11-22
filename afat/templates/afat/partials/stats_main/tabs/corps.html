@@ -32,7 +32,7 @@
 
                         <div id="{% if key == 'No Alliance' %}0000{% else %}{{ value.0 }}{% endif %}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{% if key == 'No Alliance' %}0000{% else %}{{ value.0 }}{% endif %}">
                             <div class="panel-body">
-                                <table class="table">
+                                <table class="table table-striped">
                                     <tbody>
                                     {% for corp in value %}
                                         {% if forloop.first %}
@@ -40,7 +40,7 @@
                                         <tr>
                                             <td><img src="{{ corp.0|corporation_logo_url:32 }}" /></td>
                                             <td>{{ corp.1 }}</td>
-                                            <td>
+                                            <td class="text-right">
                                                 <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.0 year %}">
                                                     <span class="glyphicon glyphicon-eye-open"></span>
                                                 </a>
@@ -55,12 +55,12 @@
                     </div>
             {% endfor %}
         {% elif permissions.stats.corp.view_own %}
-            <table class="table">
+            <table class="table table-striped">
                 <tbody>
                     <tr>
                         <td><img src="{{ data.0.0|corporation_logo_url:32 }}" /> </td>
                         <td>{{ data.0.1 }}</td>
-                        <td>
+                        <td class="text-right">
                             <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' data.0.0 year %}">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                             </a>

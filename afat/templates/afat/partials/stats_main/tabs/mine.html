@@ -27,7 +27,7 @@
                 {% endif %}
                     <div class="panel-body">
                     {% if char.1|length > 0 %}
-                        <table class="table">
+                        <table class="table table-striped">
                             <thead>
                                 <th>{% translate "Month" %}</th>
                                 <th>{% translate "FAT Count" %}</th>
@@ -39,7 +39,7 @@
                                     <tr>
                                         <td>{{ month|month }}</td>
                                         <td>{{ fatcount }}</td>
-                                        <td>
+                                        <td class="text-right">
                                             <a href="{% url 'afat:stats_char' char.2 year month %}" class="btn btn-primary btn-sm">
                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                             </a>
