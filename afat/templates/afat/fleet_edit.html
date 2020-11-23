@@ -29,35 +29,35 @@
     {% include "afat/modals/delete-fat.html" %}
 {% endblock %}
 
-{% block extra_javascript %}
-    {% include 'bundles/datatables-js.html' %}
-    {% include 'bundles/clipboard-js.html' %}
-{% endblock %}
-
 {% block extra_css %}
     {% include 'bundles/datatables-css.html' %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
 {% endblock %}
 
-{% block extra_script %}
-    $(document).ready(function(){
-        $('#fat-chars').DataTable();
+{% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/clipboard-js.html' %}
 
-        var clipboard = new ClipboardJS('.copy-btn');
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $('#fat-chars').DataTable();
 
-        clipboard.on('success', function(e) {
-            $('.copy-btn').tooltip('show');
+            var clipboard = new ClipboardJS('.copy-btn');
+
+            clipboard.on('success', function(e) {
+                $('.copy-btn').tooltip('show');
+            });
+
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var url = button.data('url') // Extract info from data-* attributes
+                var name = button.data('name');
+                var modal = $(this)
+
+                modal.find('#fat-link').attr('href', url)
+                modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
+            });
         });
-
-        $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var url = button.data('url') // Extract info from data-* attributes
-            var name = button.data('name');
-
-            var modal = $(this)
-            modal.find('#fat-link').attr("href", url)
-            modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
-        });
-    });
+    </script>
 {% endblock %}
