@@ -146,9 +146,10 @@ def stats(request, year: int = None):
     months = []
 
     for char in chars:
-        char_l = [char.character.character_name]
         char_fats = AFat.objects.filter(afatlink__afattime__year=year)
         char_stats = {}
+
+        char_has_fats = False
 
         for i in range(1, 13):
             char_fat_count = (
@@ -159,10 +160,13 @@ def stats(request, year: int = None):
 
             if char_fat_count > 0:
                 char_stats[str(i)] = char_fat_count
+                char_has_fats = True
 
-        char_l.append(char_stats)
-        char_l.append(char.character.character_id)
-        months.append(char_l)
+        if char_has_fats is True:
+            char_l = [char.character.character_name]
+            char_l.append(char_stats)
+            char_l.append(char.character.character_id)
+            months.append(char_l)
 
     context = {
         "data": data,
