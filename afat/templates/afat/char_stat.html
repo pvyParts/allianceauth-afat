@@ -24,11 +24,6 @@
     </div>
 {% endblock %}
 
-{% block extra_javascript %}
-    {% include 'bundles/datatables-js.html' %}
-    {% include 'bundles/moment-js.html' %}
-{% endblock %}
-
 {% block extra_css %}
     {% include 'bundles/datatables-css.html' %}
 
@@ -36,28 +31,39 @@
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
 
-{% block extra_script %}
-    $.fn.dataTable.moment = function(format, locale) {
-        var types = $.fn.dataTable.ext.type;
+{% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/moment-js.html' %}
 
-        // Add type detection
-        types.detect.unshift(function(d) {
-            return moment(d, format, locale, true).isValid() ?
-                'moment-'+format :
-                null;
-        } );
+    <script type="application/javascript">
+        /**
+         * datetime formatting
+         *
+         * @param format
+         * @param locale
+         */
+        $.fn.dataTable.moment = function(format, locale) {
+            var types = $.fn.dataTable.ext.type;
 
-        // Add sorting method - use an integer for the sorting
-        types.order[ 'moment-'+format+'-pre' ] = function(d) {
-            return moment(d, format, locale, true).unix();
+            // Add type detection
+            types.detect.unshift(function(d) {
+                return moment(d, format, locale, true).isValid() ? 'moment-' + format : null;
+            });
+
+            // Add sorting method - use an integer for the sorting
+            types.order['moment-' + format + '-pre'] = function(d) {
+                return moment(d, format, locale, true).unix();
+            };
         };
-    };
 
-    $(document).ready(function() {
-        $.fn.dataTable.moment('YYYY-MMM-D, HH:mm');
+        $(document).ready(function() {
+            $.fn.dataTable.moment('YYYY-MMM-D, HH:mm');
 
-        $('#raw-data').DataTable({
-            "order": [[ 4, "desc" ]]
+            $('#raw-data').DataTable({
+                "order": [
+                    [4, "desc"]
+                ]
+            });
         });
-    });
+    </script>
 {% endblock %}

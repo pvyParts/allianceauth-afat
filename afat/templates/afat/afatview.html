@@ -49,14 +49,16 @@
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
 
-{% block extra_script %}
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var url = button.data('url') // Extract info from data-* attributes
-        var name = button.data('name');
+{% block extra_javascript %}
+    <script type="application/javascript">
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var url = button.data('url') // Extract info from data-* attributes
+            var name = button.data('name');
+            var modal = $(this)
 
-        var modal = $(this)
-        modal.find('#fat-link').attr("href", url)
-        modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
-    });
+            modal.find('#fat-link').attr('href', url)
+            modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
+        });
+    </script>
 {% endblock %}
