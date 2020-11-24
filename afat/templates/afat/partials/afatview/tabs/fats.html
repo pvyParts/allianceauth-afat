@@ -11,11 +11,12 @@
         {% if fats %}
             <ul class="nav nav-pills">
                 {% for char in fats %}
-                    {% if forloop.first %}
-                        <li class="active"><a data-toggle="tab" href="#{{ char|last }}"><img class="img-circle" src="{{ char|last|character_portrait_url:32 }}"/>  {{ char.0 }}</a></li>
-                    {% else %}
-                        <li><a data-toggle="tab" href="#{{ char|last }}"><img class="img-circle" src="{{ char|last|character_portrait_url:32 }}"/>  {{ char.0 }}</a></li>
-                    {% endif %}
+                    <li class="afat-character-tab{% if forloop.first %} active{% endif %}">
+                        <a data-toggle="tab" href="#{{ char|last }}">
+                            <img class="img-circle" src="{{ char|last|character_portrait_url:32 }}"/>
+                            {{ char.0 }}
+                        </a>
+                    </li>
                 {% endfor %}
             </ul>
 
@@ -26,11 +27,13 @@
                             {% if char|slice:"1:-1"|length > 0 %}
                                 <table class="table table-striped">
                                     <thead>
-                                        <th>Fleet Name</th>
-                                        <th>Fleet Type</th>
-                                        <th>Location</th>
-                                        <th>Ship</th>
-                                        <th>EVE Time</th>
+                                        <tr>
+                                            <th>{% translate 'Fleet Name' %}</th>
+                                            <th>{% translate 'Fleet Type' %}</th>
+                                            <th>{% translate 'Location' %}</th>
+                                            <th>{% translate 'Ship' %}</th>
+                                            <th>{% translate 'EVE Time' %}</th>
+                                        </tr>
                                     </thead>
 
                                     <tbody>
@@ -44,7 +47,9 @@
                                                     {% endif %}
 
                                                     {% if afat.afatlink.is_esilink %}
-                                                        <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
+                                                        <span class="label label-success afat-label afat-label-via-esi">
+                                                            {% translate 'via ESI' %}
+                                                        </span>
                                                     {% endif %}
                                                 </td>
                                                 <td>

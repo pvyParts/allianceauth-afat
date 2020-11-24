@@ -45,11 +45,11 @@
 
             var clipboard = new ClipboardJS('.copy-btn');
 
-            clipboard.on('success', function(e) {
+            clipboard.on('success', function() {
                 $('.copy-btn').tooltip('show');
             });
 
-            $('#deleteModal').on('show.bs.modal', function (event) {
+            $('#deleteModal').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
                 var url = button.data('url') // Extract info from data-* attributes
                 var name = button.data('name');
