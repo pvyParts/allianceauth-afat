@@ -13,9 +13,9 @@
                         <div class="panel-heading" role="tab" id="heading{% if key == 'No Alliance' %}0000{% else %}{{ value.0 }}{% endif %}">
                             <h4 class="panel-title">
                                 {% if key == 'No Alliance' %}
-                                    <img src="{{ 1|alliance_logo_url:32 }}" alt="{% translate 'No Alliance' %}"/>
+                                    <img src="{{ 1|alliance_logo_url:32 }}" alt="{% translate 'No Alliance' %}">
                                 {% else %}
-                                    <img src="{{ value.0|alliance_logo_url:32 }}" alt="{{ key }}" />
+                                    <img src="{{ value.0|alliance_logo_url:32 }}" alt="{{ key }}">
                                 {% endif %}
 
                                 <a role="button"
@@ -45,7 +45,7 @@
                                             {% if forloop.first %}
                                             {% else %}
                                                 <tr>
-                                                    <td><img src="{{ corp.0|corporation_logo_url:32 }}" alt="{{ corp.1 }}"/></td>
+                                                    <td><img src="{{ corp.0|corporation_logo_url:32 }}" alt="{{ corp.1 }}"></td>
                                                     <td>{{ corp.1 }}</td>
                                                     <td class="text-right">
                                                         <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' corp.0 year %}">
@@ -65,7 +65,7 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <td><img src="{{ data.0.0|corporation_logo_url:32 }}" alt="{{ data.0.1 }}" /> </td>
+                            <td><img src="{{ data.0.0|corporation_logo_url:32 }}" alt="{{ data.0.1 }}"></td>
                             <td>{{ data.0.1 }}</td>
                             <td class="text-right">
                                 <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' data.0.0 year %}">
