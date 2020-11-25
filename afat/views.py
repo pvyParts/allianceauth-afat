@@ -82,9 +82,9 @@ def afat_view(request):
             .reverse()[:30]
         )
 
-        char_1 = [char.character.character_name]
-
         if fat.count() > 0:
+            char_1 = [char.character.character_name]
+
             for f in fat:
                 char_1.append(f)
 
