@@ -13,10 +13,13 @@
         <div class="tab-content">
             <div class="tab-pane fade in active panel-default" id="fatsbyship">
                 <div class="panel-body">
-                    <h3>{% translate "FATs By Ship Type" %}</h3>
+                    <h3>
+                        {% translate "FATs By Ship Type" %}
+                    </h3>
 
                     <canvas id="ship-pie" width="800" height="500"></canvas>
-                    <script>
+
+                    <script type="application/javascript">
                         var shipPieChart = new Chart(document.getElementById("ship-pie"), {
                             type: "pie",
                             data: {
@@ -29,17 +32,20 @@
                             options: {
                                 responsive: true
                             }
-                        })
+                        });
                     </script>
                 </div>
             </div>
 
             <div id="fatsbytime" class="tab-pane fade in panel-default">
                 <div class="panel-body">
-                    <h3>{% translate "FATs By Time" %}</h3>
+                    <h3>
+                        {% translate "FATs By Time" %}
+                    </h3>
 
                     <canvas id="time-line" width="800" height="500"></canvas>
-                    <script>
+
+                    <script type="application/javascript">
                         var timeLineChart = new Chart(document.getElementById("time-line"), {
                             type: 'line',
                             data: {
@@ -53,17 +59,20 @@
                             options: {
                                 responsive: false
                             }
-                        })
+                        });
                     </script>
                 </div>
             </div>
 
             <div class="tab-pane fade in panel-default" id="fatsbyweek">
                 <div class="panel-body">
-                    <h3>{% translate "FATs By Weekday" %}</h3>
+                    <h3>
+                        {% translate "FATs By Weekday" %}
+                    </h3>
 
                     <canvas id="weekday-line" width="800" height="500"></canvas>
-                    <script>
+
+                    <script type="application/javascript">
                         var weekdayLineChart = new Chart(document.getElementById('weekday-line'), {
                             type: 'line',
                             data:{
@@ -77,17 +86,20 @@
                             options: {
                                 responsive: false
                             }
-                        })
+                        });
                     </script>
                 </div>
             </div>
 
             <div class="tab-pane fade in panel-default" id="avgfats">
                 <div class="panel-body">
-                    <h3>{% translate "Average FATs By Corporation" %}</h3>
+                    <h3>
+                        {% translate "Average FATs By Corporation" %}
+                    </h3>
 
                     <canvas id="avgs" width="1000" height="700"></canvas>
-                    <script>
+
+                    <script type="application/javascript">
                         var averagesHorizontalBarChart = new Chart(document.getElementById('avgs'), {
                             type: 'horizontalBar',
                             data:{
@@ -113,7 +125,7 @@
                                     }]
                                 }
                             }
-                        })
+                        });
                     </script>
                 </div>
             </div>

@@ -7,13 +7,15 @@
 
         <table class="table table-striped" style="width: 100%;">
             <thead>
-                <th>{% translate "Fleet Name" %}</th>
-                <th>{% translate "Creator" %}</th>
-                <th>{% translate "EVE Time" %}</th>
+                <tr>
+                    <th>{% translate "Fleet Name" %}</th>
+                    <th>{% translate "Creator" %}</th>
+                    <th>{% translate "EVE Time" %}</th>
 
-                {% if permissions.fatlinks.manipulate %}
-                    <th>{% translate "Actions" %}</th>
-                {% endif %}
+                    {% if permissions.fatlinks.manipulate %}
+                        <th>{% translate "Actions" %}</th>
+                    {% endif %}
+                </tr>
             </thead>
 
             <tbody>

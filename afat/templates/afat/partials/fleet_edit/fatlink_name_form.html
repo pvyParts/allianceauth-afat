@@ -28,10 +28,16 @@
                 <p>Link:
                     <i>
                         {{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}
-                        <a class="copy-link" href="{% url 'afat:link_click' link.hash %}" class="label label-success"></a>
+                        <a class="label label-success copy-link" href="{% url 'afat:link_click' link.hash %}"></a>
                     </i>
 
-                    <button class="copy-btn btn btn-success btn-sm" data-toggle="tooltip" data-html="true" title='{% translate "Copied!" %}' data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}" style="margin-left: 1rem;" >
+                    <button class="copy-btn btn btn-success btn-sm"
+                            data-toggle="tooltip"
+                            data-html="true"
+                            title='{% translate "Copied!" %}'
+                            data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_click' link.hash %}"
+                            style="margin-left: 1rem;"
+                    >
                         {% translate "Copy me!" %}
                     </button>
                 </p>

@@ -82,9 +82,9 @@ def afat_view(request):
             .reverse()[:30]
         )
 
-        char_1 = [char.character.character_name]
-
         if fat.count() > 0:
+            char_1 = [char.character.character_name]
+
             for f in fat:
                 char_1.append(f)
 
@@ -760,7 +760,9 @@ def links_data(request, year: int = None) -> JsonResponse:
         if fatlink.link_type:
             fatlink_type = fatlink.link_type.name
 
-        creator = fatlink.creator.profile.main_character.character_name
+        creator = fatlink.creator.username
+        if fatlink.creator.profile.main_character is not None:
+            creator = fatlink.creator.profile.main_character.character_name
         time = fatlink.afattime
         fats_number = fatlink.number_of_fats
 

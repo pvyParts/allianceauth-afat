@@ -1,4 +1,4 @@
-
+{% load filters %}
 {% load evelinks %}
 {% load i18n %}
 
@@ -6,13 +6,14 @@
     <div class="panel-body">
         <h4>{% translate "Your monthly stats" %}</h4>
 
-        <p>{% translate "Only months with FAT data of the current year are shown." %}</p>
+        <p>{% translate "Only months with FAT data of the selected year are shown." %}</p>
+        <p>{% translate "Only charaters that have FATs for the selected year are shown." %}</p>
 
         <ul class="nav nav-pills">
             {% for char in charstats %}
                 <li class="afat-stats-character-tab{% if forloop.first %} active{% endif %}">
                     <a data-toggle="tab" href="#{{ char.2 }}">
-                        <img class="img-circle" src="{{ char.2|character_portrait_url:32 }}"/>
+                        <img class="img-circle" src="{{ char.2|character_portrait_url:32 }}" alt="{{ char.0 }}">
                         {{ char.0 }}
                     </a>
                 </li>
@@ -27,9 +28,11 @@
                             {% if char.1|length > 0 %}
                                 <table class="table table-striped">
                                     <thead>
-                                        <th>{% translate "Month" %}</th>
-                                        <th>{% translate "FAT Count" %}</th>
-                                        <th></th>
+                                        <tr>
+                                            <th>{% translate "Month" %}</th>
+                                            <th>{% translate "FAT Count" %}</th>
+                                            <th></th>
+                                        </tr>
                                     </thead>
 
                                     <tbody>
