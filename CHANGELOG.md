@@ -26,9 +26,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - tables tweaked …
-» preventing DataTables from getting wider than their parent element
-» even/odd styles
-» text alignments
+    - preventing DataTables from getting wider than their parent element
+    - even/odd styles
+    - text alignments
 
 
 ## [1.3.0] - 2020-11-19
