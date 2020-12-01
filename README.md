@@ -28,6 +28,7 @@ However data does not share, but you can migrate their data to AFAT, for more in
     - [From Alliance Auth native FAT](#from-alliance-auth-native-fat)
     - [From bFAT](#from-bfat)
     - [From ImicusFAT](#from-imicusfat)
+- [Changelog](CHANGELOG.md)
 - [Credits](#credits)
 
 ## Installation
