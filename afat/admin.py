@@ -70,8 +70,8 @@ class AFatLinkAdmin(admin.ModelAdmin):
     def _link_type(self, obj):
         if obj.link_type:
             return obj.link_type.name
-        else:
-            return "-"
+
+        return "-"
 
     _link_type.short_description = "Fleet Type"
     _link_type.admin_order_field = "link_type__name"
