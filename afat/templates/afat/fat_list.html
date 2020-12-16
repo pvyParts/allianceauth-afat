@@ -42,23 +42,27 @@
         </div>
     {% endif %}
 
-    <table class="table table-striped" id="link-list" style="width: 100%;">
-        <thead>
-            <tr>
-                <th>{% translate "Fleet Name" %}</th>
-                <th>{% translate "Fleet Type" %}</th>
-                <th>{% translate "Creator" %}</th>
-                <th>{% translate "EVE Time" %}</th>
-                <th>{% translate "# of FATs" %}</th>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table table-striped" id="link-list" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>{% translate "Fleet Name" %}</th>
+                        <th>{% translate "Fleet Type" %}</th>
+                        <th>{% translate "Creator" %}</th>
+                        <th>{% translate "EVE Time" %}</th>
+                        <th>{% translate "# of FATs" %}</th>
 
-                {% if permissions.fatlinks.manipulate %}
-                    <th>{% translate "Actions" %}</th>
-                {% endif %}
-            </tr>
-        </thead>
+                        {% if permissions.fatlinks.manipulate %}
+                            <th>{% translate "Actions" %}</th>
+                        {% endif %}
+                    </tr>
+                </thead>
 
-        <tbody></tbody>
-    </table>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 
     {% include "afat/modals/delete-fat-link.html" %}
 {% endblock %}
