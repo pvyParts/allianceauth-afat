@@ -20,8 +20,8 @@
 
         <p>&nbsp;</p>
 
-        <div class="col-md-2">{% translate "Creator:" %} {{ link.creator.profile.main_character.character_name }}</div>
-        <div class="col-md-2 col-md-offset-8">{% translate "Time:" %} {{ link.afattime }}</div>
+        <div class="col-md-6">{% translate "Creator:" %} {{ link.creator.profile.main_character.character_name }}</div>
+        <div class="col-md-6 text-right">{% translate "Time:" %} {{ link.afattime }}</div>
 
         {% if link_ongoing %}
             <div class="col-md-10">

@@ -1,0 +1,525 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-12 14:23+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: auth_hooks.py:22 templates/afat/partials/menu.html:15
+msgid "Fleet Activity Tracking"
+msgstr ""
+
+#: forms.py:17 forms.py:37 forms.py:48 templates/afat/fat_list.html:48
+#: templates/afat/partials/addlink/clickable_link.html:28
+#: templates/afat/partials/addlink/esi_link.html:23
+#: templates/afat/partials/afatview/tabs/fatlinks.html:11
+#: templates/afat/partials/afatview/tabs/fats.html:31
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:11
+msgid "Fleet Name"
+msgstr ""
+
+#: forms.py:18 forms.py:39
+msgid "Type"
+msgstr ""
+
+#: forms.py:26 templates/afat/partials/fleet_edit/tabs/manualfat.html:19
+msgid "Character Name"
+msgstr ""
+
+#: forms.py:27 templates/afat/partials/fleet_edit/tabs/manualfat.html:27
+msgid "System"
+msgstr ""
+
+#: forms.py:28 templates/afat/partials/fleet_edit/tabs/fats.html:13
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:31
+msgid "Ship Type"
+msgstr ""
+
+#: forms.py:38
+msgid "Duration"
+msgstr ""
+
+#: templates/afat/addlink.html:6 templates/afat/afatview.html:7
+#: templates/afat/base.html:6 templates/afat/date_select.html:7
+#: templates/afat/date_select.html:13 templates/afat/fat_list.html:6
+#: templates/afat/fleet_edit.html:6 templates/afat/stats_main.html:8
+msgid "Fleet Activity"
+msgstr ""
+
+#: templates/afat/addlink.html:12
+msgid "Create a FAT Link"
+msgstr ""
+
+#: templates/afat/addlink.html:24 templates/afat/afatview.html:26
+#: templates/afat/fat_list.html:35
+#: templates/afat/partials/fleet_edit/message.html:21
+#: templates/afat/partials/fleet_edit/message.html:82
+#: templates/afat/partials/fleet_edit/message.html:93
+#: templates/afat/stats_main.html:28
+msgid "Oh No!"
+msgstr ""
+
+#: templates/afat/addlink.html:26 templates/afat/afatview.html:28
+#: templates/afat/fat_list.html:37
+#: templates/afat/partials/fleet_edit/message.html:10
+#: templates/afat/partials/fleet_edit/message.html:31
+#: templates/afat/partials/fleet_edit/message.html:62
+#: templates/afat/partials/fleet_edit/message.html:72
+#: templates/afat/partials/fleet_edit/message.html:95
+#: templates/afat/stats_main.html:30
+msgid "Success!"
+msgstr ""
+
+#: templates/afat/afatview.html:13
+msgid "Recent Activity"
+msgstr ""
+
+#: templates/afat/afatview.html:61 templates/afat/fat_list.html:156
+#: templates/afat/fleet_edit.html:59
+msgid "Are you sure you want to delete"
+msgstr ""
+
+#: templates/afat/ally_stat.html:7 templates/afat/ally_stat.html:13
+#: templates/afat/char_stat.html:12 templates/afat/corp_stat.html:6
+#: templates/afat/corp_stat.html:12 templates/afat/partials/menu.html:21
+#: templates/afat/stats_main.html:14
+msgid "Statistics"
+msgstr ""
+
+#: templates/afat/char_stat.html:6
+msgid "FAT Statistics"
+msgstr ""
+
+#: templates/afat/date_select.html:18 templates/afat/fat_list.html:17
+#: templates/afat/partials/ally_stat/month_navigation.html:6
+#: templates/afat/partials/ally_stat/month_navigation.html:8
+#: templates/afat/partials/char_stat/month_navigation.html:6
+#: templates/afat/partials/char_stat/month_navigation.html:8
+#: templates/afat/partials/corp_stat/month_navigation.html:6
+#: templates/afat/partials/corp_stat/month_navigation.html:8
+#: templates/afat/partials/stats_main/year_navigation.html:5
+msgid "Previous Month"
+msgstr ""
+
+#: templates/afat/date_select.html:23 templates/afat/fat_list.html:22
+#: templates/afat/partials/ally_stat/month_navigation.html:15
+#: templates/afat/partials/ally_stat/month_navigation.html:18
+#: templates/afat/partials/char_stat/month_navigation.html:15
+#: templates/afat/partials/char_stat/month_navigation.html:18
+#: templates/afat/partials/corp_stat/month_navigation.html:15
+#: templates/afat/partials/corp_stat/month_navigation.html:18
+#: templates/afat/partials/stats_main/year_navigation.html:10
+msgid "Next Month"
+msgstr ""
+
+#: templates/afat/date_select.html:24 templates/afat/fat_list.html:23
+#: templates/afat/partials/ally_stat/month_navigation.html:16
+#: templates/afat/partials/ally_stat/month_navigation.html:19
+#: templates/afat/partials/char_stat/month_navigation.html:16
+#: templates/afat/partials/char_stat/month_navigation.html:19
+#: templates/afat/partials/corp_stat/month_navigation.html:16
+#: templates/afat/partials/corp_stat/month_navigation.html:19
+#: templates/afat/partials/stats_main/year_navigation.html:11
+msgid "Current Month"
+msgstr ""
+
+#: templates/afat/date_select.html:31
+#: templates/afat/partials/stats_main/tabs/mine.html:32
+msgid "Month"
+msgstr ""
+
+#: templates/afat/date_select.html:32
+#: templates/afat/partials/afatview/tabs_navigation.html:5
+#: templates/afat/partials/ally_stat/tabs/corporations.html:15
+#: templates/afat/partials/corp_stat/tabs/member.html:12
+#: templates/afat/partials/fleet_edit/tabs_navigation.html:5
+msgid "FATs"
+msgstr ""
+
+#: templates/afat/date_select.html:34
+#: templates/afat/partials/ally_stat/tabs/corporations.html:16
+msgid "Avg FATs"
+msgstr ""
+
+#: templates/afat/fat_list.html:12
+msgid "All FAT Links"
+msgstr ""
+
+#: templates/afat/fat_list.html:49
+#: templates/afat/partials/afatview/tabs/fats.html:32
+#: templates/afat/partials/char_stat/tabs/raw_data.html:12
+msgid "Fleet Type"
+msgstr ""
+
+#: templates/afat/fat_list.html:50
+#: templates/afat/partials/afatview/tabs/fatlinks.html:12
+msgid "Creator"
+msgstr ""
+
+#: templates/afat/fat_list.html:51
+#: templates/afat/partials/afatview/tabs/fatlinks.html:13
+#: templates/afat/partials/afatview/tabs/fats.html:35
+#: templates/afat/partials/char_stat/tabs/raw_data.html:15
+msgid "EVE Time"
+msgstr ""
+
+#: templates/afat/fat_list.html:52
+#: templates/afat/partials/char_stat/tabs/graphs.html:38
+msgid "# of FATs"
+msgstr ""
+
+#: templates/afat/fat_list.html:55
+#: templates/afat/partials/afatview/tabs/fatlinks.html:16
+#: templates/afat/partials/fleet_edit/tabs/fats.html:16
+msgid "Actions"
+msgstr ""
+
+#: templates/afat/fat_list.html:140
+#: templates/afat/partials/afatview/tabs/fats.html:51
+msgid "via ESI"
+msgstr ""
+
+#: templates/afat/fleet_edit.html:13
+msgid "Edit FAT Link"
+msgstr ""
+
+#: templates/afat/modals/delete-fat-link.html:9
+msgid "Delete FAT Link"
+msgstr ""
+
+#: templates/afat/modals/delete-fat-link.html:21
+#: templates/afat/modals/delete-fat.html:21
+msgid "Cancel"
+msgstr ""
+
+#: templates/afat/modals/delete-fat-link.html:25
+#: templates/afat/modals/delete-fat.html:25
+msgid "Delete"
+msgstr ""
+
+#: templates/afat/modals/delete-fat.html:9
+msgid "Delete FAT"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:8
+msgid "Create a clickable FAT Link"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:14
+msgid ""
+"This option will create a clickable like just like that created by the "
+"standard FAT module."
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:29
+#: templates/afat/partials/addlink/esi_link.html:26
+msgid "Enter fleet name"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:37
+#: templates/afat/partials/addlink/esi_link.html:34
+msgid "Fleet Type (optional)"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:41
+#: templates/afat/partials/addlink/esi_link.html:38
+msgid "Please select a fleet type"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:54
+msgid "FAT expiry in minutes"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:57
+msgid "Expiry Time in Minutes"
+msgstr ""
+
+#: templates/afat/partials/addlink/clickable_link.html:65
+msgid "Create Link"
+msgstr ""
+
+#: templates/afat/partials/addlink/esi_link.html:8
+msgid "Create link using ESI"
+msgstr ""
+
+#: templates/afat/partials/addlink/esi_link.html:14
+msgid ""
+"This option will automatically register the entire fleet without member "
+"clicks. Use this if you <b>are</b> Fleet Boss, otherwise please use the "
+"clickable FATLink option."
+msgstr ""
+
+#: templates/afat/partials/addlink/esi_link.html:52
+msgid "Add ESI Link"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fatlinks.html:6
+msgid "Most Recent FAT Links"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:7
+msgid "Your Most Recent FATs"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:9
+msgid "Only charaters that have recent FATs are shown."
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:33
+#: templates/afat/partials/char_stat/tabs/raw_data.html:13
+#: templates/afat/partials/fleet_edit/tabs/fats.html:12
+msgid "Location"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:34
+#: templates/afat/partials/char_stat/tabs/raw_data.html:14
+msgid "Ship"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:69
+#: templates/afat/partials/stats_main/tabs/mine.html:54
+msgid "No FATs for"
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs/fats.html:79
+msgid "No recent FAT activity registered for any of your characters."
+msgstr ""
+
+#: templates/afat/partials/afatview/tabs_navigation.html:6
+#: templates/afat/partials/menu.html:25
+msgid "FAT Links"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/corporations.html:8
+msgid "Member Corps"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/corporations.html:14
+msgid "Corporation"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/corporations.html:17
+msgid "Corporation Stats"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/graphs.html:7
+#: templates/afat/partials/ally_stat/tabs/graphs.html:17
+#: templates/afat/partials/corp_stat/tabs/graphs.html:7
+#: templates/afat/partials/corp_stat/tabs/graphs.html:15
+msgid "FATs By Ship Type"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/graphs.html:8
+msgid "Corporation Performance"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/graphs.html:9
+#: templates/afat/partials/ally_stat/tabs/graphs.html:43
+#: templates/afat/partials/corp_stat/tabs/graphs.html:8
+#: templates/afat/partials/corp_stat/tabs/graphs.html:53
+msgid "FATs By Time"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/graphs.html:10
+#: templates/afat/partials/ally_stat/tabs/graphs.html:70
+#: templates/afat/partials/corp_stat/tabs/graphs.html:9
+#: templates/afat/partials/corp_stat/tabs/graphs.html:78
+msgid "FATs By Weekday"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs/graphs.html:97
+msgid "Average FATs By Corporation"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs_navigation.html:5
+#: templates/afat/partials/char_stat/tabs_navigation.html:5
+#: templates/afat/partials/corp_stat/tabs_navigation.html:5
+msgid "Graphs"
+msgstr ""
+
+#: templates/afat/partials/ally_stat/tabs_navigation.html:6
+msgid "Corporations"
+msgstr ""
+
+#: templates/afat/partials/char_stat/tabs/graphs.html:7
+msgid "FATs by Ship Type"
+msgstr ""
+
+#: templates/afat/partials/char_stat/tabs/graphs.html:29
+msgid "FATs by Time of Day"
+msgstr ""
+
+#: templates/afat/partials/char_stat/tabs/raw_data.html:6
+msgid "FATs for"
+msgstr ""
+
+#: templates/afat/partials/char_stat/tabs/raw_data.html:11
+msgid "Name"
+msgstr ""
+
+#: templates/afat/partials/char_stat/tabs_navigation.html:6
+#: templates/afat/partials/fleet_edit/tabs_navigation.html:7
+msgid "Raw Data"
+msgstr ""
+
+#: templates/afat/partials/corp_stat/tabs/member.html:6
+#: templates/afat/partials/corp_stat/tabs_navigation.html:6
+msgid "Members"
+msgstr ""
+
+#: templates/afat/partials/corp_stat/tabs/member.html:11
+#: templates/afat/partials/fleet_edit/tabs/fats.html:11
+msgid "Character"
+msgstr ""
+
+#: templates/afat/partials/corp_stat/tabs/member.html:13
+msgid "Character Stats"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:14
+msgid "Set Name"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:23
+msgid "Creator:"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:24
+msgid "Time:"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:37
+msgid "Copied!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/fatlink_name_form.html:41
+#: templates/afat/partials/fleet_edit/message.html:51
+msgid "Copy me!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:12
+msgid "FAT Link Created!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:13
+msgid "FATs have been queued, they may take a few mins to show up."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:23
+msgid "Something went wrong!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:33
+msgid "Clickable FAT Link Created!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:34
+msgid ""
+"Make sure to give your fleet members the following link to click so that "
+"they get credit for this fleet."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:38
+msgid "Link"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:64
+msgid "Fleet name successfully changed."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:74
+msgid "Manual FAT processed."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/message.html:84
+msgid ""
+"Manual FAT processing failed! The character name you entered was not found."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/fats.html:6
+msgid "FATs for this FAT Link"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/flatlist.html:6
+msgid "FAT Link Raw Data"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:6
+#: templates/afat/partials/fleet_edit/tabs_navigation.html:6
+msgid "Manual FAT"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:9
+msgid "Is someone missing from the list of FATs? Use this form to add them."
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:11
+msgid "Note:"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:11
+msgid "This action is logged!"
+msgstr ""
+
+#: templates/afat/partials/fleet_edit/tabs/manualfat.html:37
+msgid "Add Manual FAT"
+msgstr ""
+
+#: templates/afat/partials/menu.html:9
+msgid "Toggle navigation"
+msgstr ""
+
+#: templates/afat/partials/menu.html:30
+msgid "Add FAT Link"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/corps.html:7
+msgid "Corporations (Click Alliance Name to See Corps)"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/corps.html:16
+msgid "No Alliance"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/mine.html:7
+msgid "Your monthly stats"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/mine.html:9
+msgid "Only months with FAT data of the selected year are shown."
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/mine.html:10
+msgid "Only charaters that have FATs for the selected year are shown."
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/mine.html:33
+msgid "FAT Count"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs/mine.html:62
+msgid "No FATs for this year at all"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs_navigation.html:5
+msgid "My Stats"
+msgstr ""
+
+#: templates/afat/partials/stats_main/tabs_navigation.html:8
+msgid "Corps"
+msgstr ""
