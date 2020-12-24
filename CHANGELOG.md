@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.4.1] - 2020-12-24
+
+### Added
+
+- Explanation for the "via Esi" labels in FAT list view
+- New "via Esi" label for currently active ESI links
+
+
+### Fixed
+
+- Prevent user from opening more than 1 ESI fleet
+
+
 ## [1.4.0] - 2020-12-24
 
 ### New

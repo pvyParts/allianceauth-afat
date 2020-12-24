@@ -96,6 +96,10 @@ urlpatterns = [
         name="fat_delete",
     ),
     # ajax calls
-    url(r"^links_data/$", views.links_data, name="links_data"),
-    url(r"^links_data/(?P<year>[0-9]+)/$", views.links_data, name="links_data"),
+    url(r"^ajax/links/get_fatlinks/$", views.links_data, name="links_data"),
+    url(
+        r"^ajax/links/get_fatlinks/(?P<year>[0-9]+)/$",
+        views.links_data,
+        name="links_data",
+    ),
 ]
