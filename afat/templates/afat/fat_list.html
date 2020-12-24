@@ -60,6 +60,17 @@
                 </thead>
 
                 <tbody></tbody>
+
+                <tfoot>
+                    <tr>
+                        <td colspan="{% if permissions.fats.manage %}4{% else %}3{% endif %}">
+                            <p>
+                                <span class="label label-success afat-label afat-label-via-esi afat-label-active-esi-fleet">via ESI</span> » Fleet is currently active and FATs are automatically being tracked via ESI<br>
+                                <span class="label label-success afat-label afat-label-via-esi">via ESI</span> » FATs have been automatically tracked via ESI
+                            </p>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -86,13 +97,13 @@
         $(document).ready(function() {
             const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
 
-            var esi_column = 5;
+            let esi_column = 5;
 
             {% if permissions.fatlinks.manipulate %}
                 esi_column = 6;
             {% endif %}
 
-            $('#link-list').DataTable({
+            let linkListTable = $('#link-list').DataTable({
                 ajax: {
                     url: "{% url 'afat:links_data' year %}",
                     dataSrc: '',
@@ -148,13 +159,51 @@
                     bootstrap: true
                 },
             });
+
+            /**
+             * refresh the datatable information every 60 seconds
+             */
+            let intervalReloadDatatable = 60000; // ms
+            let expectedReloadDatatable = Date.now() + intervalReloadDatatable;
+
+            /**
+             * reload datatable "linkListTable"
+             */
+            let realoadDataTable = function() {
+                let dt = Date.now() - expectedReloadDatatable; // the drift (positive for overshooting)
+
+                if(dt > intervalReloadDatatable) {
+                    // something really bad happened. Maybe the browser (tab) was inactive?
+                    // possibly special handling to avoid futile "catch up" run
+                    console.log('Something went wrong, reloading page ...');
+
+                    window.location.replace(
+                        window.location.pathname + window.location.search + window.location.hash
+                    );
+                }
+
+                linkListTable.ajax.reload();
+
+                expectedReloadDatatable += intervalReloadDatatable;
+
+                // take drift into account
+                setTimeout(
+                    realoadDataTable,
+                    Math.max(0, intervalReloadDatatable - dt)
+                );
+            };
+
+            setTimeout(
+                realoadDataTable,
+                intervalReloadDatatable
+            );
         });
 
-        $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var url = button.data('url') // Extract info from data-* attributes
-            var name = button.data('name');
-            var modal = $(this)
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget) // Button that triggered the modal
+            let url = button.data('url') // Extract info from data-* attributes
+            let name = button.data('name');
+            let modal = $(this)
 
             modal.find('#fat-link').attr('href', url)
             modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
