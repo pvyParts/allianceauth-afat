@@ -7,9 +7,11 @@
 [![PyPI Downloads](https://img.shields.io/pypi/dm/allianceauth-afat)](https://pypi.org/project/allianceauth-afat/)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](http://black.readthedocs.io/en/latest/)
 
-An Improved FAT/PAP System for [Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
+An Improved FAT/PAP System for
+[Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
 
-AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pushed when ImicusFAT get updates to keep on par with it.
+AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pushed when
+ImicusFAT get updates to keep on par with it.
 
 ### Feature Highlights/Differences
 - FATLink Creation and Population from ESI
@@ -18,7 +20,8 @@ AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pus
 - Many Core Functionality Improvements and Fixes
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
-However data does not share, but you can migrate their data to AFAT, for more information see below.
+However data does not share, but you can migrate their data to AFAT, for more
+information see below.
 
 ## Contents
 
@@ -38,7 +41,8 @@ This app is a plugin for Alliance Auth. If you don't have Alliance Auth running 
 please install it first before proceeding.
 (see the official [AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html) for details)
 
-**For users migrating from one of the other FAT systems, please read the specific instructions FIRST.**
+**For users migrating from one of the other FAT systems,
+please read the specific instructions FIRST.**
 
 ### Step 1 - Install app
 
@@ -54,6 +58,15 @@ pip install allianceauth-afat
 Configure your AA settings (`local.py`) as follows:
 
 - Add `'afat',` to `INSTALLED_APPS`
+- Add the scheduled task so ESI links will be updated automagically
+
+```python
+# AFAT - https://github.com/ppfeufer/allianceauth-afat
+CELERYBEAT_SCHEDULE["afat_update_esi_fatlinks"] = {
+    "task": "afat.tasks.update_esi_fatlinks",
+    "schedule": crontab(minute="*/1"),
+}
+```
 
 ### Step 3 - Finalize the installation
 
@@ -88,7 +101,8 @@ from bFAT or from ImicusFAT if you have used one of these until now.
 
 **!!IMPORTANT!!**
 
-Only do this once and ONLY BEFORE you are using AFAT. A later migration is **not** possible.
+Only do this once and ONLY BEFORE you are using AFAT.
+A later migration is **not** possible.
 
 
 #### Import from native FAT
@@ -113,5 +127,6 @@ python myauth/manage.py afat_import_from_imicusfat
 
 ## Credits
 • AFAT • Privately maintained by @ppfeufer is a whitelabel of
-[ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained by @exiom with @Aproia and @ppfeufer
-• Based on [allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
+[ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained
+by @exiom with @Aproia and @ppfeufer • Based on
+[allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
