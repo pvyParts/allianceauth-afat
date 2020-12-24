@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.4.0] - 2020-12-24
+
+### New
+
+ESI links will now be updated automagically. This means, pilots who join later will
+still be registered, as long as the FC who created the ESI link is still the actual
+fleet boss and didn't close or leave the fleet.
+
+
 ## [1.3.4] - 2020-12-16
 
 ### Fixed
@@ -16,7 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.3] - 2020-11-28
 
 ### Fixed
-- 'NoneType' object has no attribute 'character_name' (This happens when the creator of a FAT link for what ever reason lost his main char and prevents the FAT link list from being loaded.)
+- 'NoneType' object has no attribute 'character_name'
+  (This happens when the creator of a FAT link for what ever reason lost his main char
+  and prevents the FAT link list from being loaded.)
 
 ### Changed
 - Reducing characters displayed on stats main view to only those with FATs
@@ -41,13 +52,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.0] - 2020-11-19
 
 ### New Feature
-- Import scripts for imports from Alliance Auth's FAT module as well as from bFAT and ImicusFAT. These imports can be done initially right after the first install of AFAT. Fiddling around with SQL to import is no linger needed with this.
+- Import scripts for imports from Alliance Auth's FAT module as well as from bFAT
+  and ImicusFAT. These imports can be done initially right after the first install of
+  AFAT. Fiddling around with SQL to import is no linger needed with this.
 
 ### Added
-- Filter to the Fat Links List view. You can now filter for Fleet Type and is a FAT link was created via ESI or not in the FAT links list.
+- Filter to the Fat Links List view. You can now filter for Fleet Type and is a
+  FAT link was created via ESI or not in the FAT links list.
 
 ### Changed
-- FAT links information in FAT links list is now loaded via ajax. This means, especially for installations with a large number of FAT links, this page should be loaded considerably faster.
+- FAT links information in FAT links list is now loaded via ajax. This means, especially
+  for installations with a large number of FAT links, this page should be loaded considerably faster.
 - Minimum required version of Alliance Auth set to 2.8.0
 
 ### Removed
@@ -57,7 +72,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.2.0] - 2020-10-19
 
 ### New
-- Added a check to `Clickable FATLinks` to verify whether the character is actually online.
+- Added a check to `Clickable FATLinks` to verify whether the character is
+  actually online.
 
 ### Changed
 - Workflow improvements for `ESI FATLinks`
@@ -65,13 +81,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Added Average FATs to the monthly corp stats overview.
-- Added "Basic Access" permission. This permission prevents unintended audience from accessing the module.
+- Added "Basic Access" permission. This permission prevents unintended audience
+  from accessing the module.
 
 ### Updating
 **IMPORTANT**:
-When updating to this version, you will need to give the state/group that should have access to the AFAT module the `afat|Alliance Auth AFAT|Can access the Alliance Auth AFAT module` permission. Without this permission, the user cannot see the link, open any statistics or register via clickable FATLinks.
+When updating to this version, you will need to give the state/group that should have
+access to the AFAT module the
+`afat|Alliance Auth AFAT|Can access the Alliance Auth AFAT module` permission.
+Without this permission, the user cannot see the link, open any statistics or register
+via clickable FATLinks.
 
-To update your existing installation of AFAT, first enable your virtual environment (venv) of your Alliance Auth installation.
+To update your existing installation of AFAT, first enable your virtual environment
+(venv) of your Alliance Auth installation.
 
 ```bash
 pip install -U allianceauth-afat
@@ -94,7 +116,8 @@ Finally restart your supervisor services for AA
 - `char` to `character`
 
 #### Changed URL parts
-- `month/year` to `year/month` (this is to enable us to have yearly statistics for certain views)
+- `month/year` to `year/month` (this is to enable us to have yearly statistics
+  for certain views)
 
 
 ### Added / Changed behavior
@@ -120,7 +143,8 @@ Finally restart your supervisor services for AA
 - Better permission handling in templates
 
 ### Checked
-- Django 3 compatibility (for AA 2.8.0 - https://gitlab.com/allianceauth/allianceauth/-/issues/1261)
+- Django 3 compatibility
+  (for AA 2.8.0 - https://gitlab.com/allianceauth/allianceauth/-/issues/1261)
 
 ### Changed
 - Minimum required Alliance Auth version
@@ -135,7 +159,8 @@ Finally restart your supervisor services for AA
 ### New
 - Some more information has been added to the admin view
 - Better permission handling in templates
-- Django 3 compatibility (for AA 2.8.0 - https://gitlab.com/allianceauth/allianceauth/-/issues/1261)
+- Django 3 compatibility
+  (for AA 2.8.0 - https://gitlab.com/allianceauth/allianceauth/-/issues/1261)
 
 ### Changed
 - Minimum required Alliance Auth version

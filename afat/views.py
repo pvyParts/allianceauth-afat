@@ -950,6 +950,9 @@ def link_create_esi(request, token, fatlink_hash):
         fleet=request.session["fatlink_form__name"],
         creator=request.user,
         hash=fatlink_hash,
+        is_esilink=True,
+        is_registered_on_esi=True,
+        esi_fleet_id=fleet_from_esi["fleet_id"],
     )
 
     # add fleet type if there is any
@@ -960,9 +963,6 @@ def link_create_esi(request, token, fatlink_hash):
         fatlink.link_type = AFatLinkType.objects.get(
             id=request.session["fatlink_form__type"]
         )
-
-    # it's en ESI fatlink
-    fatlink.is_esilink = True
 
     # save it
     fatlink.save()

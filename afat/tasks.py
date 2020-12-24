@@ -6,6 +6,8 @@ tasks
 
 from celery import shared_task
 
+from esi.models import Token
+
 from afat import __title__
 from afat.models import AFat, AFatLink
 from afat.providers import esi
@@ -142,22 +144,127 @@ def process_character(char, fatlink_hash):
     :param fatlink_hash:
     :return:
     """
+
     link = AFatLink.objects.get(hash=fatlink_hash)
-
     char_id = char["character_id"]
-    sol_id = char["solar_system_id"]
-    ship_id = char["ship_type_id"]
-
-    solar_system = esi.client.Universe.get_universe_systems_system_id(
-        system_id=sol_id
-    ).result()
-    ship = esi.client.Universe.get_universe_types_type_id(type_id=ship_id).result()
-
-    sol_name = solar_system["name"]
-    ship_name = ship["name"]
     character = get_or_create_char(character_id=char_id)
-    AFat(
-        afatlink_id=link.pk, character=character, system=sol_name, shiptype=ship_name
-    ).save()
 
-    logger.info("Processing information for character with ID %s", character)
+    # only process if the character is not already registered for this FAT
+    if AFat.objects.filter(character=character, afatlink_id=link.pk).exists() is False:
+        solar_system_id = char["solar_system_id"]
+        ship_type_id = char["ship_type_id"]
+
+        solar_system = esi.client.Universe.get_universe_systems_system_id(
+            system_id=solar_system_id
+        ).result()
+        ship = esi.client.Universe.get_universe_types_type_id(
+            type_id=ship_type_id
+        ).result()
+
+        solar_system_name = solar_system["name"]
+        ship_name = ship["name"]
+
+        logger.info(
+            "Adding {character_name} in {system_name} flying a {ship_name} "
+            "to FAT link {fatlink_hash}".format(
+                character_name=character,
+                system_name=solar_system_name,
+                ship_name=ship_name,
+                fatlink_hash=fatlink_hash,
+            )
+        )
+
+        AFat(
+            afatlink_id=link.pk,
+            character=character,
+            system=solar_system_name,
+            shiptype=ship_name,
+        ).save()
+    else:
+        logger.info(
+            "No changes. No new pilots to add to FAT link {fatlink_hash}".format(
+                fatlink_hash=fatlink_hash
+            )
+        )
+
+
+@shared_task
+def update_esi_fatlinks():
+    """
+    checking ESI fat links for changes
+    """
+
+    required_scopes = ["esi-fleets.read_fleet.v1"]
+
+    close_fleet = False
+
+    try:
+        esi_fatlinks = AFatLink.objects.filter(
+            is_esilink=True, is_registered_on_esi=True
+        )
+
+        for fatlink in esi_fatlinks:
+            logger.info("Processing information for ESI FAT with hash %s", fatlink.hash)
+
+            if fatlink.creator.profile.main_character is not None:
+                # Check if there is a fleet
+                try:
+                    fleet_commander_id = (
+                        fatlink.creator.profile.main_character.character_id
+                    )
+                    esi_token = Token.get_token(fleet_commander_id, required_scopes)
+
+                    fleet_from_esi = (
+                        esi.client.Fleets.get_characters_character_id_fleet(
+                            character_id=fleet_commander_id,
+                            token=esi_token.valid_access_token(),
+                        ).result()
+                    )
+
+                    if fatlink.esi_fleet_id == fleet_from_esi["fleet_id"]:
+                        # Check if we deal with the fleet boss here
+                        try:
+                            esi_fleet_member = (
+                                esi.client.Fleets.get_fleets_fleet_id_members(
+                                    fleet_id=fleet_from_esi["fleet_id"],
+                                    token=esi_token.valid_access_token(),
+                                ).result()
+                            )
+
+                            # process fleet members
+                            process_fats.delay(
+                                data_list=esi_fleet_member,
+                                data_source="esi",
+                                fatlink_hash=fatlink.hash,
+                            )
+                        except Exception:
+                            logger.info(
+                                "Closing ESI FAT with hash {fatlink_hash}. "
+                                "Reason: No fleet boss available".format(
+                                    fatlink_hash=fatlink.hash
+                                )
+                            )
+                            close_fleet = True
+
+                except Exception:
+                    logger.info(
+                        "Closing ESI FAT with hash {fatlink_hash}. "
+                        "Reason: No fleet available".format(fatlink_hash=fatlink.hash)
+                    )
+                    close_fleet = True
+
+            else:
+                logger.info(
+                    "Closing ESI FAT with hash {fatlink_hash}. "
+                    "Reason: No fatlink creator available".format(
+                        fatlink_hash=fatlink.hash
+                    )
+                )
+                close_fleet = True
+
+        if close_fleet is True:
+            fatlink.is_registered_on_esi = False
+            fatlink.save()
+
+    except AFatLink.DoesNotExist:
+        pass
