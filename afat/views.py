@@ -753,7 +753,14 @@ def links_data(request, year: int = None) -> JsonResponse:
         esi_fleet_marker = ""
         via_esi = "No"
         if fatlink.is_esilink:
-            esi_fleet_marker += '<span class="label label-success afat-label afat-label-via-esi">via ESI</span>'
+            esi_fleet_marker_classes = (
+                "label label-success afat-label afat-label-via-esi"
+            )
+            if fatlink.is_registered_on_esi:
+                esi_fleet_marker_classes += " afat-label-active-esi-fleet"
+            esi_fleet_marker += (
+                f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
+            )
             via_esi = "Yes"
 
         fatlink_type = ""
@@ -826,7 +833,16 @@ def link_add(request):
         is_enabled=True,
     ).order_by("name")
 
-    context = {"link_types": link_types, "msg": msg, "permissions": permissions}
+    has_open_esi_fleet = AFatLink.objects.filter(
+        creator=request.user, is_esilink=True, is_registered_on_esi=True
+    ).exists()
+
+    context = {
+        "link_types": link_types,
+        "msg": msg,
+        "permissions": permissions,
+        "has_open_esi_fleet": has_open_esi_fleet,
+    }
 
     logger.info("Add FAT link view called by %s", request.user)
 
