@@ -14,7 +14,6 @@ from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
@@ -751,11 +750,6 @@ def links_data(request, year: int = None) -> JsonResponse:
     :return:
     """
 
-    data = list()
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     if year is None:
         year = datetime.now().year
 
@@ -765,72 +759,11 @@ def links_data(request, year: int = None) -> JsonResponse:
         .annotate(number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True)))
     )
 
-    for fatlink in fatlinks:
-        fatlink_fleet = fatlink.hash
-        if fatlink.fleet:
-            fatlink_fleet = fatlink.fleet
+    fatlink_rows = [
+        convert_fatlinks_to_dict(fatlink, request.user) for fatlink in fatlinks
+    ]
 
-        esi_fleet_marker = ""
-        via_esi = "No"
-        if fatlink.is_esilink:
-            esi_fleet_marker_classes = (
-                "label label-success afat-label afat-label-via-esi"
-            )
-            if fatlink.is_registered_on_esi:
-                esi_fleet_marker_classes += " afat-label-active-esi-fleet"
-            esi_fleet_marker += (
-                f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
-            )
-            via_esi = "Yes"
-
-        fatlink_type = ""
-        if fatlink.link_type:
-            fatlink_type = fatlink.link_type.name
-
-        creator = fatlink.creator.username
-        if fatlink.creator.profile.main_character is not None:
-            creator = fatlink.creator.profile.main_character.character_name
-
-        time = fatlink.afattime
-        fats_number = fatlink.number_of_fats
-
-        actions = ""
-        if permissions["fatlinks"]["manipulate"]:
-            if permissions["fatlinks"]["change"]:
-                button_edit_url = reverse("afat:link_edit", args=[fatlink.hash])
-
-                actions += (
-                    '<a class="btn btn-afat-action btn-info btn-sm" href="'
-                    + button_edit_url
-                    + '">'
-                    '<span class="glyphicon glyphicon-pencil"></span>'
-                    "</a>"
-                )
-
-            if permissions["fatlinks"]["delete"]:
-                button_delete_url = reverse("afat:link_delete", args=[fatlink.hash])
-
-                actions += (
-                    '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
-                    'data-target="#deleteModal" data-url="' + button_delete_url + '" '
-                    'data-name="' + fatlink_fleet + '">'
-                    '<span class="glyphicon glyphicon-trash"></span>'
-                    "</a>"
-                )
-
-        data.append(
-            {
-                "fatlink_fleet": fatlink_fleet + esi_fleet_marker,
-                "link_type": fatlink_type,
-                "creator": creator,
-                "time": time,
-                "fats_number": fats_number,
-                "actions": actions,
-                "via_esi": via_esi,
-            }
-        )
-
-    return JsonResponse(data, safe=False)
+    return JsonResponse(fatlink_rows, safe=False)
 
 
 @login_required()

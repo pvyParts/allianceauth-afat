@@ -107,11 +107,11 @@
                     cache: false
                 },
                 columns: [
-                    {data: 'fatlink_fleet'},
-                    {data: 'link_type'},
-                    {data: 'creator'},
+                    {data: 'fleet_name'},
+                    {data: 'fleet_type'},
+                    {data: 'creator_name'},
                     {
-                        data: 'time',
+                        data: 'fleet_time',
                         render: $.fn.dataTable.render.moment(
                             moment.ISO_8601,
                             DATETIME_FORMAT
