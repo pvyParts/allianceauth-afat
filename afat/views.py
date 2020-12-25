@@ -110,8 +110,6 @@ def dashboard_links_data(request) -> JsonResponse:
     :param request:
     """
 
-    # fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
-
     fatlinks = AFatLink.objects.order_by("-afattime").annotate(
         number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True))
     )[:10]
