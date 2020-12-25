@@ -63,6 +63,50 @@
         $(document).ready(function() {
             const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
 
+            // recent fats per character
+            if (characters.length > 0) {
+                let noFatsWarning = '<div class="alert alert-warning" role="alert">' +
+                    '<p>{% translate "No recent FATs for" %} ###CHARACTER_NAME###</p>' +
+                    '</div>'
+
+                characters.forEach(function(character) {
+                    $('#recent-fats-character-' + character.charId).DataTable({
+                        ajax: {
+                            url: '{% url "afat:dashboard_fats_data" 0 %}'.replace(
+                                '0',
+                                character.charId
+                            ),
+                            dataSrc: '',
+                            cache: false
+                        },
+                        columns: [
+                            {data: 'fleet_name'},
+                            {data: 'fleet_type'},
+                            {data: 'system'},
+                            {data: 'ship_type'},
+                            {
+                                data: 'fleet_time',
+                                render: $.fn.dataTable.render.moment(
+                                    moment.ISO_8601,
+                                    DATETIME_FORMAT
+                                )
+                            },
+                        ],
+                        language: {
+                            emptyTable: noFatsWarning.replace(
+                                '###CHARACTER_NAME###',
+                                character.charName
+                            )
+                        },
+                        paging: false,
+                        ordering: false,
+                        searching: false,
+                        info: false
+                    });
+                });
+            }
+
+            // recent fatlinks
             $('#dashboard-recent-fatlinks').DataTable({
                 ajax: {
                     url: '{% url "afat:dashboard_links_data" %}',
@@ -83,9 +127,6 @@
                     {% if permissions.fatlinks.manipulate %}
                         {data: 'actions'},
                     {% endif %}
-                ],
-                order: [
-                    [0, 'desc']
                 ],
                 paging: false,
                 ordering: false,

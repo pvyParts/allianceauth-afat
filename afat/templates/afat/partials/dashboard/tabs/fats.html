@@ -8,67 +8,54 @@
 
         <p>{% translate "Only charaters that have recent FATs are shown." %}</p>
 
-        {% if fats %}
+        {% if characters %}
+            <script type="application/javascript">
+                let characters = new Array();
+            </script>
+
             <ul class="nav nav-pills">
-                {% for char in fats %}
+                {% for character in characters %}
                     <li class="afat-character-tab{% if forloop.first %} active{% endif %}">
-                        <a data-toggle="tab" href="#{{ char|last }}">
-                            <img class="img-circle" src="{{ char|last|character_portrait_url:32 }}" alt="{{ char.0 }}">
-                            {{ char.0 }}
+                        <script type="application/javascript">
+                            characters.push({
+                                charId: {{ character.character_id }},
+                                charName: '{{ character.character_name }}'
+                            })
+                        </script>
+
+                        <a data-toggle="tab" href="#{{ character.character_id }}">
+                            <img class="img-circle" src="{{ character.character_id|character_portrait_url:32 }}" alt="{{ character.character_name }}">
+                            {{ character.character_name }}
                         </a>
                     </li>
                 {% endfor %}
             </ul>
 
             <div class="tab-content">
-                {% for char in fats %}
-                    <div id="{{ char|last }}" class="tab-pane fade in panel-default{% if forloop.first %} active{% endif %}">
+                {% for character in characters %}
+                    <div id="{{ character.character_id }}" class="tab-pane fade in panel-default{% if forloop.first %} active{% endif %}">
                         <div class="panel-body">
-                            {% if char|slice:"1:-1"|length > 0 %}
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>{% translate 'Fleet Name' %}</th>
-                                            <th>{% translate 'Fleet Type' %}</th>
-                                            <th>{% translate 'Location' %}</th>
-                                            <th>{% translate 'Ship' %}</th>
-                                            <th>{% translate 'EVE Time' %}</th>
-                                        </tr>
-                                    </thead>
+                            <table class="table table-striped" id="recent-fats-character-{{ character.character_id }}" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>{% translate 'Fleet Name' %}</th>
+                                        <th>{% translate 'Fleet Type' %}</th>
+                                        <th>{% translate 'Location' %}</th>
+                                        <th>{% translate 'Ship' %}</th>
+                                        <th>{% translate 'EVE Time' %}</th>
+                                    </tr>
+                                </thead>
 
-                                    <tbody>
-                                        {% for afat in char|slice:"1:" %}
-                                            <tr>
-                                                <td>
-                                                    {% if afat.afatlink.fleet %}
-                                                        {{ afat.afatlink.fleet }}
-                                                    {% else %}
-                                                        {{ afat.afatlink.hash }}
-                                                    {% endif %}
+                                <tbody></tbody>
 
-                                                    {% if afat.afatlink.is_esilink %}
-                                                        <span class="label label-success afat-label afat-label-via-esi">
-                                                            {% translate 'via ESI' %}
-                                                        </span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if afat.afatlink.link_type %}
-                                                        {{ afat.afatlink.link_type.name }}
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ afat.system }}</td>
-                                                <td>{{ afat.shiptype }}</td>
-                                                <td>{{ afat.afatlink.afattime|date:"Y-M-d, H:i" }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <div class="alert alert-warning" role="alert">
-                                    <p>{% translate "No FATs for" %} {{ char.0 }}</p>
-                                </div>
-                            {% endif %}
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="{% if permissions.fats.manage %}5{% else %}4{% endif %}">
+                                            {% include "afat/partials/fatlink_list_legend.html" %}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 {% endfor %}

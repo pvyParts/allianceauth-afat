@@ -4,12 +4,20 @@ views helper
 
 import random
 
-from afat.models import AFatLink
+from afat.models import AFat, AFatLink
 from afat.permissions import get_user_permissions
+from allianceauth.eveonline.models import EveCharacter
 from django.urls import reverse
 
 
 def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
+    """
+    converts a AFatLink object into a dictionary
+    :param fatlink:
+    :param user:
+    :return:
+    """
+
     # get users permissions
     permissions = get_user_permissions(user)
 
@@ -89,6 +97,54 @@ def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
         "actions": actions,
         "via_esi": via_esi,
     }
+
+    return summary
+
+
+def convert_fats_to_dict(fat: AFat) -> dict:
+    """
+    converts a afat object into a dictionary
+    :param fatlink:
+    """
+
+    # fleet type
+    fleet_type = ""
+    if fat.afatlink.link_type is not None:
+        fleet_type = fat.afatlink.link_type.name
+
+    # esi marker
+    via_esi = "No"
+    esi_fleet_marker = ""
+
+    if fat.afatlink.is_esilink:
+        via_esi = "Yes"
+        esi_fleet_marker_classes = "label label-success afat-label afat-label-via-esi"
+
+        if fat.afatlink.is_registered_on_esi:
+            esi_fleet_marker_classes += " afat-label-active-esi-fleet"
+
+        esi_fleet_marker += f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
+
+    summary = {
+        "system": fat.system,
+        "ship_type": fat.shiptype,
+        "character_name": fat.character.character_name,
+        "fleet_name": fat.afatlink.fleet + esi_fleet_marker,
+        "fleet_time": fat.afatlink.afattime,
+        "fleet_type": fleet_type,
+        "via_esi": via_esi,
+    }
+
+    return summary
+
+
+def convert_evecharacter_to_dict(evecharacter: EveCharacter) -> dict:
+    """
+    converts an EveCharacter object into a dictionary
+    :param fatlink:
+    """
+
+    summary = {"character_id": "", "character_name": ""}
 
     return summary
 

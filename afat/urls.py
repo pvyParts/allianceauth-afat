@@ -97,6 +97,11 @@ urlpatterns = [
     ),
     # ajax calls
     url(
+        r"^ajax/dashboard/get_fats/(?P<charid>[0-9]+)/$",
+        views.dashboard_fats_data,
+        name="dashboard_fats_data",
+    ),
+    url(
         r"^ajax/dashboard/get_fatlinks/$",
         views.dashboard_links_data,
         name="dashboard_links_data",

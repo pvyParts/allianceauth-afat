@@ -26,7 +26,11 @@ from afat.forms import (
     AFatClickFatForm,
     FatLinkEditForm,
 )
-from afat.helper.views_helper import convert_fatlinks_to_dict, get_random_rgba_color
+from afat.helper.views_helper import (
+    convert_fatlinks_to_dict,
+    convert_fats_to_dict,
+    get_random_rgba_color,
+)
 from afat.models import (
     AFat,
     ClickAFatDuration,
@@ -71,30 +75,47 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    chars = CharacterOwnership.objects.filter(user=request.user)
-    fats = []
+    characters_by_user = CharacterOwnership.objects.filter(user=request.user)
+    characters = list()
 
-    for char in chars:
-        fat = (
-            AFat.objects.filter(character=char.character)
+    for users_character in characters_by_user:
+        character_fat = (
+            AFat.objects.filter(character=users_character.character)
             .order_by("afatlink__afattime")
             .reverse()[:30]
         )
 
-        if fat.count() > 0:
-            char_1 = [char.character.character_name]
+        if character_fat.count() > 0:
+            characters.append(users_character.character)
 
-            for f in fat:
-                char_1.append(f)
-
-            char_1.append(char.character.character_id)
-            fats.append(char_1)
-
-    context = {"fats": fats, "msg": msg, "permissions": permissions}
+    context = {"characters": characters, "msg": msg, "permissions": permissions}
 
     logger.info("Module called by {user}".format(user=request.user))
 
     return render(request, "afat/dashboard.html", context)
+
+
+@login_required
+@permission_required("afat.basic_access")
+def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
+    """
+    ajax call
+    get fats for dashboard view
+    :param request:
+    :param charid:
+    """
+
+    character = EveCharacter.objects.get(character_id=charid)
+
+    fats = (
+        AFat.objects.filter(character=character)
+        .order_by("afatlink__afattime")
+        .reverse()[:30]
+    )
+
+    character_fat_rows = [convert_fats_to_dict(fat) for fat in fats]
+
+    return JsonResponse(character_fat_rows, safe=False)
 
 
 @login_required
