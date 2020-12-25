@@ -57,9 +57,9 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def afat_view(request):
+def dashboard(request):
     """
-    afat_view
+    dashboard
     :param request:
     :return:
     """
@@ -97,7 +97,7 @@ def afat_view(request):
 
     logger.info("Module called by %s", request.user)
 
-    return render(request, "afat/afatview.html", context)
+    return render(request, "afat/dashboard.html", context)
 
 
 @login_required()
@@ -209,12 +209,12 @@ def stats_char(request, charid: int, year: int = None, month: int = None):
             "You do not have permission to view statistics for that character.",
         )
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     if not month or not year:
         request.session["msg"] = ("danger", "Date information not complete!")
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     fats = AFat.objects.filter(
         character__character_id=charid,
@@ -309,7 +309,7 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
                 "You do not have permission to view statistics for that corporation.",
             )
 
-            return redirect("afat:afat_view")
+            return redirect("afat:dashboard")
 
     corp = EveCorporationInfo.objects.get(corporation_id=corpid)
     corp_name = corp.corporation_name
@@ -517,7 +517,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     if not month or not year:
         request.session["msg"] = ("danger", "Date information incomplete.")
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     fats = AFat.objects.filter(
         character__alliance_id=allianceid,
@@ -901,7 +901,7 @@ def link_create_click(request):
                 " clickable FAT Link."
             ),
         ]
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     request.session["msg"] = [
         "warning",
@@ -911,7 +911,7 @@ def link_create_click(request):
         ),
     ]
 
-    return redirect("afat:afat_view")
+    return redirect("afat:dashboard")
 
 
 @login_required()
@@ -1024,7 +1024,7 @@ def create_esi_fat(request):
         "Something went wrong when attempting to submit your  ESI FAT Link.",
     ]
 
-    return redirect("afat:afat_view")
+    return redirect("afat:dashboard")
 
 
 @login_required()
@@ -1047,7 +1047,7 @@ def click_link(request, token, fatlink_hash: str = None):
     if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT link hash provided."]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     try:
         try:
@@ -1055,7 +1055,7 @@ def click_link(request, token, fatlink_hash: str = None):
         except AFatLink.DoesNotExist:
             request.session["msg"] = ["warning", "The hash provided is not valid."]
 
-            return redirect("afat:afat_view")
+            return redirect("afat:dashboard")
 
         dur = ClickAFatDuration.objects.get(fleet=fleet)
         now = timezone.now() - timedelta(minutes=dur.duration)
@@ -1069,7 +1069,7 @@ def click_link(request, token, fatlink_hash: str = None):
                 ),
             ]
 
-            return redirect("afat:afat_view")
+            return redirect("afat:dashboard")
 
         character = EveCharacter.objects.get(character_id=token.character_id)
 
@@ -1135,7 +1135,7 @@ def click_link(request, token, fatlink_hash: str = None):
                         character.character_name,
                     )
 
-                    return redirect("afat:afat_view")
+                    return redirect("afat:dashboard")
                 except Exception:
                     request.session["msg"] = [
                         "warning",
@@ -1145,7 +1145,7 @@ def click_link(request, token, fatlink_hash: str = None):
                         ),
                     ]
 
-                    return redirect("afat:afat_view")
+                    return redirect("afat:dashboard")
             else:
                 request.session["msg"] = [
                     "warning",
@@ -1157,7 +1157,7 @@ def click_link(request, token, fatlink_hash: str = None):
                     ),
                 ]
 
-                return redirect("afat:afat_view")
+                return redirect("afat:dashboard")
         except Exception:
             request.session["msg"] = [
                 "warning",
@@ -1167,14 +1167,14 @@ def click_link(request, token, fatlink_hash: str = None):
                 ),
             ]
 
-            return redirect("afat:afat_view")
+            return redirect("afat:dashboard")
     except Exception:
         request.session["msg"] = [
             "warning",
             "The hash provided is not for a clickable FAT Link.",
         ]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
 
 @login_required()
@@ -1199,14 +1199,14 @@ def edit_link(request, fatlink_hash: str = None):
     if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     try:
         link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     if request.method == "POST":
         fatlink_edit_form = FatLinkEditForm(request.POST)
@@ -1310,7 +1310,7 @@ def del_link(request, fatlink_hash: str = None):
     if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     try:
         link = AFatLink.objects.get(hash=fatlink_hash)
@@ -1321,7 +1321,7 @@ def del_link(request, fatlink_hash: str = None):
             "the fatlink has already been deleted.",
         ]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     AFat.objects.filter(afatlink_id=link.pk).delete()
 
@@ -1360,7 +1360,7 @@ def del_fat(request, fatlink_hash, fat):
             "The hash provided is either invalid or has been deleted.",
         ]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     try:
         fat = AFat.objects.get(pk=fat, afatlink_id=link.pk)
@@ -1370,7 +1370,7 @@ def del_fat(request, fatlink_hash, fat):
             "The hash and FAT ID do not match.",
         ]
 
-        return redirect("afat:afat_view")
+        return redirect("afat:dashboard")
 
     fat.delete()
     AFatDelLog(remover=request.user, deltype=1, string=fat.__str__()).save()

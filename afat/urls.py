@@ -12,7 +12,7 @@ app_name: str = "afat"
 
 urlpatterns = [
     # dashboard
-    url(r"^$", views.afat_view, name="afat_view"),
+    url(r"^$", views.dashboard, name="dashboard"),
     # stats main page
     url(r"^statistic/$", views.stats, name="stats"),
     url(r"^statistic/(?P<year>[0-9]+)/$", views.stats, name="stats"),
