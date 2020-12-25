@@ -107,6 +107,10 @@
             }
 
             // recent fatlinks
+            let noFatlinksWarning = '<div class="alert alert-warning" role="alert">' +
+                '<p>{% translate "No recent FAT links" %}</p>' +
+                '</div>'
+
             $('#dashboard-recent-fatlinks').DataTable({
                 ajax: {
                     url: '{% url "afat:dashboard_links_data" %}',
@@ -128,6 +132,9 @@
                         {data: 'actions'},
                     {% endif %}
                 ],
+                language: {
+                    emptyTable: noFatlinksWarning
+                },
                 paging: false,
                 ordering: false,
                 searching: false,
