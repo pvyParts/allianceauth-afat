@@ -12,7 +12,7 @@ app_name: str = "afat"
 
 urlpatterns = [
     # dashboard
-    url(r"^$", views.afat_view, name="afat_view"),
+    url(r"^$", views.dashboard, name="dashboard"),
     # stats main page
     url(r"^statistic/$", views.stats, name="stats"),
     url(r"^statistic/(?P<year>[0-9]+)/$", views.stats, name="stats"),
@@ -96,6 +96,16 @@ urlpatterns = [
         name="fat_delete",
     ),
     # ajax calls
+    url(
+        r"^ajax/dashboard/get_fats/(?P<charid>[0-9]+)/$",
+        views.dashboard_fats_data,
+        name="dashboard_fats_data",
+    ),
+    url(
+        r"^ajax/dashboard/get_fatlinks/$",
+        views.dashboard_links_data,
+        name="dashboard_links_data",
+    ),
     url(r"^ajax/links/get_fatlinks/$", views.links_data, name="links_data"),
     url(
         r"^ajax/links/get_fatlinks/(?P<year>[0-9]+)/$",
