@@ -160,7 +160,7 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         data = None
 
     chars = CharacterOwnership.objects.filter(user=request.user)
-    months = []
+    months = list()
 
     for char in chars:
         char_fats = AFat.objects.filter(afatlink__afattime__year=year)
@@ -394,7 +394,7 @@ def stats_corp(
     data_stacked = []
 
     for key, value in data.items():
-        stack = []
+        stack = list()
         stack.append(key)
         stack.append(get_random_rgba_color())
         stack.append([])
@@ -589,7 +589,7 @@ def stats_alliance(
     data_stacked = []
 
     for key, value in data.items():
-        stack = []
+        stack = list()
         stack.append(key)
         stack.append(get_random_rgba_color())
         stack.append([])
@@ -1065,7 +1065,8 @@ def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
                     request.session["msg"] = [
                         "success",
                         (
-                            "FAT registered for {character_name} at {fleet_name}".format(
+                            "FAT registered for {character_name} "
+                            "at {fleet_name}".format(
                                 character_name=character.character_name, fleet_name=name
                             )
                         ),
