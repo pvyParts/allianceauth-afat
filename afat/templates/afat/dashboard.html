@@ -45,11 +45,55 @@
 {% endblock %}
 
 {% block extra_css %}
+    {% include 'bundles/datatables-css.html' %}
+
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
 
 {% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/moment-js.html' with locale=True %}
+
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/dataTables.rowGroup.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/datetime.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
+
+    <script type="application/javascript">
+        $(document).ready(function() {
+            const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
+
+            let linkListTable = $('#dashboard-recent-fatlinks').DataTable({
+                ajax: {
+                    url: '{% url "afat:dashboard_links_data" %}',
+                    dataSrc: '',
+                    cache: false
+                },
+                columns: [
+                    {data: 'fleet_name'},
+                    {data: 'fleet_type'},
+                    {data: 'creator_name'},
+                    {
+                        data: 'fleet_time',
+                        render: $.fn.dataTable.render.moment(
+                            moment.ISO_8601,
+                            DATETIME_FORMAT
+                        )
+                    },
+                    {% if permissions.fatlinks.manipulate %}
+                        {data: 'actions'},
+                    {% endif %}
+                ],
+                order: [
+                    [0, 'desc']
+                ],
+                paging: false,
+                ordering: false,
+                searching: false,
+            });
+        });
+    </script>
+
     <script type="application/javascript">
         $('#deleteModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal

@@ -28,6 +28,7 @@ from afat.forms import (
     AFatClickFatForm,
     FatLinkEditForm,
 )
+from afat.helper.views_helper import convert_fatlinks_to_dict
 from afat.models import (
     AFat,
     ClickAFatDuration,
@@ -91,13 +92,35 @@ def dashboard(request):
             char_1.append(char.character.character_id)
             fats.append(char_1)
 
-    fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
+    # fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
 
-    context = {"fats": fats, "links": fatlinks, "msg": msg, "permissions": permissions}
+    context = {"fats": fats, "msg": msg, "permissions": permissions}
 
     logger.info("Module called by %s", request.user)
 
     return render(request, "afat/dashboard.html", context)
+
+
+@login_required
+@permission_required("afat.basic_access")
+def dashboard_links_data(request) -> JsonResponse:
+    """
+    ajax call
+    get recent fat links for the dashboard datatable
+    :param request:
+    """
+
+    # fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
+
+    fatlinks = AFatLink.objects.order_by("-afattime").annotate(
+        number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True))
+    )[:10]
+
+    fatlink_rows = [
+        convert_fatlinks_to_dict(fatlink, request.user) for fatlink in fatlinks
+    ]
+
+    return JsonResponse(fatlink_rows, safe=False)
 
 
 @login_required()
@@ -746,7 +769,6 @@ def links_data(request, year: int = None) -> JsonResponse:
 
     for fatlink in fatlinks:
         fatlink_fleet = fatlink.hash
-
         if fatlink.fleet:
             fatlink_fleet = fatlink.fleet
 
@@ -770,6 +792,7 @@ def links_data(request, year: int = None) -> JsonResponse:
         creator = fatlink.creator.username
         if fatlink.creator.profile.main_character is not None:
             creator = fatlink.creator.profile.main_character.character_name
+
         time = fatlink.afattime
         fats_number = fatlink.number_of_fats
 

@@ -5,10 +5,11 @@
     <div class="panel-body">
         <h4>{% translate "Most Recent FAT Links" %}</h4>
 
-        <table class="table table-striped" style="width: 100%;">
+        <table class="table table-striped" id="dashboard-recent-fatlinks" style="width: 100%;">
             <thead>
                 <tr>
                     <th>{% translate "Fleet Name" %}</th>
+                    <th>{% translate "Fleet Type" %}</th>
                     <th>{% translate "Creator" %}</th>
                     <th>{% translate "EVE Time" %}</th>
 
@@ -18,45 +19,18 @@
                 </tr>
             </thead>
 
-            <tbody>
-                {% for link in links %}
-                    <tr>
-                        <td>
-                            {% if link.fleet %}
-                                {{ link.fleet }}
-                            {% else %}
-                                {{ link.hash }}
-                            {% endif %}
+            <tbody></tbody>
 
-                            {% if link.is_esilink %}
-                                <span class="label label-success afat-label afat-label-via-esi">via ESI</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ link.creator.profile.main_character.character_name }}</td>
-                        <td>{{ link.afattime|date:"Y-M-d, H:i" }}</td>
-
-                        {% if permissions.fatlinks.manipulate %}
-                            <td>
-                                {% if permissions.fatlinks.change %}
-                                    <a class="btn btn-info btn-sm" href="{% url 'afat:link_edit' link.hash %}">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                {% endif %}
-
-                                {% if permissions.fatlinks.delete %}
-                                    <a class="btn btn-danger btn-sm"
-                                        data-toggle="modal"
-                                        data-target="#deleteModal"
-                                        data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:link_delete' link.hash %}"
-                                        data-name="{% if link.fleet %}{{ link.fleet }}{% else %}{{ link.hash }}{% endif %}">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                {% endif %}
-                            </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="{% if permissions.fats.manage %}5{% else %}4{% endif %}">
+                        <p>
+                            <span class="label label-success afat-label afat-label-via-esi afat-label-active-esi-fleet">via ESI</span> » Fleet is currently active and FATs are automatically being tracked via ESI<br>
+                            <span class="label label-success afat-label afat-label-via-esi">via ESI</span> » FATs have been automatically tracked via ESI
+                        </p>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
