@@ -63,7 +63,7 @@
         $(document).ready(function() {
             const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
 
-            let linkListTable = $('#dashboard-recent-fatlinks').DataTable({
+            $('#dashboard-recent-fatlinks').DataTable({
                 ajax: {
                     url: '{% url "afat:dashboard_links_data" %}',
                     dataSrc: '',
