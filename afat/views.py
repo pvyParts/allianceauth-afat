@@ -4,15 +4,14 @@
 the views
 """
 
-import random
-
 from collections import OrderedDict
 
 from datetime import datetime, timedelta
 
+from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -27,7 +26,7 @@ from afat.forms import (
     AFatClickFatForm,
     FatLinkEditForm,
 )
-from afat.helper.views_helper import convert_fatlinks_to_dict
+from afat.helper.views_helper import convert_fatlinks_to_dict, get_random_rgba_color
 from afat.models import (
     AFat,
     ClickAFatDuration,
@@ -57,7 +56,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def dashboard(request):
+def dashboard(request: WSGIRequest) -> HttpResponse:
     """
     dashboard
     :param request:
@@ -91,18 +90,16 @@ def dashboard(request):
             char_1.append(char.character.character_id)
             fats.append(char_1)
 
-    # fatlinks = AFatLink.objects.order_by("afattime").reverse()[:10]
-
     context = {"fats": fats, "msg": msg, "permissions": permissions}
 
-    logger.info("Module called by %s", request.user)
+    logger.info("Module called by {user}".format(user=request.user))
 
     return render(request, "afat/dashboard.html", context)
 
 
 @login_required
 @permission_required("afat.basic_access")
-def dashboard_links_data(request) -> JsonResponse:
+def dashboard_links_data(request: WSGIRequest) -> JsonResponse:
     """
     ajax call
     get recent fat links for the dashboard datatable
@@ -122,7 +119,7 @@ def dashboard_links_data(request) -> JsonResponse:
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats(request, year: int = None):
+def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     statistics main view
     :type year: string
@@ -198,14 +195,16 @@ def stats(request, year: int = None):
         "permissions": permissions,
     }
 
-    logger.info("Statistics overview called by %s", request.user)
+    logger.info("Statistics overview called by {user}".format(user=request.user))
 
     return render(request, "afat/stats_main.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats_char(request, charid: int, year: int = None, month: int = None):
+def stats_char(
+    request: WSGIRequest, charid: int, year: int = None, month: int = None
+) -> HttpResponse:
     """
     character statistics view
     :param request:
@@ -226,7 +225,7 @@ def stats_char(request, charid: int, year: int = None, month: int = None):
     if character not in valid and not request.user.has_perm("afat.stats_char_other"):
         request.session["msg"] = (
             "warning",
-            "You do not have permission to view statistics for that character.",
+            "You do not have permission to view statistics for this character.",
         )
 
         return redirect("afat:dashboard")
@@ -254,9 +253,7 @@ def stats_char(request, charid: int, year: int = None, month: int = None):
     colors = []
 
     for _ in data_ship_type.keys():
-        bg_color_str = "rgba({}, {}, {}, 1)".format(
-            random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-        )
+        bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
     data_ship_type = [
@@ -275,11 +272,7 @@ def stats_char(request, charid: int, year: int = None, month: int = None):
     data_time = [
         list(data_time.keys()),
         list(data_time.values()),
-        [
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        ],
+        [get_random_rgba_color()],
     ]
 
     context = {
@@ -298,14 +291,16 @@ def stats_char(request, charid: int, year: int = None, month: int = None):
         "permissions": permissions,
     }
 
-    logger.info("Character statistics called by %s", request.user)
+    logger.info("Character statistics called by {user}".format(user=request.user))
 
     return render(request, "afat/char_stat.html", context)
 
 
 @login_required()
 @permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
-def stats_corp(request, corpid: int, year: int = None, month: int = None):
+def stats_corp(
+    request: WSGIRequest, corpid: int, year: int = None, month: int = None
+) -> HttpResponse:
     """
     corp statistics view
     :param request:
@@ -401,11 +396,7 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
     for key, value in data.items():
         stack = []
         stack.append(key)
-        stack.append(
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        )
+        stack.append(get_random_rgba_color())
         stack.append([])
 
         data_ = stack[2]
@@ -427,11 +418,7 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
     data_time = [
         list(data_time.keys()),
         list(data_time.values()),
-        [
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        ],
+        [get_random_rgba_color()],
     ]
 
     # Data for By Weekday
@@ -443,11 +430,7 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
     data_weekday = [
         ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         data_weekday,
-        [
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        ],
+        [get_random_rgba_color()],
     ]
 
     chars = {}
@@ -474,14 +457,20 @@ def stats_corp(request, corpid: int, year: int = None, month: int = None):
         "permissions": permissions,
     }
 
-    logger.info("Corporation statistics for %s called by %s", corp_name, request.user)
+    logger.info(
+        "Corporation statistics for {corp_name} called by {user}".format(
+            corp_name=corp_name, user=request.user
+        )
+    )
 
     return render(request, "afat/corp_stat.html", context)
 
 
 @login_required()
 @permission_required("afat.stats_corp_other")
-def stats_alliance(request, allianceid: int, year: int = None, month: int = None):
+def stats_alliance(
+    request: WSGIRequest, allianceid: int, year: int = None, month: int = None
+) -> HttpResponse:
     """
     alliance statistics view
     :param request:
@@ -559,9 +548,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     colors = []
 
     for _ in data_ship_type.keys():
-        bg_color_str = "rgba({}, {}, {}, 1)".format(
-            random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-        )
+        bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
     data_ship_type = [
@@ -604,11 +591,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     for key, value in data.items():
         stack = []
         stack.append(key)
-        stack.append(
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        )
+        stack.append(get_random_rgba_color())
         stack.append([])
 
         data_ = stack[2]
@@ -633,9 +616,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     data_avgs = [
         list(data_avgs.keys()),
         list(data_avgs.values()),
-        "rgba({}, {}, {}, 1)".format(
-            random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-        ),
+        get_random_rgba_color(),
     ]
 
     # Fats by Time
@@ -647,11 +628,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     data_time = [
         list(data_time.keys()),
         list(data_time.values()),
-        [
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        ],
+        [get_random_rgba_color()],
     ]
 
     # Fats by weekday
@@ -663,11 +640,7 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
     data_weekday = [
         ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         data_weekday,
-        [
-            "rgba({}, {}, {}, 1)".format(
-                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            )
-        ],
+        [get_random_rgba_color()],
     ]
 
     # Corp list
@@ -700,14 +673,18 @@ def stats_alliance(request, allianceid: int, year: int = None, month: int = None
         "permissions": permissions,
     }
 
-    logger.info("Alliance statistics for %s called by %s", alliance_name, request.user)
+    logger.info(
+        "Alliance statistics for {alliance_name} called by {user}".format(
+            alliance_name=alliance_name, user=request.user
+        )
+    )
 
     return render(request, "afat/ally_stat.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def links(request, year: int = None):
+def links(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     fatlinks view
     :param year:
@@ -735,14 +712,14 @@ def links(request, year: int = None):
         "permissions": permissions,
     }
 
-    logger.info("FAT link list called by %s", request.user)
+    logger.info("FAT link list called by {user}".format(user=request.user))
 
     return render(request, "afat/fat_list.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def links_data(request, year: int = None) -> JsonResponse:
+def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
     """
     fatlinks view
     :param year:
@@ -768,7 +745,7 @@ def links_data(request, year: int = None) -> JsonResponse:
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
-def link_add(request):
+def link_add(request: WSGIRequest) -> HttpResponse:
     """
     add fatlink view
     :param request:
@@ -798,14 +775,14 @@ def link_add(request):
         "has_open_esi_fleet": has_open_esi_fleet,
     }
 
-    logger.info("Add FAT link view called by %s", request.user)
+    logger.info("Add FAT link view called by {user}".format(user=request.user))
 
     return render(request, "afat/addlink.html", context)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
-def link_create_click(request):
+def link_create_click(request: WSGIRequest):
     """
     create fatlink helper
     :param request:
@@ -836,14 +813,18 @@ def link_create_click(request):
             dur.duration = form.cleaned_data["duration"]
             dur.save()
 
-            request.session["{}-creation-code".format(fatlink_hash)] = 202
+            request.session[
+                "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
+            ] = 202
 
             logger.info(
-                "FAT link %s with name %s and a duration of %s minutes was created by %s",
-                fatlink_hash,
-                form.cleaned_data["name"],
-                form.cleaned_data["duration"],
-                request.user,
+                "FAT link {fatlink_hash} with name {name} and a "
+                "duration of {duration} minutes was created by {user}".format(
+                    fatlink_hash=fatlink_hash,
+                    name=form.cleaned_data["name"],
+                    duration=form.cleaned_data["duration"],
+                    user=request.user,
+                )
             )
 
             return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
@@ -871,9 +852,9 @@ def link_create_click(request):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_afatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
-def link_create_esi(request, token, fatlink_hash):
+def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
     """
-    create ESI link helper
+    helper: create ESI link
     :param request:
     :param token:
     :param fatlink_hash:
@@ -892,8 +873,9 @@ def link_create_esi(request, token, fatlink_hash):
         # Not in a fleet
         request.session["msg"] = [
             "warning",
-            "To use the ESI function, you neeed to be in fleet and you need to be the fleet boss! "
-            "You can create a clickable FAT link and share it, if you like.",
+            "To use the ESI function, you neeed to be in fleet and you need to be "
+            "the fleet boss! You can create a clickable FAT link and share it, "
+            "if you like.",
         ]
 
         # return to "Add FAT Link" view
@@ -948,15 +930,21 @@ def link_create_esi(request, token, fatlink_hash):
         data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
     )
 
-    request.session["{}-creation-code".format(fatlink_hash)] = 200
+    request.session[
+        "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
+    ] = 200
 
-    logger.info("ESI FAT link %s created by %s", fatlink_hash, request.user)
+    logger.info(
+        "ESI FAT link {fatlink_hash} created by {user}".format(
+            fatlink_hash=fatlink_hash, user=request.user
+        )
+    )
 
     return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
 
 
 @login_required()
-def create_esi_fat(request):
+def create_esi_fat(request: WSGIRequest):
     """
     create ESI fat helper
     :param request:
@@ -990,7 +978,7 @@ def create_esi_fat(request):
         "esi-location.read_online.v1",
     ]
 )
-def click_link(request, token, fatlink_hash: str = None):
+def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
     """
     click fatlink helper
     :param request:
@@ -1077,16 +1065,17 @@ def click_link(request, token, fatlink_hash: str = None):
                     request.session["msg"] = [
                         "success",
                         (
-                            "FAT registered for {} at {}".format(
-                                character.character_name, name
+                            "FAT registered for {character_name} at {fleet_name}".format(
+                                character_name=character.character_name, fleet_name=name
                             )
                         ),
                     ]
 
                     logger.info(
-                        "Fleetparticipation for fleet %s registered for pilot %s",
-                        name,
-                        character.character_name,
+                        "Fleetparticipation for fleet {fleet_name} "
+                        "registered for pilot {character_name}".format(
+                            fleet_name=name, character_name=character.character_name
+                        )
                     )
 
                     return redirect("afat:dashboard")
@@ -1094,8 +1083,10 @@ def click_link(request, token, fatlink_hash: str = None):
                     request.session["msg"] = [
                         "warning",
                         (
-                            "A FAT already exists for the selected character ({}) and fleet"
-                            " combination.".format(character.character_name)
+                            "A FAT already exists for the selected character "
+                            "({character_name}) and fleet combination.".format(
+                                character_name=character.character_name
+                            )
                         ),
                     ]
 
@@ -1104,9 +1095,9 @@ def click_link(request, token, fatlink_hash: str = None):
                 request.session["msg"] = [
                     "warning",
                     (
-                        "Cannot register the fleet participation for {character}. "
+                        "Cannot register the fleet participation for {character_name}. "
                         "The character needs to be online.".format(
-                            character=character.character_name
+                            character_name=character.character_name
                         )
                     ),
                 ]
@@ -1116,8 +1107,8 @@ def click_link(request, token, fatlink_hash: str = None):
             request.session["msg"] = [
                 "warning",
                 (
-                    "There was an issue with the token for {}."
-                    " Please try again.".format(character.character_name)
+                    "There was an issue with the token for {character_name}. "
+                    "Please try again.".format(character_name=character.character_name)
                 ),
             ]
 
@@ -1139,7 +1130,7 @@ def click_link(request, token, fatlink_hash: str = None):
         "afat.change_afatlink",
     )
 )
-def edit_link(request, fatlink_hash: str = None):
+def edit_link(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
     edit fatlink view
     :param request:
@@ -1169,7 +1160,9 @@ def edit_link(request, fatlink_hash: str = None):
         if fatlink_edit_form.is_valid():
             link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
-            request.session["{}-task-code".format(fatlink_hash)] = 1
+            request.session[
+                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+            ] = 1
         elif manual_fat_form.is_valid():
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
@@ -1193,11 +1186,17 @@ def edit_link(request, fatlink_hash: str = None):
                     created_at=created_at,
                 ).save()
 
-                request.session["{}-task-code".format(fatlink_hash)] = 3
+                request.session[
+                    "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+                ] = 3
             else:
-                request.session["{}-task-code".format(fatlink_hash)] = 4
+                request.session[
+                    "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+                ] = 4
         else:
-            request.session["{}-task-code".format(fatlink_hash)] = 0
+            request.session[
+                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+            ] = 0
 
     msg_code = None
     message = None
@@ -1205,10 +1204,19 @@ def edit_link(request, fatlink_hash: str = None):
     if "msg" in request.session:
         msg_code = 999
         message = request.session.pop("msg")
-    elif "{}-creation-code".format(fatlink_hash) in request.session:
-        msg_code = request.session.pop("{}-creation-code".format(fatlink_hash))
-    elif "{}-task-code".format(fatlink_hash) in request.session:
-        msg_code = request.session.pop("{}-task-code".format(fatlink_hash))
+    elif (
+        "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
+        in request.session
+    ):
+        msg_code = request.session.pop(
+            "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
+        )
+    elif (
+        "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash) in request.session
+    ):
+        msg_code = request.session.pop(
+            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+        )
 
     fats = AFat.objects.filter(afatlink=link)
     flatlist = None
@@ -1246,14 +1254,18 @@ def edit_link(request, fatlink_hash: str = None):
         "permissions": permissions,
     }
 
-    logger.info("FAT link %s edited by %s", fatlink_hash, request.user)
+    logger.info(
+        "FAT link {fatlink_hash} edited by {user}".format(
+            fatlink_hash=fatlink_hash, user=request.user
+        )
+    )
 
     return render(request, "afat/fleet_edit.html", context)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afatlink"))
-def del_link(request, fatlink_hash: str = None):
+def del_link(request: WSGIRequest, fatlink_hash: str = None):
     """
     delete fatlink helper
     :param request:
@@ -1285,9 +1297,8 @@ def del_link(request, fatlink_hash: str = None):
 
     request.session["msg"] = [
         "success",
-        "The FAT Link ({0}) and all associated FATs have been successfully deleted.".format(
-            fatlink_hash
-        ),
+        "The FAT Link ({fatlink_hash}) and all associated FATs "
+        "have been successfully deleted.".format(fatlink_hash=fatlink_hash),
     ]
 
     logger.info("FAT link %s deleted by %s", fatlink_hash, request.user)
@@ -1297,7 +1308,7 @@ def del_link(request, fatlink_hash: str = None):
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
-def del_fat(request, fatlink_hash, fat):
+def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
     """
     delete fat helper
     :param request:
@@ -1317,7 +1328,7 @@ def del_fat(request, fatlink_hash, fat):
         return redirect("afat:dashboard")
 
     try:
-        fat = AFat.objects.get(pk=fat, afatlink_id=link.pk)
+        fat_details = AFat.objects.get(pk=fat, afatlink_id=link.pk)
     except AFat.DoesNotExist:
         request.session["msg"] = [
             "danger",
@@ -1326,14 +1337,18 @@ def del_fat(request, fatlink_hash, fat):
 
         return redirect("afat:dashboard")
 
-    fat.delete()
-    AFatDelLog(remover=request.user, deltype=1, string=fat.__str__()).save()
+    fat_details.delete()
+    AFatDelLog(remover=request.user, deltype=1, string=fat_details.__str__()).save()
 
     request.session["msg"] = [
         "success",
-        "The FAT from link {0} has been successfully deleted.".format(fatlink_hash),
+        "The FAT for {character_name} has been successfully "
+        "deleted from link {fatlink_hash}.".format(
+            character_name=fat_details.character.character_name,
+            fatlink_hash=fatlink_hash,
+        ),
     ]
 
-    logger.info("FAT %s deleted by %s", fat, request.user)
+    logger.info("FAT %s deleted by %s", fat_details, request.user)
 
     return redirect("afat:link_edit", fatlink_hash=fatlink_hash)

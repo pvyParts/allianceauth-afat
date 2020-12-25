@@ -2,6 +2,8 @@
 views helper
 """
 
+import random
+
 from afat.models import AFatLink
 from afat.permissions import get_user_permissions
 from django.urls import reverse
@@ -89,3 +91,15 @@ def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
     }
 
     return summary
+
+
+def get_random_rgba_color():
+    """
+    get a random RGB(a) color
+    :return:
+    """
+    return "rgba({red}, {green}, {blue}, 1)".format(
+        red=random.randint(0, 255),
+        green=random.randint(0, 255),
+        blue=random.randint(0, 255),
+    )
