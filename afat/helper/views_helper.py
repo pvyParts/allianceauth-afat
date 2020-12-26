@@ -11,7 +11,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.urls import reverse
 
 
-def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
+def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     """
     converts a AFatLink object into a dictionary
     :param fatlink:
@@ -20,7 +20,7 @@ def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
     """
 
     # get users permissions
-    permissions = get_user_permissions(user)
+    permissions = get_user_permissions(request.user)
 
     # fleet name
     fatlink_fleet = fatlink.hash

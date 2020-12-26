@@ -109,7 +109,9 @@ def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
         .reverse()[:10]
     )
 
-    character_fat_rows = [convert_fats_to_dict(fat) for fat in fats]
+    character_fat_rows = [
+        convert_fats_to_dict(request=request, fat=fat) for fat in fats
+    ]
 
     return JsonResponse(character_fat_rows, safe=False)
 
@@ -128,7 +130,8 @@ def dashboard_links_data(request: WSGIRequest) -> JsonResponse:
     )[:10]
 
     fatlink_rows = [
-        convert_fatlinks_to_dict(fatlink, request.user) for fatlink in fatlinks
+        convert_fatlinks_to_dict(request=request, fatlink=fatlink)
+        for fatlink in fatlinks
     ]
 
     return JsonResponse(fatlink_rows, safe=False)
@@ -754,7 +757,8 @@ def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
     )
 
     fatlink_rows = [
-        convert_fatlinks_to_dict(fatlink, request.user) for fatlink in fatlinks
+        convert_fatlinks_to_dict(request=request, fatlink=fatlink)
+        for fatlink in fatlinks
     ]
 
     return JsonResponse(fatlink_rows, safe=False)
@@ -1298,7 +1302,7 @@ def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
 
     fats = AFat.objects.filter(afatlink__hash=fatlink_hash)
 
-    fat_rows = [convert_fats_to_dict(request, fat) for fat in fats]
+    fat_rows = [convert_fats_to_dict(request=request, fat=fat) for fat in fats]
 
     return JsonResponse(fat_rows, safe=False)
 
