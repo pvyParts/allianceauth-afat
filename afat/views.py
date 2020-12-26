@@ -918,10 +918,13 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         # return to "Add FAT Link" view
         return redirect("afat:link_add")
 
+    creator_character = EveCharacter.objects.get(character_id=token.character_id)
+
     # create the fatlink
     fatlink = AFatLink(
         fleet=request.session["fatlink_form__name"],
         creator=request.user,
+        character=creator_character,
         hash=fatlink_hash,
         is_esilink=True,
         is_registered_on_esi=True,
@@ -984,7 +987,7 @@ def create_esi_fat(request: WSGIRequest):
 
     request.session["msg"] = [
         "danger",
-        "Something went wrong when attempting to submit your  ESI FAT Link.",
+        "Something went wrong when attempting to submit your ESI FAT Link.",
     ]
 
     return redirect("afat:dashboard")

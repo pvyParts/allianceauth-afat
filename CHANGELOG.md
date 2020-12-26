@@ -13,7 +13,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Ajax URLs structured
 - Internal methods for afat_view renamed to dashboard
 - Dashboard static tables replaced with DataTables which get populated via Ajax calls
-- Fleet Edit FAT list talbe replaced with Datatable
+- Fleet Edit FAT list table replaced with DataTable
+
+### Fixed
+
+- Missing fleet commander added to ESI FAT links. Now the automatic ESI pull also
+  works when the fleet commander is an alt of the creator
+- Length of form fields adjusted
+- Hardened the auto ESI pull against possible ESI hiccups, so ESI FAT links are not
+  closed prematurely
 
 
 ## [1.4.1] - 2020-12-24

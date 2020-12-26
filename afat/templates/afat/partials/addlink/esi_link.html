@@ -1,4 +1,3 @@
-
 {% load i18n %}
 
 <div class="col-md-6 mr-md-1">
@@ -11,14 +10,21 @@
 
         <div class="panel-body">
             <p>
-                {% translate "This option will automatically register the entire fleet without member clicks. Use this if you <b>are</b> Fleet Boss, otherwise please use the clickable FATLink option." %}
+                {% blocktranslate %}
+                    This option will automatically register the entire fleet without
+                    member clicks. Use this if you <b>are</b> Fleet Boss, otherwise
+                    please use the clickable FAT link option.
+                {% endblocktranslate %}
             </p>
 
             {% if has_open_esi_fleet %}
                 <p class="alert alert-info">
                     {% blocktranslate %}
-                        You already have an open ESI fleet, which means that all pilots who join your fleet will be automatically registered.
-                        If you just left the fleet and want to open a new one, wait 1 minute to give the system time to update and try again.
+                        You already have an open ESI fleet, which means that all pilots
+                        who join your fleet will be automatically registered. If you
+                        just left the fleet and want to open a new one, wait a
+                        moment to give the system time to update (max 5 minutes)
+                        and try again.
                     {% endblocktranslate %}
                 </p>
             {% endif %}
