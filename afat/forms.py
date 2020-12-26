@@ -14,7 +14,7 @@ class AFatLinkForm(forms.Form):
     used to create ESI fatlinks
     """
 
-    name_esi = forms.CharField(label=_("Fleet Name"), max_length=50)
+    name_esi = forms.CharField(label=_("Fleet Name"), max_length=255)
     type_esi = forms.IntegerField(label=_("Type"), required=False)
 
 
@@ -23,18 +23,18 @@ class AFatManualFatForm(forms.Form):
     manual fat form
     """
 
-    character = forms.CharField(label=_("Character Name"), max_length=50)
-    system = forms.CharField(label=_("System"), max_length=50)
+    character = forms.CharField(label=_("Character Name"), max_length=255)
+    system = forms.CharField(label=_("System"), max_length=100)
     shiptype = forms.CharField(label=_("Ship Type"), max_length=100)
 
 
 class AFatClickFatForm(forms.Form):
     """
     fatlink form
-    used to create copy fatlinks
+    used to create clickable fatlinks
     """
 
-    name = forms.CharField(label=_("Fleet Name"), max_length=50)
+    name = forms.CharField(label=_("Fleet Name"), max_length=255)
     duration = forms.IntegerField(label=_("Duration"), min_value=1)
     type = forms.IntegerField(label=_("Type"), required=False)
 
@@ -42,7 +42,7 @@ class AFatClickFatForm(forms.Form):
 class FatLinkEditForm(forms.Form):
     """
     fatlink edit form
-    used in edit view to change teh fatlink name
+    used in edit view to change the fatlink name
     """
 
-    fleet = forms.CharField(label=_("Fleet Name"), max_length=50)
+    fleet = forms.CharField(label=_("Fleet Name"), max_length=255)
