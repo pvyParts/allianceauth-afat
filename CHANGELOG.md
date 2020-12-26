@@ -6,13 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [1.4.x] - xxxx-xx-xx
+## [1.4.2] - xxxx-xx-xx
 
 ### Changed
 
 - Ajax URLs structured
 - Internal methods for afat_view renamed to dashboard
 - Dashboard static tables replaced with DataTables which get populated via Ajax calls
+- Fleet Edit FAT list talbe replaced with Datatable
 
 
 ## [1.4.1] - 2020-12-24
