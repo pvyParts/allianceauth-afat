@@ -73,10 +73,10 @@ urlpatterns = [
     url(r"^links/create/esifat/$", views.create_esi_fat, name="create_esi_fat"),
     url(r"^links/create/click/$", views.link_create_click, name="link_create_click"),
     url(r"^links/add/$", views.link_add, name="link_add"),
-    url(r"^links/edit/$", views.edit_link, name="link_edit"),
+    url(r"^links/edit/$", views.link_edit, name="link_edit"),
     url(
         r"^links/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
-        views.edit_link,
+        views.link_edit,
         name="link_edit",
     ),
     url(
@@ -111,5 +111,10 @@ urlpatterns = [
         r"^ajax/links/get_fatlinks/(?P<year>[0-9]+)/$",
         views.links_data,
         name="links_data",
+    ),
+    url(
+        r"^ajax/links/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
+        views.link_edit_fat_data,
+        name="link_edit_fat_data",
     ),
 ]
