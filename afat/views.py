@@ -79,11 +79,7 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
     characters = list()
 
     for users_character in characters_by_user:
-        character_fat = (
-            AFat.objects.filter(character=users_character.character)
-            .order_by("afatlink__afattime")
-            .reverse()[:30]
-        )
+        character_fat = AFat.objects.filter(character=users_character.character)
 
         if character_fat.count() > 0:
             characters.append(users_character.character)
@@ -110,7 +106,7 @@ def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
     fats = (
         AFat.objects.filter(character=character)
         .order_by("afatlink__afattime")
-        .reverse()[:30]
+        .reverse()[:10]
     )
 
     character_fat_rows = [convert_fats_to_dict(fat) for fat in fats]
