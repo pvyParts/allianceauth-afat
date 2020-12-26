@@ -1148,7 +1148,7 @@ def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
         "afat.change_afatlink",
     )
 )
-def edit_link(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
+def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
     edit fatlink view
     :param request:
