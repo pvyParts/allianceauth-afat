@@ -306,7 +306,7 @@ def update_esi_fatlinks() -> None:
                                 )
 
                                 cache.set(
-                                    CACHE_KEY_NO_FLEET_ERROR + fatlink.hash,
+                                    CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash,
                                     str(error_no_fleetboss_count),
                                     75,
                                 )
