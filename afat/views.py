@@ -1236,17 +1236,17 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
             "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
         )
 
-    fats = AFat.objects.filter(afatlink=link)
-    flatlist = None
-
-    if len(fats) > 0:
-        flatlist = []
-
-        for fat in fats:
-            fatinfo = [fat.character.character_name, str(fat.system), str(fat.shiptype)]
-            flatlist.append("\t".join(fatinfo))
-
-        flatlist = "\r\n".join(flatlist)
+    # Flatlist / Raw Data Tab (deactivated as of 2020-12-26)
+    # fats = AFat.objects.filter(afatlink=link)
+    # flatlist = None
+    # if len(fats) > 0:
+    #     flatlist = []
+    #
+    #     for fat in fats:
+    #         fatinfo = [fat.character.character_name, str(fat.system), str(fat.shiptype)]
+    #         flatlist.append("\t".join(fatinfo))
+    #
+    #     flatlist = "\r\n".join(flatlist)
 
     # let's see if the link is still valid or has expired already
     link_ongoing = True
@@ -1266,8 +1266,7 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
         "msg_code": msg_code,
         "message": message,
         "link": link,
-        "fats": fats,
-        "flatlist": flatlist,
+        # "flatlist": flatlist,
         "link_ongoing": link_ongoing,
         "permissions": permissions,
     }
@@ -1279,6 +1278,29 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     )
 
     return render(request, "afat/fleet_edit.html", context)
+
+
+@login_required()
+@permissions_required(
+    (
+        "afat.manage_afat",
+        "afat.add_afatlink",
+        "afat.change_afatlink",
+    )
+)
+def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
+    """
+    ajax call
+    fat list in link edit view
+    :param request:
+    :param fatlink_hash:
+    """
+
+    fats = AFat.objects.filter(afatlink__hash=fatlink_hash)
+
+    fat_rows = [convert_fats_to_dict(request, fat) for fat in fats]
+
+    return JsonResponse(fat_rows, safe=False)
 
 
 @login_required()

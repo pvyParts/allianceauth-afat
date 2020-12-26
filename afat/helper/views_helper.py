@@ -7,6 +7,7 @@ import random
 from afat.models import AFat, AFatLink
 from afat.permissions import get_user_permissions
 from allianceauth.eveonline.models import EveCharacter
+from django.core.handlers.wsgi import WSGIRequest
 from django.urls import reverse
 
 
@@ -101,11 +102,16 @@ def convert_fatlinks_to_dict(fatlink: AFatLink, user) -> dict:
     return summary
 
 
-def convert_fats_to_dict(fat: AFat) -> dict:
+def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     """
     converts a afat object into a dictionary
     :param fatlink:
+    :param user:
+    :return:
     """
+
+    # get users permissions
+    permissions = get_user_permissions(request.user)
 
     # fleet type
     fleet_type = ""
@@ -125,6 +131,24 @@ def convert_fats_to_dict(fat: AFat) -> dict:
 
         esi_fleet_marker += f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
 
+    # actions
+    actions = ""
+    if permissions["fats"]["delete"]:
+        button_delete_fat = reverse("afat:fat_delete", args=[fat.afatlink.hash, fat.id])
+
+        actions += (
+            '<a class="btn btn-danger btn-sm" '
+            'data-toggle="modal" '
+            'data-target="#deleteModal" '
+            'data-url="{data_url}" '
+            'data-name="{data_name}">'
+            '<span class="glyphicon glyphicon-trash"></span>'
+            "</a>".format(
+                data_url=button_delete_fat,
+                data_name=fat.character.character_name,
+            )
+        )
+
     summary = {
         "system": fat.system,
         "ship_type": fat.shiptype,
@@ -133,6 +157,7 @@ def convert_fats_to_dict(fat: AFat) -> dict:
         "fleet_time": fat.afatlink.afattime,
         "fleet_type": fleet_type,
         "via_esi": via_esi,
+        "actions": actions,
     }
 
     return summary

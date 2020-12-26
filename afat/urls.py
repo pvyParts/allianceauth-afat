@@ -112,4 +112,9 @@ urlpatterns = [
         views.links_data,
         name="links_data",
     ),
+    url(
+        r"^ajax/links/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
+        views.link_edit_fat_data,
+        name="link_edit_fat_data",
+    ),
 ]
