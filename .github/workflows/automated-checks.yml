@@ -11,6 +11,7 @@ on:
 jobs:
   # pre-commit checks
   pre-commit:
+    name: Pre Commit Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -24,19 +25,20 @@ jobs:
         uses: pre-commit/action@v2.0.0
 
   # black formatter
-  black-format:
-    needs: pre-commit
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Run Black Formatter Checks
-        uses: Ahuge/black-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BLACK_ARGS: "."
+#  black-format:
+#    needs: pre-commit
+#    name: Black Code Formatter
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Run Black Formatter Checks
+#        uses: Ahuge/black-action@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          BLACK_ARGS: "."
 
   # codacy security scan
   codacy-security-scan:
@@ -72,7 +74,8 @@ jobs:
 
   # pypi build test
   build-test:
-    needs: [black-format, codacy-security-scan]
+    needs: [codacy-security-scan]
+    name: PyPi Build Test
     runs-on: ubuntu-latest
 
     steps:
