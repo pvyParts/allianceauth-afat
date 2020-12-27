@@ -56,26 +56,31 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
             content_type__app_label="afat", codename="basic_access"
         )
 
-        # users_with_access = users_with_permission(basic_access_permission)
         characters_with_access = characters_with_permission(basic_access_permission)
 
         data = {"No Alliance": [1]}
         sanity_check = dict()
 
-        # for corp in corps:
+        # first create the alliance keys in our dict
         for character in characters_with_access:
-            if character.corporation_name not in sanity_check:
-                sanity_check[character.corporation_name] = True
+            if character.alliance_name is not None:
+                data[character.alliance_name] = [character.alliance_id]
 
+        # now append the alliance keys
+        for character in characters_with_access:
+            corp_id = character.corporation_id
+
+            if corp_id not in sanity_check.keys():
                 if character.alliance_name is None:
                     data["No Alliance"].append(
                         (character.corporation_id, character.corporation_name)
                     )
                 else:
-                    data[character.alliance_name] = [character.alliance_id]
                     data[character.alliance_name].append(
                         (character.corporation_id, character.corporation_name)
                     )
+
+            sanity_check[corp_id] = corp_id
 
     elif request.user.has_perm("afat.stats_corp_own"):
         data = [
