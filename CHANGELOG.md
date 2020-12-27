@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Ajax URLs structured
 - Internal methods for afat_view renamed to dashboard
+- Views modularized
 - Dashboard static tables replaced with DataTables which get populated via Ajax calls
 - Fleet Edit FAT list table replaced with DataTable
 
