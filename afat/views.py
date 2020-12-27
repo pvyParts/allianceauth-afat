@@ -154,6 +154,8 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
     if year is None:
         year = datetime.now().year
 
+    data = None
+
     if request.user.has_perm("afat.stats_corp_other"):
         corps = EveCorporationInfo.objects.all()
         alliances = EveAllianceInfo.objects.all()
@@ -169,15 +171,14 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
                 data[corp.alliance.alliance_name].append(
                     (corp.corporation_id, corp.corporation_name)
                 )
-    elif request.user.has_perm("afat.stats_corp_own"):
+
+    if request.user.has_perm("afat.stats_corp_own"):
         data = [
             (
                 request.user.profile.main_character.corporation_id,
                 request.user.profile.main_character.corporation_name,
             )
         ]
-    else:
-        data = None
 
     chars = CharacterOwnership.objects.filter(user=request.user)
     months = list()
