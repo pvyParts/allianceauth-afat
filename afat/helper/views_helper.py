@@ -6,9 +6,11 @@ import random
 
 from afat.models import AFat, AFatLink
 from afat.permissions import get_user_permissions
-from allianceauth.eveonline.models import EveCharacter
+
 from django.core.handlers.wsgi import WSGIRequest
 from django.urls import reverse
+
+from allianceauth.eveonline.models import EveCharacter
 
 
 def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:

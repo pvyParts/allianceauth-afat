@@ -23,10 +23,7 @@ from afat.permissions import get_user_permissions
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
 from afat.utils import LoggerAddTag
-from allianceauth.authentication.decorators import permissions_required
-from allianceauth.eveonline.models import EveCharacter
-from allianceauth.eveonline.providers import provider
-from allianceauth.services.hooks import get_extension_logger
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count, Q
@@ -34,8 +31,14 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+
 from esi.decorators import token_required
 from esi.models import Token
+
+from allianceauth.authentication.decorators import permissions_required
+from allianceauth.eveonline.models import EveCharacter
+from allianceauth.eveonline.providers import provider
+from allianceauth.services.hooks import get_extension_logger
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
