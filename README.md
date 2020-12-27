@@ -10,29 +10,33 @@
 An Improved FAT/PAP System for
 [Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
 
-AFAT is a privately maintained whitelabel of ImicusFAT. Updates will only be pushed when
-ImicusFAT get updates to keep on par with it.
+AFAT is a privately maintained whitelabel of ImicusFAT. The only reason AFAT exists
+is because I don't like having an alliance internal meme as a name for a module in
+my Auth system. Nothing else ...
 
-### Feature Highlights/Differences
+
+## Features and highlights
 - FATLink Creation and Population from ESI
 - Fleet Type Classification (can be added in the Admin Menu)
 - Graphical Statistics Views
 - Many Core Functionality Improvements and Fixes
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
-However data does not share, but you can migrate their data to AFAT, for more
+However, data does not share, but you can migrate their data to AFAT, for more
 information see below.
+
 
 ## Contents
 
 - [Installation](#installation)
 - [Updating](#updating)
 - [Data Migration](#data-migration)
-    - [From Alliance Auth native FAT](#from-alliance-auth-native-fat)
-    - [From bFAT](#from-bfat)
-    - [From ImicusFAT](#from-imicusfat)
+    - [From Alliance Auth native FAT](#import-from-native-fat)
+    - [From bFAT](#import-from-bfat)
+    - [From ImicusFAT](#import-from-imicusfat)
 - [Changelog](CHANGELOG.md)
 - [Credits](#credits)
+
 
 ## Installation
 
@@ -79,6 +83,7 @@ python manage.py migrate
 
 Restart your supervisor services for AA.
 
+
 ## Updating
 
 To update your existing installation of ImicusFAT, first enable your
@@ -93,6 +98,7 @@ python manage.py migrate
 
 Finally restart your supervisor services for AA
 
+
 ## Data Migration
 
 Right after the **initial** installation and running migrations,
@@ -105,25 +111,24 @@ Only do this once and ONLY BEFORE you are using AFAT.
 A later migration is **not** possible.
 
 
-#### Import from native FAT
+### Import from native FAT
 
 ```bash
 python myauth/manage.py afat_import_from_allianceauth_fat
 ```
 
-
-#### Import from bFAT
+### Import from bFAT
 
 ```bash
 python myauth/manage.py afat_import_from_bfat
 ```
 
-
-#### Import from ImicusFAT
+### Import from ImicusFAT
 
 ```bash
 python myauth/manage.py afat_import_from_imicusfat
 ```
+
 
 ## Credits
 • AFAT • Privately maintained by @ppfeufer is a whitelabel of
