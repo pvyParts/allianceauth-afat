@@ -7,7 +7,10 @@ import random
 from afat.models import AFat, AFatLink
 from afat.permissions import get_user_permissions
 
+from django.contrib.auth.models import User, Permission
 from django.core.handlers.wsgi import WSGIRequest
+from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from allianceauth.eveonline.models import EveCharacter
@@ -186,3 +189,38 @@ def get_random_rgba_color():
         green=random.randint(0, 255),
         blue=random.randint(0, 255),
     )
+
+
+def users_with_permission(permission: Permission) -> models.QuerySet:
+    """
+    returns queryset of users that have the given permission in Auth
+    """
+
+    users_qs = (
+        User.objects.prefetch_related(
+            "user_permissions", "groups", "profile__state__permissions"
+        )
+        .filter(
+            Q(user_permissions=permission)
+            | Q(groups__permissions=permission)
+            | Q(profile__state__permissions=permission)
+        )
+        .distinct()
+    )
+
+    return users_qs
+
+
+def characters_with_permission(permission: Permission) -> models.QuerySet:
+    """
+    returns queryset of characters that have the given permission
+    in Auth through due to their associated user
+    """
+
+    # first we need the users that have the permission
+    users_qs = users_with_permission(permission)
+
+    # now get their characters ...
+    charater_qs = EveCharacter.objects.filter(character_ownership__user__in=users_qs)
+
+    return charater_qs

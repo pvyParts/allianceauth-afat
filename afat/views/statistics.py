@@ -7,12 +7,16 @@ from datetime import datetime
 from collections import OrderedDict
 
 from afat import __title__
-from afat.helper.views_helper import get_random_rgba_color
+from afat.helper.views_helper import (
+    characters_with_permission,
+    get_random_rgba_color,
+)
 from afat.models import AFat
 from afat.permissions import get_user_permissions
 from afat.utils import LoggerAddTag
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -48,20 +52,30 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         year = datetime.now().year
 
     if request.user.has_perm("afat.stats_corp_other"):
-        corps = EveCorporationInfo.objects.all()
-        alliances = EveAllianceInfo.objects.all()
-        data = {"No Alliance": []}
+        basic_access_permission = Permission.objects.select_related("content_type").get(
+            content_type__app_label="afat", codename="basic_access"
+        )
 
-        for alliance in alliances:
-            data[alliance.alliance_name] = [alliance.alliance_id]
+        # users_with_access = users_with_permission(basic_access_permission)
+        characters_with_access = characters_with_permission(basic_access_permission)
 
-        for corp in corps:
-            if corp.alliance is None:
-                data["No Alliance"].append((corp.corporation_id, corp.corporation_name))
-            else:
-                data[corp.alliance.alliance_name].append(
-                    (corp.corporation_id, corp.corporation_name)
-                )
+        data = {"No Alliance": [1]}
+        sanity_check = dict()
+
+        # for corp in corps:
+        for character in characters_with_access:
+            if character.corporation_name not in sanity_check:
+                sanity_check[character.corporation_name] = True
+
+                if character.alliance_name is None:
+                    data["No Alliance"].append(
+                        (character.corporation_id, character.corporation_name)
+                    )
+                else:
+                    data[character.alliance_name] = [character.alliance_id]
+                    data[character.alliance_name].append(
+                        (character.corporation_id, character.corporation_name)
+                    )
 
     elif request.user.has_perm("afat.stats_corp_own"):
         data = [
@@ -107,6 +121,10 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         "year_prev": int(year) - 1,
         "year_next": int(year) + 1,
         "permissions": permissions,
+        # "corporation_ids": corporation_ids,
+        # "corps": corps,
+        # "users_with_access": users_with_access,
+        # "characters_with_access": characters_with_access,
     }
 
     logger.info("Statistics overview called by {user}".format(user=request.user))
