@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Views modularized
 - Dashboard static tables replaced with DataTables which get populated via Ajax calls
 - Fleet Edit FAT list table replaced with DataTable
+- Statistics now only show alliances and corps when their members have access to the
+  module, not just all anymore
 
 ### Fixed
 
