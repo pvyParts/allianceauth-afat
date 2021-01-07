@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [1.4.2] - xxxx-xx-xx
+## [1.4.2] - 2021-01-07
+
+### Added
+
+- Useragent to ESI calls
 
 ### Changed
 
@@ -58,13 +62,13 @@ fleet boss and didn't close or leave the fleet.
 
 ## [1.3.3] - 2020-11-28
 
+### Changed
+- Reducing characters displayed on stats main view to only those with FATs
+
 ### Fixed
 - 'NoneType' object has no attribute 'character_name'
   (This happens when the creator of a FAT link for what ever reason lost his main char
   and prevents the FAT link list from being loaded.)
-
-### Changed
-- Reducing characters displayed on stats main view to only those with FATs
 
 
 ## [1.3.2] - 2020-11-23
@@ -220,7 +224,7 @@ Finally restart your supervisor services for AA
 
 ## [0.3.5] - 2020-08-31
 
-### Changes
+### Changed
 
 - Can Only Create ESI Link if Fleet Boss
 - Show Clickable Link Only When Still Valid
@@ -230,7 +234,7 @@ Finally restart your supervisor services for AA
 
 - Remaining Flat List Fragments
 
-### Fixes
+### Fixed
 
 - ESI FAT Messages
 - Various Formatting Enhancements
