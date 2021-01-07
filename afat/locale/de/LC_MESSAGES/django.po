@@ -2,10 +2,10 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Peter Pfeufer <rounon.dax@terra-nanotech.de>, 2020
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -28,8 +28,8 @@ msgstr "Flottenaktivitäts-Tracking"
 #: forms.py:17 forms.py:37 forms.py:48 templates/afat/fat_list.html:48
 #: templates/afat/partials/addlink/clickable_link.html:28
 #: templates/afat/partials/addlink/esi_link.html:23
-#: templates/afat/partials/afatview/tabs/fatlinks.html:11
-#: templates/afat/partials/afatview/tabs/fats.html:31
+#: templates/afat/partials/dashboard/tabs/fatlinks.html:11
+#: templates/afat/partials/dashboard/tabs/fats.html:31
 #: templates/afat/partials/fleet_edit/fatlink_name_form.html:11
 msgid "Fleet Name"
 msgstr "Flottenname"
@@ -55,7 +55,7 @@ msgstr "Schiffstyp"
 msgid "Duration"
 msgstr "Dauer"
 
-#: templates/afat/addlink.html:6 templates/afat/afatview.html:7
+#: templates/afat/addlink.html:6 templates/afat/dashboard.html:7
 #: templates/afat/base.html:6 templates/afat/date_select.html:7
 #: templates/afat/date_select.html:13 templates/afat/fat_list.html:6
 #: templates/afat/fleet_edit.html:6 templates/afat/stats_main.html:8
@@ -66,7 +66,7 @@ msgstr "Flottenaktivität"
 msgid "Create a FAT Link"
 msgstr "FAT Link erstellen"
 
-#: templates/afat/addlink.html:24 templates/afat/afatview.html:26
+#: templates/afat/addlink.html:24 templates/afat/dashboard.html:26
 #: templates/afat/fat_list.html:35
 #: templates/afat/partials/fleet_edit/message.html:21
 #: templates/afat/partials/fleet_edit/message.html:82
@@ -75,7 +75,7 @@ msgstr "FAT Link erstellen"
 msgid "Oh No!"
 msgstr "Oh NEIN!"
 
-#: templates/afat/addlink.html:26 templates/afat/afatview.html:28
+#: templates/afat/addlink.html:26 templates/afat/dashboard.html:28
 #: templates/afat/fat_list.html:37
 #: templates/afat/partials/fleet_edit/message.html:10
 #: templates/afat/partials/fleet_edit/message.html:31
@@ -86,11 +86,11 @@ msgstr "Oh NEIN!"
 msgid "Success!"
 msgstr "Erfolg!"
 
-#: templates/afat/afatview.html:13
+#: templates/afat/dashboard.html:13
 msgid "Recent Activity"
 msgstr "Kürzliche Aktivität"
 
-#: templates/afat/afatview.html:61 templates/afat/fat_list.html:156
+#: templates/afat/dashboard.html:61 templates/afat/fat_list.html:156
 #: templates/afat/fleet_edit.html:59
 msgid "Are you sure you want to delete"
 msgstr "Wirklich löschen?"
@@ -145,7 +145,7 @@ msgid "Month"
 msgstr "Monat"
 
 #: templates/afat/date_select.html:32
-#: templates/afat/partials/afatview/tabs_navigation.html:5
+#: templates/afat/partials/dashboard/tabs_navigation.html:5
 #: templates/afat/partials/ally_stat/tabs/corporations.html:15
 #: templates/afat/partials/corp_stat/tabs/member.html:12
 #: templates/afat/partials/fleet_edit/tabs_navigation.html:5
@@ -162,19 +162,19 @@ msgid "All FAT Links"
 msgstr "Alle FAT Links"
 
 #: templates/afat/fat_list.html:49
-#: templates/afat/partials/afatview/tabs/fats.html:32
+#: templates/afat/partials/dashboard/tabs/fats.html:32
 #: templates/afat/partials/char_stat/tabs/raw_data.html:12
 msgid "Fleet Type"
 msgstr "Flottenart"
 
 #: templates/afat/fat_list.html:50
-#: templates/afat/partials/afatview/tabs/fatlinks.html:12
+#: templates/afat/partials/dashboard/tabs/fatlinks.html:12
 msgid "Creator"
 msgstr "Ersteller"
 
 #: templates/afat/fat_list.html:51
-#: templates/afat/partials/afatview/tabs/fatlinks.html:13
-#: templates/afat/partials/afatview/tabs/fats.html:35
+#: templates/afat/partials/dashboard/tabs/fatlinks.html:13
+#: templates/afat/partials/dashboard/tabs/fats.html:35
 #: templates/afat/partials/char_stat/tabs/raw_data.html:15
 msgid "EVE Time"
 msgstr "EVE Zeit"
@@ -185,13 +185,13 @@ msgid "# of FATs"
 msgstr "Anz. FATs"
 
 #: templates/afat/fat_list.html:55
-#: templates/afat/partials/afatview/tabs/fatlinks.html:16
+#: templates/afat/partials/dashboard/tabs/fatlinks.html:16
 #: templates/afat/partials/fleet_edit/tabs/fats.html:16
 msgid "Actions"
 msgstr "Aktionen"
 
 #: templates/afat/fat_list.html:140
-#: templates/afat/partials/afatview/tabs/fats.html:51
+#: templates/afat/partials/dashboard/tabs/fats.html:51
 msgid "via ESI"
 msgstr "via ESI"
 
@@ -274,41 +274,41 @@ msgstr ""
 msgid "Add ESI Link"
 msgstr "ESI Link erstellen"
 
-#: templates/afat/partials/afatview/tabs/fatlinks.html:6
+#: templates/afat/partials/dashboard/tabs/fatlinks.html:6
 msgid "Most Recent FAT Links"
 msgstr "Neueste FAT Links"
 
-#: templates/afat/partials/afatview/tabs/fats.html:7
+#: templates/afat/partials/dashboard/tabs/fats.html:7
 msgid "Your Most Recent FATs"
 msgstr "Deine neuesten FAT Links"
 
-#: templates/afat/partials/afatview/tabs/fats.html:9
+#: templates/afat/partials/dashboard/tabs/fats.html:9
 msgid "Only charaters that have recent FATs are shown."
 msgstr ""
 "Es werden nur Charaktere angezeigt welche kürzlich durch einen FAT Link "
 "registriert wurden."
 
-#: templates/afat/partials/afatview/tabs/fats.html:33
+#: templates/afat/partials/dashboard/tabs/fats.html:33
 #: templates/afat/partials/char_stat/tabs/raw_data.html:13
 #: templates/afat/partials/fleet_edit/tabs/fats.html:12
 msgid "Location"
 msgstr "System"
 
-#: templates/afat/partials/afatview/tabs/fats.html:34
+#: templates/afat/partials/dashboard/tabs/fats.html:34
 #: templates/afat/partials/char_stat/tabs/raw_data.html:14
 msgid "Ship"
 msgstr "Schiff"
 
-#: templates/afat/partials/afatview/tabs/fats.html:69
+#: templates/afat/partials/dashboard/tabs/fats.html:69
 #: templates/afat/partials/stats_main/tabs/mine.html:54
 msgid "No FATs for"
 msgstr "Keine FATs für"
 
-#: templates/afat/partials/afatview/tabs/fats.html:79
+#: templates/afat/partials/dashboard/tabs/fats.html:79
 msgid "No recent FAT activity registered for any of your characters."
 msgstr "Keine Aktivität für Deine Charaktere registriert."
 
-#: templates/afat/partials/afatview/tabs_navigation.html:6
+#: templates/afat/partials/dashboard/tabs_navigation.html:6
 #: templates/afat/partials/menu.html:25
 msgid "FAT Links"
 msgstr "FAT Links"

@@ -2,9 +2,9 @@
 
 <div id="fats" class="tab-pane fade in active panel panel-default">
     <div class="panel-body">
-        <h4>{% translate "FATs for this FAT Link" %}</h4>
+        <h4>{% translate "FATs for this FAT Link <small>(updated every 15 seconds)</small>" %}</h4>
 
-        <table class="table table-striped" id="fat-chars" style="width: 100%;">
+        <table class="table table-striped" id="fleet-edit-fat-list" style="width: 100%;">
             <thead>
                 <tr>
                     <th>{% translate "Character" %}</th>
@@ -17,28 +17,7 @@
                 </tr>
             </thead>
 
-            <tbody>
-                {% for fat in fats %}
-                    <tr>
-                        <td>{{ fat.character.character_name }}</td>
-                        <td>{{ fat.system }}</td>
-                        <td>{{ fat.shiptype }}</td>
-                        <td class="text-right">
-                            {% if permissions.fats.delete %}
-                                <a
-                                    class="btn btn-danger btn-sm"
-                                    data-toggle="modal"
-                                    data-target="#deleteModal"
-                                    data-url="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:fat_delete' link.hash fat.id %}"
-                                    data-name="{% if fat.character.character_name %}{{ fat.character.character_name }}{% else %}this pilot{% endif %}"
-                                >
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>

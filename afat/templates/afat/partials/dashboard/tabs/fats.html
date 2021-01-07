@@ -1,0 +1,71 @@
+
+{% load evelinks %}
+{% load i18n %}
+
+<script type="application/javascript">
+    let characters = new Array();
+</script>
+
+<div id="fats" class="tab-pane fade in active panel panel-default">
+    <div class="panel-body">
+        <h4>{% translate "Your Most Recent FATs" %}</h4>
+
+        <p>{% translate "Only charaters that have recent FATs are shown. <small>(latest 10 FATs per character)</small>" %}</p>
+
+        {% if characters %}
+            <ul class="nav nav-pills">
+                {% for character in characters %}
+                    <li class="afat-character-tab{% if forloop.first %} active{% endif %}">
+                        <script type="application/javascript">
+                            characters.push({
+                                charId: {{ character.character_id }},
+                                charName: '{{ character.character_name }}'
+                            })
+                        </script>
+
+                        <a data-toggle="tab" href="#{{ character.character_id }}">
+                            <img class="img-circle" src="{{ character.character_id|character_portrait_url:32 }}" alt="{{ character.character_name }}">
+                            {{ character.character_name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content">
+                {% for character in characters %}
+                    <div id="{{ character.character_id }}" class="tab-pane fade in panel-default{% if forloop.first %} active{% endif %}">
+                        <div class="panel-body">
+                            <table class="table table-striped" id="recent-fats-character-{{ character.character_id }}" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>{% translate 'Fleet Name' %}</th>
+                                        <th>{% translate 'Fleet Type' %}</th>
+                                        <th>{% translate 'Location' %}</th>
+                                        <th>{% translate 'Ship' %}</th>
+                                        <th>{% translate 'EVE Time' %}</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody></tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="{% if permissions.fats.manage %}5{% else %}4{% endif %}">
+                                            {% include "afat/partials/fatlink_list_legend.html" %}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                <p>
+                    {% translate "No recent FAT activity registered for any of your characters." %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>

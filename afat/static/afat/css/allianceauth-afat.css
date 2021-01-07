@@ -2,6 +2,16 @@
     .btn-afat-action {
         margin: 0 0.25rem;
     }
+
+    .fatlink-list-legend {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgb(236, 240, 241);
+    }
+
+    .template-dark-mode .fatlink-list-legend {
+        border-top: 1px solid rgb(70, 69, 69);
+    }
 }
 
 /* labels

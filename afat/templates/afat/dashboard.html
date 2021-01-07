@@ -1,0 +1,161 @@
+{% extends 'afat/base.html' %}
+
+{% load evelinks %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
+
+{% block afat_header %}
+    <br>
+    {% include "afat/partials/menu.html" %}
+
+    <h2>{% translate "Recent Activity" %}</h2>
+{% endblock %}
+
+{% block afat_body %}
+    {% if msg %}
+        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times</span>
+            </button>
+
+            {% if msg.0 != 'warning' %}
+                <h4>
+                    {% if msg.0 == 'danger' %}
+                        {% translate "Oh No!" %}
+                    {% elif msg.0 == 'success' %}
+                        {% translate "Success!" %}
+                    {% endif %}
+                </h4>
+            {% endif %}
+
+            <p>{{ msg.1 }}</p>
+        </div>
+    {% endif %}
+
+    {% include "afat/partials/dashboard/tabs_navigation.html" %}
+
+    <div class="tab-content">
+        {% include "afat/partials/dashboard/tabs/fats.html" %}
+        {% include "afat/partials/dashboard/tabs/fatlinks.html" %}
+    </div>
+
+    {% include "afat/modals/delete-fat.html" %}
+{% endblock %}
+
+{% block extra_css %}
+    {% include 'bundles/datatables-css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
+{% endblock %}
+
+{% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/moment-js.html' with locale=True %}
+
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/dataTables.rowGroup.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/datetime.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
+
+    <script type="application/javascript">
+        $(document).ready(function() {
+            const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
+
+            // recent fats per character
+            if (characters.length > 0) {
+                let noFatsWarning = '<div class="alert alert-warning" role="alert">' +
+                    '<p>{% translate "No recent FATs for" %} ###CHARACTER_NAME###</p>' +
+                    '</div>'
+
+                characters.forEach(function(character) {
+                    $('#recent-fats-character-' + character.charId).DataTable({
+                        ajax: {
+                            url: '{% url "afat:dashboard_fats_data" 0 %}'.replace(
+                                '0',
+                                character.charId
+                            ),
+                            dataSrc: '',
+                            cache: false
+                        },
+                        columns: [
+                            {data: 'fleet_name'},
+                            {data: 'fleet_type'},
+                            {data: 'system'},
+                            {data: 'ship_type'},
+                            {
+                                data: 'fleet_time',
+                                render: $.fn.dataTable.render.moment(
+                                    moment.ISO_8601,
+                                    DATETIME_FORMAT
+                                )
+                            },
+                        ],
+                        language: {
+                            emptyTable: noFatsWarning.replace(
+                                '###CHARACTER_NAME###',
+                                character.charName
+                            )
+                        },
+                        paging: false,
+                        ordering: false,
+                        searching: false,
+                        info: false
+                    });
+                });
+            }
+
+            // recent fatlinks
+            let noFatlinksWarning = '<div class="alert alert-warning" role="alert">' +
+                '<p>{% translate "No recent FAT links" %}</p>' +
+                '</div>'
+
+            $('#dashboard-recent-fatlinks').DataTable({
+                ajax: {
+                    url: '{% url "afat:dashboard_links_data" %}',
+                    dataSrc: '',
+                    cache: false
+                },
+                columns: [
+                    {data: 'fleet_name'},
+                    {data: 'fleet_type'},
+                    {data: 'creator_name'},
+                    {
+                        data: 'fleet_time',
+                        render: $.fn.dataTable.render.moment(
+                            moment.ISO_8601,
+                            DATETIME_FORMAT
+                        )
+                    },
+                    {% if permissions.fatlinks.manipulate %}
+                        {data: 'actions'},
+                    {% endif %}
+                ],
+                language: {
+                    emptyTable: noFatlinksWarning
+                },
+                paging: false,
+                ordering: false,
+                searching: false,
+                info: false
+            });
+        });
+    </script>
+
+    <script type="application/javascript">
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var url = button.data('url'); // Extract info from data-* attributes
+            var name = button.data('name');
+            var modal = $(this);
+
+            modal.find('#fat-link').attr('href', url);
+            modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
+        }).on('hide.bs.modal', function() {
+            var modal = $(this);
+
+            modal.find('.modal-body').html('');
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,35 @@
+
+{% load i18n %}
+
+<div id="fatlinks" class="tab-pane fade panel panel-default">
+    <div class="panel-body">
+        <h4>
+            {% translate "Most Recent FAT Links <small>(latest 10)</small>" %}
+        </h4>
+
+        <table class="table table-striped" id="dashboard-recent-fatlinks" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>{% translate "Fleet Name" %}</th>
+                    <th>{% translate "Fleet Type" %}</th>
+                    <th>{% translate "Creator" %}</th>
+                    <th>{% translate "EVE Time" %}</th>
+
+                    {% if permissions.fatlinks.manipulate %}
+                        <th>{% translate "Actions" %}</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan="{% if permissions.fats.manage %}5{% else %}4{% endif %}">
+                        {% include "afat/partials/fatlink_list_legend.html" %}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

@@ -21,7 +21,7 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
             self,
             _("Fleet Activity Tracking"),
             "fas fa-space-shuttle fa-fw",
-            "afat:afat_view",
+            "afat:dashboard",
             navactive=["afat:"],
         )
 
