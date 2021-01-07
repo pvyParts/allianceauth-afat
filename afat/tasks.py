@@ -43,7 +43,7 @@ CACHE_KEY_NO_FLEETBOSS_ERROR = (
 
 # params for all tasks
 TASK_DEFAULT_KWARGS = {
-    "time_limit": 1200,  # stop after 20 minutes
+    "time_limit": 120,  # stop after 2 minutes
 }
 
 # params for tasks that make ESI calls
@@ -121,7 +121,7 @@ def get_or_create_char(name: str = None, character_id: int = None):
     else:
         character = eve_character[0]
 
-    logger.info("Processing information for character %s", character.pk)
+    logger.info("Processing information for {character}".format(character=character))
 
     return character
 
@@ -206,7 +206,7 @@ def process_character(char, fatlink_hash):
         ship_name = ship["name"]
 
         logger.info(
-            "Adding {character_name} in {system_name} flying a {ship_name} "
+            "New Pilot: Adding {character_name} in {system_name} flying a {ship_name} "
             "to FAT link {fatlink_hash}".format(
                 character_name=character,
                 system_name=solar_system_name,
@@ -223,8 +223,8 @@ def process_character(char, fatlink_hash):
         ).save()
     else:
         logger.info(
-            "No changes. No new pilots to add to FAT link {fatlink_hash}".format(
-                fatlink_hash=fatlink_hash
+            "{character} is already registered with FAT link {fatlink_hash}".format(
+                character=character, fatlink_hash=fatlink_hash
             )
         )
 
@@ -347,6 +347,7 @@ def update_esi_fatlinks() -> None:
                         fatlink_hash=fatlink.hash, reason=close_fleet_reason
                     )
                 )
+
                 fatlink.is_registered_on_esi = False
                 fatlink.save()
 
