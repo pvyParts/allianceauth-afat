@@ -1,9 +1,11 @@
 """
 fatlinks related views
 """
+
 from datetime import datetime, timedelta
 
 from afat import __title__
+from afat.app_settings import AFAT_DEFAULT_FATLINK_EXPIRY_TIME
 from afat.forms import (
     AFatClickFatForm,
     AFatLinkForm,
@@ -135,6 +137,7 @@ def link_add(request: WSGIRequest) -> HttpResponse:
         "msg": msg,
         "permissions": permissions,
         "has_open_esi_fleet": has_open_esi_fleet,
+        "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
     }
 
     logger.info("Add FAT link view called by {user}".format(user=request.user))
@@ -351,6 +354,7 @@ def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
     :param fatlink_hash:
     :return:
     """
+
     if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT link hash provided."]
 
