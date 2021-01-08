@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.4.4-beta.1] - 2021-01-08
+
+### Added
+
+- Option to set the default expiry time for clickable FAT links in minutes. If
+  nothing es set, 60 minutes will be assumed as default.
+
+
 ## [1.4.3] - 2021-01-08
 
 ### Fixed
