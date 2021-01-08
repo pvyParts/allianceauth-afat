@@ -17,10 +17,11 @@ my Auth system. Nothing else ...
 
 
 ## Features and highlights
+
 - FATLink Creation and Population from ESI
+- Automatic tracing of participation on FAT links created via ESI
 - Fleet Type Classification (can be added in the Admin Menu)
 - Graphical Statistics Views
-- Many Core Functionality Improvements and Fixes
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
@@ -35,7 +36,9 @@ information see below.
     - [From Alliance Auth native FAT](#import-from-native-fat)
     - [From bFAT](#import-from-bfat)
     - [From ImicusFAT](#import-from-imicusfat)
-- [Changelog](CHANGELOG.md)
+- [Settings](#settings)
+- [Permissions](#permissions)
+- [Changelog](#changelog)
 - [Credits](#credits)
 
 
@@ -129,6 +132,33 @@ python myauth/manage.py afat_import_from_bfat
 ```bash
 python myauth/manage.py afat_import_from_imicusfat
 ```
+
+
+## Settings
+
+To customize the module, the following settings are available.
+
+| Name                             | Description                                                     | Default Value |
+|:---------------------------------|:----------------------------------------------------------------|--------------:|
+| AFAT_DEFAULT_FATLINK_EXPIRY_TIME | Sets the default expiry time for clickable FAT links in Minutes | 60            |
+
+
+## Permissions
+
+| Name                                                              | Description                                                                                                                                           | Notes                                                                                   |
+|:------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| afat.Alliance Auth AFAT.Can access the Alliance Auth AFAT Module  | Users with this permission can acces the AFAT module and register their participation through clickable FAT links                                     | Your line member probably want this permission                                          |
+| afat.FAT Link.Can Manage the AFAT Module                          | User with this permission can manage the complete AFAT Module. They can create, edit and remove FAT links as well as they can create and remove FATs  | Your Military lead probably should get this permission                                  |
+| afat.Fat Link.Can add FAT Link                                    | Users with this permission can only add FAT links                                                                                                     | Your regular FC or who ever should be able to add FAT links should have this permission |
+
+There are probably a lot more permissions registered in your Django Admin Panel, but
+they are not used as of now, so you can happiely ignore them.
+
+
+## Changelog
+
+To keep track of all changes, please read the
+[Changelog](https://github.com/ppfeufer/allianceauth-afat/blob/master/CHANGELOG.md).
 
 
 ## Credits
