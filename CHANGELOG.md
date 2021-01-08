@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.4.3] - 2021-01-08
+
+### Fixed
+
+- Deal with invalid user profiles. For example when a user has revoked his/her ESI
+  access.
+
+
 ## [1.4.2] - 2021-01-07
 
 ### Added
