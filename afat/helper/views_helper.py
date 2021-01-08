@@ -54,9 +54,16 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
     # creator name
     creator_name = fatlink.creator.username
+    user_has_no_profile = False
 
-    if fatlink.creator.profile.main_character is not None:
-        creator_name = fatlink.creator.profile.main_character.character_name
+    try:
+        creator_profile = fatlink.creator.profile
+    except Exception:
+        user_has_no_profile = True
+
+    if user_has_no_profile is False:
+        if creator_profile.main_character is not None:
+            creator_name = creator_profile.main_character.character_name
 
     # fleet time
     time = fatlink.afattime
