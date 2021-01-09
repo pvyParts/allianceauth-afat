@@ -8,7 +8,7 @@ import re
 
 from django.conf import settings
 
-from fleetpings.utils import clean_setting
+from afat.utils import clean_setting
 
 
 # set default panels if none are set in local.py

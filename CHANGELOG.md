@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.4.4-beta.2] - 2021-01-09
+
+### Fixed
+
+- Import from the right module, shall we?
+
+
 ## [1.4.4-beta.1] - 2021-01-08
 
 ### Added
