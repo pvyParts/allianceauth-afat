@@ -5,7 +5,6 @@ views helper
 import random
 
 from afat.models import AFat, AFatLink
-from afat.permissions import get_user_permissions
 
 from django.contrib.auth.models import User, Permission
 from django.core.handlers.wsgi import WSGIRequest
@@ -23,9 +22,6 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     :param user:
     :return:
     """
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
 
     # fleet name
     fatlink_fleet = fatlink.hash
@@ -73,28 +69,29 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
     # action buttons
     actions = ""
-    if permissions["fatlinks"]["manipulate"]:
-        if permissions["fatlinks"]["change"]:
-            button_edit_url = reverse("afat:link_edit", args=[fatlink.hash])
+    if request.user.has_perm("afat.manage_afat") or request.user.has_perm(
+        "afat.add_fatlink"
+    ):
+        button_edit_url = reverse("afat:link_edit", args=[fatlink.hash])
 
-            actions += (
-                '<a class="btn btn-afat-action btn-info btn-sm" href="'
-                + button_edit_url
-                + '">'
-                '<span class="glyphicon glyphicon-pencil"></span>'
-                "</a>"
-            )
+        actions += (
+            '<a class="btn btn-afat-action btn-info btn-sm" href="'
+            + button_edit_url
+            + '">'
+            '<span class="fas fa-eye"></span>'
+            "</a>"
+        )
 
-        if permissions["fatlinks"]["delete"]:
-            button_delete_url = reverse("afat:link_delete", args=[fatlink.hash])
+    if request.user.has_perm("afat.manage_afat"):
+        button_delete_url = reverse("afat:link_delete", args=[fatlink.hash])
 
-            actions += (
-                '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
-                'data-target="#deleteModal" data-url="' + button_delete_url + '" '
-                'data-name="' + fatlink_fleet + '">'
-                '<span class="glyphicon glyphicon-trash"></span>'
-                "</a>"
-            )
+        actions += (
+            '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
+            'data-target="#deleteModal" data-url="' + button_delete_url + '" '
+            'data-name="' + fatlink_fleet + '">'
+            '<span class="glyphicon glyphicon-trash"></span>'
+            "</a>"
+        )
 
     summary = {
         "pk": fatlink.pk,
@@ -122,9 +119,6 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     :return:
     """
 
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     # fleet type
     fleet_type = ""
     if fat.afatlink.link_type is not None:
@@ -145,7 +139,7 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
 
     # actions
     actions = ""
-    if permissions["fats"]["delete"]:
+    if request.user.has_perm("afat.manage_afat"):
         button_delete_fat = reverse("afat:fat_delete", args=[fat.afatlink.hash, fat.id])
 
         actions += (

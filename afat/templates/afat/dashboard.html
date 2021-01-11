@@ -128,7 +128,7 @@
                             DATETIME_FORMAT
                         )
                     },
-                    {% if permissions.fatlinks.manipulate %}
+                    {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
                         {data: 'actions'},
                     {% endif %}
                 ],

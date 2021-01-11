@@ -1,4 +1,3 @@
-
 {% load i18n %}
 
 <div id="fatlinks" class="tab-pane fade panel panel-default">
@@ -15,7 +14,7 @@
                     <th>{% translate "Creator" %}</th>
                     <th>{% translate "EVE Time" %}</th>
 
-                    {% if permissions.fatlinks.manipulate %}
+                    {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
                         <th>{% translate "Actions" %}</th>
                     {% endif %}
                 </tr>
@@ -25,7 +24,7 @@
 
             <tfoot>
                 <tr>
-                    <td colspan="{% if permissions.fats.manage %}5{% else %}4{% endif %}">
+                    <td colspan="{% if perms.afat.manage_afat or perms.afat.add_fatlink %}5{% else %}4{% endif %}">
                         {% include "afat/partials/fatlink_list_legend.html" %}
                     </td>
                 </tr>

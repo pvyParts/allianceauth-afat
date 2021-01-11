@@ -10,11 +10,13 @@
     {% include "afat/partials/menu.html" %}
     {% include "afat/partials/fleet_edit/message.html" %}
 
-    <h2>{% translate "Edit FAT Link" %}</h2>
+    <h2>{% translate "FAT Link Details" %}</h2>
 {% endblock %}
 
 {% block afat_body %}
-    {% include "afat/partials/fleet_edit/fatlink_name_form.html" %}
+    {% if perms.afat.manage_afat %}
+        {% include "afat/partials/fleet_edit/fatlink_name_form.html" %}
+    {% endif %}
 
     <p>&nbsp;</p>
 
@@ -54,7 +56,7 @@
                     {data: 'character_name'},
                     {data: 'system'},
                     {data: 'ship_type'},
-                    {% if permissions.fats.manage %}
+                    {% if perms.afat.manage_afat %}
                         {
                             data: 'actions',
                             width: '50px'
@@ -62,7 +64,7 @@
                     {% endif %}
                 ],
                 columnDefs: [
-                    {% if permissions.fats.manage %}
+                    {% if perms.afat.manage_afat %}
                         {
                             orderable: false,
                             targets: [3]

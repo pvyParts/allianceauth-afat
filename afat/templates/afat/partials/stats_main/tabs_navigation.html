@@ -1,10 +1,9 @@
-
 {% load i18n %}
 
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#mine">{% translate "My Stats" %}</a></li>
 
-    {% if permissions.stats.corp.view_own or permissions.stats.corp.view_other %}
+    {% if perms.afat.stats_corporation_own or perms.afat.stats_corporation_other %}
         <li><a data-toggle="tab" href="#corps">{% translate "Corps" %}</a></li>
     {% endif %}
 </ul>

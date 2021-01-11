@@ -5,7 +5,6 @@ dashboard related views
 from afat import __title__
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from afat.models import AFat, AFatLink
-from afat.permissions import get_user_permissions
 from afat.utils import LoggerAddTag
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -31,9 +30,6 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
     :return:
     """
 
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     msg = None
 
     if "msg" in request.session:
@@ -48,7 +44,7 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
         if character_fat.count() > 0:
             characters.append(users_character.character)
 
-    context = {"characters": characters, "msg": msg, "permissions": permissions}
+    context = {"characters": characters, "msg": msg}
 
     logger.info("Module called by {user}".format(user=request.user))
 

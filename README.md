@@ -145,14 +145,13 @@ To customize the module, the following settings are available.
 
 ## Permissions
 
-| Name                                                              | Description                                                                                                                                           | Notes                                                                                   |
-|:------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| afat.Alliance Auth AFAT.Can access the Alliance Auth AFAT Module  | Users with this permission can acces the AFAT module and register their participation through clickable FAT links                                     | Your line member probably want this permission                                          |
-| afat.FAT Link.Can Manage the AFAT Module                          | User with this permission can manage the complete AFAT Module. They can create, edit and remove FAT links as well as they can create and remove FATs  | Your Military lead probably should get this permission                                  |
-| afat.Fat Link.Can add FAT Link                                    | Users with this permission can only add FAT links                                                                                                     | Your regular FC or who ever should be able to add FAT links should have this permission |
-
-There are probably a lot more permissions registered in your Django Admin Panel, but
-they are not used as of now, so you can happiely ignore them.
+| Name | Description | Notes |
+|:-----|:------------|:-----|
+| basic_access | Can access the AFAT module | Your line member probably want this permission, so they can see the module and click the FAT links they are given. They also can see their own statistics with this permission. |
+| manage_afat | Can manage the AFAT module | Your Military lead probably should get this permission |
+| add_fatlink | Can create FAT Links | Your regular FC or who ever should be able to add FAT links should have this permission |
+| stats_corporation_own | Can see own corporation statistics |  |
+| stats_corporation_other | Can see statistics of other corporations |  |
 
 
 ## Changelog

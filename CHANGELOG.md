@@ -6,19 +6,56 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [1.4.4-beta.2] - 2021-01-09
-
-### Fixed
-
-- Import from the right module, shall we?
-
-
-## [1.4.4-beta.1] - 2021-01-08
+## [1.4.4] - 2021-01-11
 
 ### Added
 
 - Option to set the default expiry time for clickable FAT links in minutes. If
   nothing es set, 60 minutes will be assumed as default.
+
+## Changed
+
+- Permissions have been completely overhauled and simplified
+
+  | Name | Description | Notes |
+  |:-----|:------------|:-----|
+  | basic_access | Can access the AFAT module | Your line member probably want this permission, so they can see the module and click the FAT links they are given. They also can see their own statistics with this permission. |
+  | manage_afat | Can manage the AFAT module | Your Military lead probably should get this permission |
+  | add_fatlink | Can create FAT Links | Your regular FC or who ever should be able to add FAT links should have this permission |
+  | stats_corporation_own | Can see own corporation statistics |  |
+  | stats_corporation_other | Can see statistics of other corporations |  |
+
+  **Please make sure to read the following before updating!**
+
+  Permissions have been completely redone and simplified. This means, the current
+  permissions will no longer apply after the update. Time to clean them up! In order
+  to do so, run the following commands **in exactly this order!**
+
+  - _Update the software itself:_
+    ```shell
+    pip install -u allianceauth-afat
+    ```
+
+  - _Open a django console:_
+    ```shell
+    python manage.py shell
+    ```
+
+  - _Remove the modules old permissions:_
+    ```python
+    from django.contrib.auth.models import Permission
+    Permission.objects.filter(content_type__app_label="afat").delete()
+    exit()
+    ```
+
+  - _Run static collection and migrations:_
+    ```shell
+    python manage.py collectstatic
+    python manage.py migrate
+    ```
+
+  **Keep in mind, you have to set the new permission to the state/grous that
+  previously had permissions.**
 
 
 ## [1.4.3] - 2021-01-08
