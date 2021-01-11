@@ -1,4 +1,3 @@
-
 {% load evelinks %}
 {% load i18n %}
 
@@ -7,7 +6,7 @@
         <h4>{% translate "Corporations (Click Alliance Name to See Corps)" %}</h4>
 
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            {% if permissions.stats.corp.view_other %}
+            {% if perms.afat.stats_corporation_other %}
                 {% for key, value in data.items|dictsort:0 %}
                     {% if value|length > 0 %}
                         <div class="panel panel-default">
@@ -59,16 +58,16 @@
                         </div>
                     {% endif %}
                 {% endfor %}
-            {% elif permissions.stats.corp.view_own %}
+            {% elif perms.afat.stats_corporation_own %}
                 <table class="table table-striped">
                     <tbody>
                         <tr>
                             <td><img src="{{ data.0.0|corporation_logo_url:32 }}" alt="{{ data.0.1 }}"></td>
                             <td>{{ data.0.1 }}</td>
                             <td class="text-right">
-                                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' data.0.0 year %}">
-                                    <span class="glyphicon glyphicon-eye-open"></span>
-                                </a>
+{#                                <a class="btn btn-primary btn-sm" href="{% url 'afat:stats_corp' data.0.0 year %}">#}
+{#                                    <span class="glyphicon glyphicon-eye-open"></span>#}
+{#                                </a>#}
                             </td>
                         </tr>
                     </tbody>

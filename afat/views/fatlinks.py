@@ -21,7 +21,6 @@ from afat.models import (
     ClickAFatDuration,
     ManualAFat,
 )
-from afat.permissions import get_user_permissions
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
 from afat.utils import LoggerAddTag
@@ -55,9 +54,6 @@ def links(request: WSGIRequest, year: int = None) -> HttpResponse:
     :return:
     """
 
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     if year is None:
         year = datetime.now().year
 
@@ -72,7 +68,6 @@ def links(request: WSGIRequest, year: int = None) -> HttpResponse:
         "year_current": datetime.now().year,
         "year_prev": int(year) - 1,
         "year_next": int(year) + 1,
-        "permissions": permissions,
     }
 
     logger.info("FAT link list called by {user}".format(user=request.user))
@@ -108,16 +103,13 @@ def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
 
 
 @login_required()
-@permissions_required(("afat.manage_afat", "afat.add_afatlink"))
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def link_add(request: WSGIRequest) -> HttpResponse:
     """
     add fatlink view
     :param request:
     :return:
     """
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
 
     msg = None
 
@@ -135,7 +127,6 @@ def link_add(request: WSGIRequest) -> HttpResponse:
     context = {
         "link_types": link_types,
         "msg": msg,
-        "permissions": permissions,
         "has_open_esi_fleet": has_open_esi_fleet,
         "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
     }
@@ -146,7 +137,7 @@ def link_add(request: WSGIRequest) -> HttpResponse:
 
 
 @login_required()
-@permissions_required(("afat.manage_afat", "afat.add_afatlink"))
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def link_create_click(request: WSGIRequest):
     """
     create fatlink helper
@@ -215,7 +206,7 @@ def link_create_click(request: WSGIRequest):
 
 
 @login_required()
-@permissions_required(("afat.manage_afat", "afat.add_afatlink"))
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
 def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
     """
@@ -493,13 +484,7 @@ def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
 
 
 @login_required()
-@permissions_required(
-    (
-        "afat.manage_afat",
-        "afat.add_afatlink",
-        "afat.change_afatlink",
-    )
-)
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
     edit fatlink view
@@ -507,9 +492,6 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     :param fatlink_hash:
     :return:
     """
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
 
     if fatlink_hash is None:
         request.session["msg"] = ["warning", "No FAT Link hash provided."]
@@ -620,7 +602,6 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
         "link": link,
         # "flatlist": flatlist,
         "link_ongoing": link_ongoing,
-        "permissions": permissions,
     }
 
     logger.info(
@@ -633,13 +614,7 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
 
 
 @login_required()
-@permissions_required(
-    (
-        "afat.manage_afat",
-        "afat.add_afatlink",
-        "afat.change_afatlink",
-    )
-)
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
     """
     ajax call
@@ -656,7 +631,7 @@ def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
 
 
 @login_required()
-@permissions_required(("afat.manage_afat", "afat.delete_afatlink"))
+@permissions_required(("afat.manage_afat"))
 def del_link(request: WSGIRequest, fatlink_hash: str = None):
     """
     delete fatlink helper
