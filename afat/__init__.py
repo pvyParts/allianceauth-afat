@@ -7,4 +7,4 @@ app config
 default_app_config: str = "afat.apps.AfatConfig"
 
 __title__ = "Fleet Activity Tracking"
-__version__ = "1.4.4-beta.2"
+__version__ = "1.4.4"
