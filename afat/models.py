@@ -25,6 +25,7 @@ def get_sentinel_user():
     get user or create one
     :return:
     """
+
     return User.objects.get_or_create(username="deleted")[0]
 
 
@@ -35,8 +36,24 @@ class AaAfat(models.Model):
         """AaAfat :: Meta"""
 
         managed = False
-        permissions = (("basic_access", "Can access the Alliance Auth AFAT module"),)
         default_permissions = ()
+        permissions = (
+            # can acces and register his own participation to a FAT link
+            ("basic_access", "Can access the AFAT module"),
+            # Can manage the whole FAT module
+            # Has:
+            #   » add_fatlink
+            #   » change_fatlink
+            #   » delete_fatlink
+            #   » add_fat
+            #   » delete_fat
+            ("manage_afat", "Can manage the AFAT module"),
+            # Can add a new FAT link
+            ("add_fatlink", "Can create FAT Links"),
+            ("stats_corporation_own", "Can see own corporation statistics"),
+            # Can see the stats of all corps
+            ("stats_corporation_other", "Can see statistics of other corporations"),
+        )
         verbose_name = "Alliance Auth AFAT"
 
 
@@ -55,6 +72,7 @@ class SoftDeletionManager(models.Manager):
         get_queryset
         :return:
         """
+
         if self.alive_only:
             return SoftDeletionQuerySet(self.model).filter(deleted_at=None)
 
@@ -65,6 +83,7 @@ class SoftDeletionManager(models.Manager):
         hard_delete
         :return:
         """
+
         return self.get_queryset().hard_delete()
 
 
@@ -89,6 +108,7 @@ class SoftDeletionModel(models.Model):
         """
         delete
         """
+
         self.deleted_at = timezone.now()
         self.save()
 
@@ -96,6 +116,7 @@ class SoftDeletionModel(models.Model):
         """
         hard_delete
         """
+
         super().delete()
 
 
@@ -109,6 +130,7 @@ class SoftDeletionQuerySet(QuerySet):
         delete
         :return:
         """
+
         return super().update(deleted_at=timezone.now())
 
     def hard_delete(self):
@@ -116,6 +138,7 @@ class SoftDeletionQuerySet(QuerySet):
         hard_delete
         :return:
         """
+
         return super().delete()
 
     def alive(self):
@@ -123,6 +146,7 @@ class SoftDeletionQuerySet(QuerySet):
         alive
         :return:
         """
+
         return self.filter(deleted_at=None)
 
     def dead(self):
@@ -130,6 +154,7 @@ class SoftDeletionQuerySet(QuerySet):
         dead
         :return:
         """
+
         return self.exclude(deleted_at=None)
 
 
@@ -163,6 +188,7 @@ class AFatLinkType(SoftDeletionModel):
         Meta
         """
 
+        default_permissions = ()
         verbose_name = "FAT Link Fleet Type"
         verbose_name_plural = "FAT Link Fleet Types"
 
@@ -230,18 +256,10 @@ class AFatLink(SoftDeletionModel):
         Meta
         """
 
+        default_permissions = ()
+        ordering = ("-afattime",)
         verbose_name = "FAT Link"
         verbose_name_plural = "FAT Links"
-        permissions = (
-            ("manage_afat", "Can manage the Another Fleet Activity Tracking module"),
-            ("stats_corp_own", "Can see own corp stats"),
-            ("stats_corp_other", "Can see stats of other corps."),
-            (
-                "stats_char_other",
-                "Can see stats of characters not associated with current user.",
-            ),
-        )
-        ordering = ("-afattime",)
 
 
 # ClickAFatDuration Model
@@ -258,6 +276,7 @@ class ClickAFatDuration(models.Model):
         Meta
         """
 
+        default_permissions = ()
         verbose_name = "FAT Duration"
         verbose_name_plural = "FAT Durations"
 
@@ -300,9 +319,10 @@ class AFat(SoftDeletionModel):
         Meta
         """
 
+        default_permissions = ()
+        unique_together = (("character", "afatlink"),)
         verbose_name = "FAT"
         verbose_name_plural = "FATs"
-        unique_together = (("character", "afatlink"),)
 
 
 # ManualAFat Model
@@ -327,6 +347,7 @@ class ManualAFat(models.Model):
         Meta
         """
 
+        default_permissions = ()
         verbose_name = "Manual FAT Log"
         verbose_name_plural = "Manual FAT Logs"
 
@@ -360,5 +381,6 @@ class AFatDelLog(models.Model):
         Meta
         """
 
+        default_permissions = ()
         verbose_name = "Delete Log"
         verbose_name_plural = "Delete Logs"

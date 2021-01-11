@@ -1,4 +1,3 @@
-
 {% load i18n %}
 
 <div class="col-md-6 ml-md-2">
@@ -54,7 +53,7 @@
                             {% translate "FAT expiry in minutes" %}
                         </span>
 
-                        <input type="number" class="form-control" name="duration" id="duration" value="30" placeholder='{% translate "Expiry Time in Minutes" %}' required>
+                        <input type="number" class="form-control" name="duration" id="duration" value="{{ default_expiry_time }}" placeholder='{% translate "Expiry Time in Minutes" %}' required>
                     </label>
                 </div>
 

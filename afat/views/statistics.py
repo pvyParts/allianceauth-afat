@@ -12,7 +12,6 @@ from afat.helper.views_helper import (
     get_random_rgba_color,
 )
 from afat.models import AFat
-from afat.permissions import get_user_permissions
 from afat.utils import LoggerAddTag
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -45,13 +44,10 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
     :return:
     """
 
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     if year is None:
         year = datetime.now().year
 
-    if request.user.has_perm("afat.stats_corp_other"):
+    if request.user.has_perm("afat.stats_corporation_other"):
         basic_access_permission = Permission.objects.select_related("content_type").get(
             content_type__app_label="afat", codename="basic_access"
         )
@@ -82,7 +78,7 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
 
             sanity_check[corp_id] = corp_id
 
-    elif request.user.has_perm("afat.stats_corp_own"):
+    elif request.user.has_perm("afat.stats_corporation_own"):
         data = [
             (
                 request.user.profile.main_character.corporation_id,
@@ -125,7 +121,6 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         "year_current": datetime.now().year,
         "year_prev": int(year) - 1,
         "year_next": int(year) + 1,
-        "permissions": permissions,
         # "corporation_ids": corporation_ids,
         # "corps": corps,
         # "users_with_access": users_with_access,
@@ -150,9 +145,6 @@ def stats_char(
     :param year:
     :return:
     """
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
 
     character = EveCharacter.objects.get(character_id=charid)
     valid = [
@@ -225,7 +217,6 @@ def stats_char(
         "data_ship_type": data_ship_type,
         "data_time": data_time,
         "fats": fats,
-        "permissions": permissions,
     }
 
     logger.info("Character statistics called by {user}".format(user=request.user))
@@ -234,9 +225,9 @@ def stats_char(
 
 
 @login_required()
-@permissions_required(("afat.stats_corp_own", "afat.stats_corp_other"))
+@permissions_required(("afat.stats_corporation_other", "afat.stats_corporation_own"))
 def stats_corp(
-    request: WSGIRequest, corpid: int, year: int = None, month: int = None
+    request: WSGIRequest, corpid: int = 0000, year: int = None, month: int = None
 ) -> HttpResponse:
     """
     corp statistics view
@@ -247,15 +238,12 @@ def stats_corp(
     :return:
     """
 
-    # get users permissions
-    permissions = get_user_permissions(request.user)
-
     if not year:
         year = datetime.now().year
 
     # Check character has permission to view other corp stats
     if int(request.user.profile.main_character.corporation_id) != int(corpid):
-        if not request.user.has_perm("afat.stats_corp_other"):
+        if not request.user.has_perm("afat.stats_corporation_other"):
             request.session["msg"] = (
                 "warning",
                 "You do not have permission to view statistics for that corporation.",
@@ -290,7 +278,6 @@ def stats_corp(
             "year_prev": int(year) - 1,
             "year_next": int(year) + 1,
             "type": 0,
-            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -391,7 +378,6 @@ def stats_corp(
         "data_time": data_time,
         "data_weekday": data_weekday,
         "chars": chars,
-        "permissions": permissions,
     }
 
     logger.info(
@@ -404,7 +390,7 @@ def stats_corp(
 
 
 @login_required()
-@permission_required("afat.stats_corp_other")
+@permission_required("afat.stats_corporation_other")
 def stats_alliance(
     request: WSGIRequest, allianceid: int, year: int = None, month: int = None
 ) -> HttpResponse:
@@ -416,9 +402,6 @@ def stats_alliance(
     :param year:
     :return:
     """
-
-    # get users permissions
-    permissions = get_user_permissions(request.user)
 
     if not year:
         year = datetime.now().year
@@ -455,7 +438,6 @@ def stats_alliance(
             "year_prev": int(year) - 1,
             "year_next": int(year) + 1,
             "type": 1,
-            "permissions": permissions,
         }
 
         return render(request, "afat/date_select.html", context)
@@ -607,7 +589,6 @@ def stats_alliance(
         "data_weekday": data_weekday,
         "corps": corps,
         "data_ship_type": data_ship_type,
-        "permissions": permissions,
     }
 
     logger.info(

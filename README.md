@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/license-GPLv3-green)](https://pypi.org/project/allianceauth-afat/)
 [![Python](https://img.shields.io/pypi/pyversions/allianceauth-afat)](https://pypi.org/project/allianceauth-afat/)
 [![Django](https://img.shields.io/pypi/djversions/allianceauth-afat?label=django)](https://pypi.org/project/allianceauth-afat/)
+![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/allianceauth-afat)](https://pypi.org/project/allianceauth-afat/)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](http://black.readthedocs.io/en/latest/)
 
@@ -16,10 +17,11 @@ my Auth system. Nothing else ...
 
 
 ## Features and highlights
+
 - FATLink Creation and Population from ESI
+- Automatic tracing of participation on FAT links created via ESI
 - Fleet Type Classification (can be added in the Admin Menu)
 - Graphical Statistics Views
-- Many Core Functionality Improvements and Fixes
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
@@ -34,7 +36,9 @@ information see below.
     - [From Alliance Auth native FAT](#import-from-native-fat)
     - [From bFAT](#import-from-bfat)
     - [From ImicusFAT](#import-from-imicusfat)
-- [Changelog](CHANGELOG.md)
+- [Settings](#settings)
+- [Permissions](#permissions)
+- [Changelog](#changelog)
 - [Credits](#credits)
 
 
@@ -128,6 +132,32 @@ python myauth/manage.py afat_import_from_bfat
 ```bash
 python myauth/manage.py afat_import_from_imicusfat
 ```
+
+
+## Settings
+
+To customize the module, the following settings are available.
+
+| Name                             | Description                                                     | Default Value |
+|:---------------------------------|:----------------------------------------------------------------|--------------:|
+| AFAT_DEFAULT_FATLINK_EXPIRY_TIME | Sets the default expiry time for clickable FAT links in Minutes | 60            |
+
+
+## Permissions
+
+| Name | Description | Notes |
+|:-----|:------------|:-----|
+| basic_access | Can access the AFAT module | Your line member probably want this permission, so they can see the module and click the FAT links they are given. They also can see their own statistics with this permission. |
+| manage_afat | Can manage the AFAT module | Your Military lead probably should get this permission |
+| add_fatlink | Can create FAT Links | Your regular FC or who ever should be able to add FAT links should have this permission |
+| stats_corporation_own | Can see own corporation statistics |  |
+| stats_corporation_other | Can see statistics of other corporations |  |
+
+
+## Changelog
+
+To keep track of all changes, please read the
+[Changelog](https://github.com/ppfeufer/allianceauth-afat/blob/master/CHANGELOG.md).
 
 
 ## Credits

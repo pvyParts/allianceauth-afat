@@ -40,7 +40,7 @@
     <div class="tab-content">
         {% include "afat/partials/stats_main/tabs/mine.html" %}
 
-        {% if permissions.stats.corp.view_own or permissions.stats.corp.view_other %}
+        {% if perms.afat.stats_corporation_own or perms.afat.stats_corporation_other %}
             {% include "afat/partials/stats_main/tabs/corps.html" %}
         {% endif %}
     </div>
