@@ -97,7 +97,7 @@ class SoftDeletionModel(models.Model):
     objects = SoftDeletionManager()
     all_objects = SoftDeletionManager(alive_only=False)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -183,7 +183,7 @@ class AFatLinkType(SoftDeletionModel):
     def __str__(self):
         return "{} - {}".format(self.id, self.name)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -233,6 +233,7 @@ class AFatLink(SoftDeletionModel):
         AFatLinkType,
         on_delete=models.CASCADE,
         null=True,
+        default=None,
         help_text="The fatlinks fleet type, if it's set",
     )
 
@@ -249,9 +250,10 @@ class AFatLink(SoftDeletionModel):
     esi_fleet_id = models.BigIntegerField(blank=True, null=True)
 
     def __str__(self):
-        return self.hash[6:]
+        # return self.hash[6:]
+        return "{} - {}".format(self.fleet, self.hash)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -271,7 +273,7 @@ class ClickAFatDuration(models.Model):
     duration = models.PositiveIntegerField()
     fleet = models.ForeignKey(AFatLink, on_delete=models.CASCADE)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -314,7 +316,7 @@ class AFat(SoftDeletionModel):
     def __str__(self):
         return "{} - {}".format(self.afatlink, self.character)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -342,7 +344,7 @@ class ManualAFat(models.Model):
     def __str__(self):
         return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
@@ -368,6 +370,7 @@ class AFatDelLog(models.Model):
         delt_to_str
         :return:
         """
+
         if self.deltype == 0:
             return "AFatLink"
 
@@ -376,7 +379,7 @@ class AFatDelLog(models.Model):
     def __str__(self):
         return "{}/{} - {}".format(self.delt_to_str(), self.string, self.remover)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta
         """
