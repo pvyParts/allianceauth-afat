@@ -121,10 +121,6 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         "year_current": datetime.now().year,
         "year_prev": int(year) - 1,
         "year_next": int(year) + 1,
-        # "corporation_ids": corporation_ids,
-        # "corps": corps,
-        # "users_with_access": users_with_access,
-        # "characters_with_access": characters_with_access,
     }
 
     logger.info("Statistics overview called by {user}".format(user=request.user))
