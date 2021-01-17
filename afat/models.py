@@ -233,7 +233,6 @@ class AFatLink(SoftDeletionModel):
         AFatLinkType,
         on_delete=models.CASCADE,
         null=True,
-        default=None,
         help_text="The fatlinks fleet type, if it's set",
     )
 
