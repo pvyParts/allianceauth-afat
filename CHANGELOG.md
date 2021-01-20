@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - An issue when the FC switched to another fleet. This was not detected properly, and
-  the "old" ESI link wan not closed.
+  the "old" ESI link was not closed.
 
 
 ## [1.4.4] - 2021-01-11
