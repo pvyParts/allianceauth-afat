@@ -162,6 +162,7 @@ def link_create_click(request: WSGIRequest):
 
             link.creator = request.user
             link.hash = fatlink_hash
+            link.afattime = timezone.now()
             link.save()
 
             dur = ClickAFatDuration()
@@ -257,6 +258,7 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
 
     # create the fatlink
     fatlink = AFatLink(
+        afattime=timezone.now(),
         fleet=request.session["fatlink_form__name"],
         creator=request.user,
         character=creator_character,

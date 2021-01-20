@@ -62,7 +62,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
             creator_name = creator_profile.main_character.character_name
 
     # fleet time
-    time = fatlink.afattime
+    fleet_time = fatlink.afattime.replace(tzinfo=None)
 
     # number of FATs
     fats_number = fatlink.number_of_fats
@@ -98,7 +98,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         "fleet_name": fatlink_fleet + esi_fleet_marker,
         "creator_name": creator_name,
         "fleet_type": fatlink_type,
-        "fleet_time": time,
+        "fleet_time": fleet_time,
         "fats_number": fats_number,
         "hash": fatlink.hash,
         "is_esilink": fatlink.is_esilink,
@@ -160,7 +160,7 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
         "ship_type": fat.shiptype,
         "character_name": fat.character.character_name,
         "fleet_name": fat.afatlink.fleet + esi_fleet_marker,
-        "fleet_time": fat.afatlink.afattime,
+        "fleet_time": fat.afatlink.afattime.replace(tzinfo=None),
         "fleet_type": fleet_type,
         "via_esi": via_esi,
         "actions": actions,

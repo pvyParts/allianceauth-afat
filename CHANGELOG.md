@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.4.5] - 2021-01-20
+
+### Changed
+
+- Views imports optimized
+
+### Fixed
+
+- An issue when the FC switched to another fleet. This was not detected properly, and
+  the "old" ESI link was not closed.
+
+
 ## [1.4.4] - 2021-01-11
 
 ### Added
