@@ -120,14 +120,9 @@ def link_add(request: WSGIRequest) -> HttpResponse:
         is_enabled=True,
     ).order_by("name")
 
-    has_open_esi_fleet = AFatLink.objects.filter(
-        creator=request.user, is_esilink=True, is_registered_on_esi=True
-    ).exists()
-
     context = {
         "link_types": link_types,
         "msg": msg,
-        "has_open_esi_fleet": has_open_esi_fleet,
         "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
     }
 
@@ -237,6 +232,35 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
 
         # return to "Add FAT Link" view
         return redirect("afat:link_add")
+
+    # Check if this character already has a fleet
+    try:
+        esi_fatlink = AFatLink.objects.filter(
+            is_esilink=True,
+            is_registered_on_esi=True,
+            esi_fleet_id=fleet_from_esi["fleet_id"],
+        )
+
+        if esi_fatlink.count() > 0:
+            creator_character = EveCharacter.objects.get(
+                character_id=token.character_id
+            )
+
+            # Character already has a fleet
+            request.session["msg"] = [
+                "warning",
+                "Fleet with ID {fleet_id} for your character {character_name} "
+                "has already been registered and pilots joining this "
+                "fleet are automatically tracked.".format(
+                    fleet_id=fleet_from_esi["fleet_id"],
+                    character_name=creator_character.character_name,
+                ),
+            ]
+
+            # return to "Add FAT Link" view
+            return redirect("afat:link_add")
+    except AFatLink.DoesNotExist:
+        pass
 
     # Check if we deal with the fleet boss here
     try:

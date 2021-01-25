@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.5.0] - 2021-01-25
+
+### Added
+
+- Ability to create ESI fat links on alts, in case the FC has another fleet on one
+  of their alts up and running
+- More ESI error handling
+
+
 ### [1.4.5] - 2021-01-20
 
 ### Changed
