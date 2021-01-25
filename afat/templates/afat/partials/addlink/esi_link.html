@@ -17,18 +17,6 @@
                 {% endblocktranslate %}
             </p>
 
-            {% if has_open_esi_fleet %}
-                <p class="alert alert-info">
-                    {% blocktranslate %}
-                        You already have an open ESI fleet, which means that all pilots
-                        who join your fleet will be automatically registered. If you
-                        just left the fleet and want to open a new one, wait a
-                        moment to give the system time to update (max 5 minutes)
-                        and try again.
-                    {% endblocktranslate %}
-                </p>
-            {% endif %}
-
             <form class="form" role="form" action="{% url 'afat:create_esi_fat' %}" method="POST">
                 {% csrf_token %}
 
@@ -38,7 +26,7 @@
                             {% translate "Fleet Name" %}
                         </span>
 
-                        <input type="text" class="form-control" name="name_esi" placeholder='{% translate "Enter fleet name" %}' required{% if has_open_esi_fleet %} disabled{% endif %}>
+                        <input type="text" class="form-control" name="name_esi" placeholder='{% translate "Enter fleet name" %}' required>
                     </label>
                 </div>
 
@@ -49,7 +37,7 @@
                                 {% translate "Fleet Type (optional)" %}
                             </span>
 
-                            <select class="form-control" name="type_esi"{% if has_open_esi_fleet %} disabled{% endif %}>
+                            <select class="form-control" name="type_esi">
                                 <option value="-1">{% translate "Please select a fleet type" %}</option>
 
                                 {% for type in link_types %}
@@ -61,7 +49,7 @@
                 {% endif %}
 
                 <div class="form-group text-right">
-                    <button class="btn btn-primary" type="submit" name="submit_click"{% if has_open_esi_fleet %} disabled{% endif %}>
+                    <button class="btn btn-primary" type="submit" name="submit_click">
                         <span class="fa fa-plus fa-fw"></span>
 
                         {% translate "Add ESI Link" %}
