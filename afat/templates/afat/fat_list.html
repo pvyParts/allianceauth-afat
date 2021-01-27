@@ -112,10 +112,9 @@
                     {data: 'creator_name'},
                     {
                         data: 'fleet_time',
-                        render: $.fn.dataTable.render.moment(
-                            moment.ISO_8601,
-                            DATETIME_FORMAT
-                        )
+                        render: function (data, type, row) {
+                            return moment(data).utc().format(DATETIME_FORMAT);
+                        }
                     },
                     {data: 'fats_number'},
 
