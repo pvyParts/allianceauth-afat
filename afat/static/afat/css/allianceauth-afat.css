@@ -14,6 +14,18 @@
     }
 }
 
+/* tables
+------------------------------------------------------------------------------------- */
+@media all {
+    .allianceauth-afat .table > tbody > tr > td,
+    .allianceauth-afat .table > tbody > tr > th,
+    .allianceauth-afat .table > tfoot > tr > td,
+    .allianceauth-afat .table > tfoot > tr > th,
+    .allianceauth-afat .table > thead > tr > td {
+        vertical-align: middle;
+    }
+}
+
 /* labels
 ------------------------------------------------------------------------------------- */
 @media all {

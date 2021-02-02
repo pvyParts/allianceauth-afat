@@ -35,6 +35,7 @@
     {% include 'bundles/datatables-css.html' %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
 
 {% block extra_javascript %}
@@ -57,17 +58,17 @@
                     {data: 'system'},
                     {data: 'ship_type'},
                     {% if perms.afat.manage_afat %}
-                        {
-                            data: 'actions',
-                            width: '50px'
-                        }
+                        {data: 'actions'},
                     {% endif %}
                 ],
                 columnDefs: [
                     {% if perms.afat.manage_afat %}
                         {
+                            targets: [3],
                             orderable: false,
-                            targets: [3]
+                            createdCell: function (td) {
+                                $(td).addClass('text-right');
+                            }
                         }
                     {% endif %}
                 ],
