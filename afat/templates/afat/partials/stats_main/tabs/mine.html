@@ -13,7 +13,7 @@
             {% for char in charstats %}
                 <li class="afat-stats-character-tab{% if forloop.first %} active{% endif %}">
                     <a data-toggle="tab" href="#{{ char.2 }}">
-                        <img class="img-circle" src="{{ char.2|character_portrait_url:32 }}" alt="{{ char.0 }}">
+                        <img class="img-circle" src="{{ char.2|character_portrait_url:32 }}" alt="{{ char.0 }}" style="margin-right: 0.25rem;">
                         {{ char.0 }}
                     </a>
                 </li>
@@ -26,7 +26,7 @@
                     <div id="{{ char.2 }}" class="tab-pane panel-default fade{% if forloop.first %} in active{% endif %}">
                         <div class="panel-body">
                             {% if char.1|length > 0 %}
-                                <table class="table table-striped">
+                                <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <th>{% translate "Month" %}</th>
