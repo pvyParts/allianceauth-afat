@@ -112,9 +112,12 @@
                     {data: 'creator_name'},
                     {
                         data: 'fleet_time',
-                        render: function (data, type, row) {
-                            return moment(data).utc().format(DATETIME_FORMAT);
-                        }
+                        render: {
+                            display: function (data, type, row) {
+                                return moment(data.time).utc().format(DATETIME_FORMAT);
+                            },
+                            _: 'timestamp'
+                        },
                     },
                     {data: 'fats_number'},
 

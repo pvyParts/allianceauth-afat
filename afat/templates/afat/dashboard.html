@@ -86,9 +86,12 @@
                             {data: 'ship_type'},
                             {
                                 data: 'fleet_time',
-                                render: function (data, type, row) {
-                                    return moment(data).utc().format(DATETIME_FORMAT);
-                                }
+                                render: {
+                                    display: function (data, type, row) {
+                                        return moment(data.time).utc().format(DATETIME_FORMAT);
+                                    },
+                                    _: 'timestamp'
+                                },
                             },
                         ],
                         language: {
@@ -122,9 +125,12 @@
                     {data: 'creator_name'},
                     {
                         data: 'fleet_time',
-                        render: function (data, type, row) {
-                            return moment(data).utc().format(DATETIME_FORMAT);
-                        }
+                        render: {
+                            display: function (data, type, row) {
+                                return moment(data.time).utc().format(DATETIME_FORMAT);
+                            },
+                            _: 'timestamp'
+                        },
                     },
                     {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
                         {data: 'actions'},
