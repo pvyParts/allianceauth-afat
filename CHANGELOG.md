@@ -6,7 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-### [1.5.2] - 2021-00-02
+### [1.5.3] - 2021-02-03
+
+### Fixed
+
+- An issue with sorting by date in datatables
+
+
+### [1.5.2] - 2021-02-02
 
 ### Changed
 
