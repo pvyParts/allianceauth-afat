@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-### [1.6.0 - upcoming] - 2021-02-xx
+### [1.6.0] - 2021-02-04
 
 ### Added
 
