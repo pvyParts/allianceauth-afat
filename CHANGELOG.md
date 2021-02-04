@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.6.0 - upcoming] - 2021-02-xx
+
+### Added
+
+- Info when there are already registered ESI links for the FC and with which characters
+
+
 ### [1.5.3] - 2021-02-03
 
 ### Fixed
