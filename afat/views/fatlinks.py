@@ -250,33 +250,61 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         return redirect("afat:link_add")
 
     # Check if this character already has a fleet
-    try:
-        esi_fatlink = AFatLink.objects.filter(
-            is_esilink=True,
-            is_registered_on_esi=True,
-            esi_fleet_id=fleet_from_esi["fleet_id"],
-        )
+    creator_character = EveCharacter.objects.get(character_id=token.character_id)
+    registered_fleets_for_creator = AFatLink.objects.filter(
+        is_esilink=True,
+        is_registered_on_esi=True,
+        character__character_name=creator_character.character_name,
+    )
 
-        if esi_fatlink.count() > 0:
-            creator_character = EveCharacter.objects.get(
-                character_id=token.character_id
+    fleet_already_registered = False
+    character_has_registered_fleets = False
+    registered_fleets_to_close = list()
+
+    if registered_fleets_for_creator.count() > 0:
+        character_has_registered_fleets = True
+
+        for registered_fleet in registered_fleets_for_creator:
+            if registered_fleet.esi_fleet_id == fleet_from_esi["fleet_id"]:
+                # Character already has a fleet
+                fleet_already_registered = True
+            else:
+                registered_fleets_to_close.append(
+                    {"registered_fleet": registered_fleet}
+                )
+
+    if fleet_already_registered is True:
+        request.session["msg"] = [
+            "warning",
+            "Fleet with ID {fleet_id} for your character {character_name} "
+            "has already been registered and pilots joining this "
+            "fleet are automatically tracked.".format(
+                fleet_id=fleet_from_esi["fleet_id"],
+                character_name=creator_character.character_name,
+            ),
+        ]
+
+        # return to "Add FAT Link" view
+        return redirect("afat:link_add")
+
+    # remove all former registered fleets if there are any
+    if (
+        character_has_registered_fleets is True
+        and fleet_already_registered is False
+        and len(registered_fleets_to_close) > 0
+    ):
+        for registered_fleet_to_close in registered_fleets_to_close:
+            logger.info(
+                "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
+                    fatlink_hash=registered_fleet_to_close["registered_fleet"].hash,
+                    reason=(
+                        "FC has opened a new fleet with the character {character}"
+                    ).format(character=creator_character.character_name),
+                )
             )
 
-            # Character already has a fleet
-            request.session["msg"] = [
-                "warning",
-                "Fleet with ID {fleet_id} for your character {character_name} "
-                "has already been registered and pilots joining this "
-                "fleet are automatically tracked.".format(
-                    fleet_id=fleet_from_esi["fleet_id"],
-                    character_name=creator_character.character_name,
-                ),
-            ]
-
-            # return to "Add FAT Link" view
-            return redirect("afat:link_add")
-    except AFatLink.DoesNotExist:
-        pass
+            registered_fleet_to_close["registered_fleet"].is_registered_on_esi = False
+            registered_fleet_to_close["registered_fleet"].save()
 
     # Check if we deal with the fleet boss here
     try:
@@ -321,8 +349,6 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
     fatlink.save()
 
     # clear session
-    # request.session["fatlink_form__name"] = None
-    # request.session["fatlink_form__type"] = None
     del request.session["fatlink_form__name"]
     del request.session["fatlink_form__type"]
 
