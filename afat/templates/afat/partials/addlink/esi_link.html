@@ -29,6 +29,7 @@
                             <li style="margin-bottom: 0.25rem; list-style: none;">
                                 <img class="img-circle" src="{{ open_esi_fleet.fleet_commander.character|character_portrait_url:32 }}" alt="{{ open_esi_fleet.fleet_commander.character.character_name }}" style="margin-right: 0.25rem;">
                                 {{ open_esi_fleet.fleet_commander.character.character_name }}
+                                <small>(ESI fleet ID: {{ open_esi_fleet.fleet_commander.esi_fleet_id }})</small>
                             </li>
                         {% endfor %}
                     </ul>
