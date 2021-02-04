@@ -248,7 +248,7 @@ def close_esi_fleet(fatlink: AFatLink, reason: str) -> None:
     """
 
     logger.info(
-        "Closing ESI FAT with hash {fatlink_hash}. Reason: {reason}".format(
+        "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
             fatlink_hash=fatlink.hash, reason=reason
         )
     )

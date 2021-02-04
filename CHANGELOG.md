@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.6.0] - 2021-02-04
+
+### Added
+
+- Info when there are already registered ESI links for the FC and with which characters
+- A check for already registered fleets on ESI link creation. If the character
+  already has a fleet registered, and it is hte same fleet, he gets a message. If it
+  is a new fleet, the old fleet will be closed, and the new fleet will be registered.
+
+
 ### [1.5.3] - 2021-02-03
 
 ### Fixed
