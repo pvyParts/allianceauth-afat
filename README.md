@@ -23,6 +23,7 @@ my Auth system. Nothing else ...
 - Automatic tracing of participation on FAT links created via ESI
 - Fleet Type Classification (can be added in the Admin Menu)
 - Graphical Statistics Views
+- Custom module name
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
@@ -139,9 +140,10 @@ python myauth/manage.py afat_import_from_imicusfat
 
 To customize the module, the following settings are available.
 
-| Name                             | Description                                                     | Default Value |
-|:---------------------------------|:----------------------------------------------------------------|--------------:|
-| AFAT_DEFAULT_FATLINK_EXPIRY_TIME | Sets the default expiry time for clickable FAT links in Minutes | 60            |
+| Name                             | Description                                                     | Default Value           |
+|:---------------------------------|:----------------------------------------------------------------|:------------------------|
+| AFAT_DEFAULT_FATLINK_EXPIRY_TIME | Sets the default expiry time for clickable FAT links in Minutes | 60                      |
+| AFAT_APP_NAME                    | Sets the application name, in case you'd like a different name  | Fleet Activity Tracking |
 
 
 ## Permissions
