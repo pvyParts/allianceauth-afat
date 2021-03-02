@@ -4,9 +4,8 @@
 auth hooks
 """
 
-from django.utils.translation import ugettext_lazy as _
-
 from afat import urls
+from afat.app_settings import AFAT_APP_NAME, AFAT_BASE_URL
 
 from allianceauth import hooks
 from allianceauth.services.hooks import MenuItemHook, UrlHook
@@ -19,7 +18,7 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
         # setup menu entry for sidebar
         MenuItemHook.__init__(
             self,
-            _("Fleet Activity Tracking"),
+            AFAT_APP_NAME,
             "fas fa-space-shuttle fa-fw",
             "afat:dashboard",
             navactive=["afat:"],
@@ -55,4 +54,4 @@ def register_url():
     :return:
     """
 
-    return UrlHook(urls, "afat", r"^fleetactivitytracking/")
+    return UrlHook(urls, "afat", r"^{base_url}/".format(base_url=AFAT_BASE_URL))

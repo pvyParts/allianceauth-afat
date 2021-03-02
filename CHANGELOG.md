@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.7.0] - 2021-03-02
+
+### Added
+
+- Setting to change the application name, in case you want it named something specific
+
+
 ### [1.6.0] - 2021-02-04
 
 ### Added
