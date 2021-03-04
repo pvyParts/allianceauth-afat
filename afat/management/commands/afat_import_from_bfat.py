@@ -1,5 +1,3 @@
-# coding=utf-8
-
 """
 import FAT data from bFAT module
 """
