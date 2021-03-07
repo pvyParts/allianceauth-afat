@@ -30,6 +30,10 @@
                                 <img class="img-circle" src="{{ open_esi_fleet.fleet_commander.character|character_portrait_url:32 }}" alt="{{ open_esi_fleet.fleet_commander.character.character_name }}" style="margin-right: 0.25rem;">
                                 {{ open_esi_fleet.fleet_commander.character.character_name }}
                                 <small>(ESI fleet ID: {{ open_esi_fleet.fleet_commander.esi_fleet_id }})</small>
+                                <a class="btn btn-primary btn-xs" href="{% url 'afat:close_esi_fatlink' open_esi_fleet.fleet_commander.hash %}" style="margin-left: 0.25rem;" title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}">
+                                    <i class="fas fa-times"></i>
+                                    <!-- {% translate 'Stop Tracking' %} -->
+                                </a>
                             </li>
                         {% endfor %}
                     </ul>
