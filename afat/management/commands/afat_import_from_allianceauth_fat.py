@@ -1,5 +1,3 @@
-# coding=utf-8
-
 """
 import FAT data from alliance auth fat module
 """

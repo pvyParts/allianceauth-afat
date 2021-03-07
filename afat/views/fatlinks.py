@@ -787,3 +787,33 @@ def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
     logger.info("FAT %s deleted by %s", fat_details, request.user)
 
     return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
+
+
+@login_required()
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
+def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
+    """
+    ajax call to close an ESI fat link
+    :param request:
+    :param fatlink_hash:
+    """
+
+    try:
+        fatlink = AFatLink.objects.get(hash=fatlink_hash)
+
+        logger.info(
+            "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
+                fatlink_hash=fatlink_hash, reason="Closed by manual request"
+            )
+        )
+
+        fatlink.is_registered_on_esi = False
+        fatlink.save()
+    except AFatLink.DoesNotExist:
+        logger.info(
+            "ESI FAT link with hash {fatlink_hash} does not exist".format(
+                fatlink_hash=fatlink_hash
+            )
+        )
+
+    return redirect("afat:link_add")

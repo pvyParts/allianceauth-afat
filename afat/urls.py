@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 url configuration
 """
@@ -102,6 +100,11 @@ urlpatterns = [
         r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/del/$",
         fatlinks.del_fat,
         name="fat_delete",
+    ),
+    url(
+        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
+        fatlinks.close_esi_fatlink,
+        name="close_esi_fatlink",
     ),
     # ajax calls :: dashboard
     url(

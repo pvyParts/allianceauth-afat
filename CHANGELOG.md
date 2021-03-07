@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.8.0] - 2021-03-07
+
+### Added
+
+- Ability to "close" ESI fat links manually. (Only the FC creating the link has this
+  ability when creating new ESI fat links when he still has registered fleets.)
+  ![Example](afat/docs/images/manually-close-esi-links.png)
+
+
 ### [1.7.0] - 2021-03-02
 
 ### Added
