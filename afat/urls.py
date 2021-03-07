@@ -101,6 +101,11 @@ urlpatterns = [
         fatlinks.del_fat,
         name="fat_delete",
     ),
+    url(
+        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
+        fatlinks.close_esi_fatlink,
+        name="close_esi_fatlink",
+    ),
     # ajax calls :: dashboard
     url(
         r"^ajax/dashboard/get_fats/(?P<charid>[0-9]+)/$",
