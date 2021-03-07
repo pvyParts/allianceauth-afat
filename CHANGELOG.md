@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Ability to "close" ESI fat links manually. (Only the FC creating the link has this
   ability when creating new ESI fat links when he still has registered fleets.)
-  ![Example](https://cdn.discordapp.com/attachments/800429905371594755/818240879012872292/unknown.png)
+  ![Example](afat/docs/images/manually-close-esi-links.png)
 
 
 ### [1.7.0] - 2021-03-02
