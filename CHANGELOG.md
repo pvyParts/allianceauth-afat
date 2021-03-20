@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+### [1.9.0] - 2021-03-20
+
+### Added
+
+- Ship type overview to FAT link detail page (#72)
+  ![Example](afat/docs/images/ship-type-overview.png)
+
+
 ### [1.8.0] - 2021-03-07
 
 ### Added
