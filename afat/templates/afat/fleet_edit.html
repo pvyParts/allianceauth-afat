@@ -39,11 +39,13 @@
 {% endblock %}
 
 {% block extra_javascript %}
+    <script type="application/javascript" src="{% static 'afat/javascript/allianceauth-afat.min.js' %}"></script>
+
     {% include 'bundles/datatables-js.html' %}
     {% include 'bundles/clipboard-js.html' %}
 
     <script type="application/javascript">
-        $(document).ready(function(){
+        $(document).ready(function() {
             let fatListTable = $('#fleet-edit-fat-list').DataTable({
                 ajax: {
                     url: '{% url "afat:link_edit_fat_data" 0 %}'.replace(
@@ -75,6 +77,31 @@
                 order: [
                     [0, 'asc']
                 ],
+                createdRow: function(row, data, rowIndex) {
+                    let shipTypeOverviewTable = $('#fleet-edit-ship-types');
+
+                    let shipTypeSlug = convertStringToSlug(data.ship_type);
+
+                    if($('tr.shiptype-' + shipTypeSlug).length) {
+                        let currentCount = shipTypeOverviewTable.find(
+                            'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
+                        ).html();
+                        let newCount = parseInt(currentCount) + 1;
+
+                        shipTypeOverviewTable.find(
+                            'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
+                        ).html(newCount);
+                    } else {
+                        shipTypeOverviewTable.append(
+                            '<tr class="shiptype-' + shipTypeSlug + '">' +
+                            '<td class="ship-type">' + data.ship_type + '</td>' +
+                            '<td class="ship-type-count text-right">1</td>' +
+                            '</tr>'
+                        );
+                    }
+
+                    sortTable($('#fleet-edit-ship-types'), 'asc');
+                },
             });
 
             /**
@@ -99,7 +126,34 @@
                     );
                 }
 
-                fatListTable.ajax.reload();
+                fatListTable.ajax.reload(function(tableData) {
+                    let shipTypeOverviewTable = $('#fleet-edit-ship-types');
+                    shipTypeOverviewTable.find('tbody').html('');
+
+                    $.each(tableData, function(i, item) {
+                        let shipTypeSlug = convertStringToSlug(item.ship_type);
+
+                        if($('tr.shiptype-' + shipTypeSlug).length) {
+                            let currentCount = shipTypeOverviewTable.find(
+                                'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
+                            ).html();
+                            let newCount = parseInt(currentCount) + 1;
+
+                            shipTypeOverviewTable.find(
+                                'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
+                            ).html(newCount);
+                        } else {
+                            shipTypeOverviewTable.append(
+                                '<tr class="shiptype-' + shipTypeSlug + '">' +
+                                '<td class="ship-type">' + item.ship_type + '</td>' +
+                                '<td class="ship-type-count text-right">1</td>' +
+                                '</tr>'
+                            );
+                        }
+                    });
+
+                    sortTable($('#fleet-edit-ship-types'), 'asc');
+                });
 
                 expectedReloadDatatable += intervalReloadDatatable;
 
