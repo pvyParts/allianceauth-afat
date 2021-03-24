@@ -7,11 +7,10 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from afat import __version__ as afat_version_installed
-
 from afat.models import (
     AFat,
-    AFatLink,
     AFatDelLog,
+    AFatLink,
     AFatLinkType,
     ClickAFatDuration,
     ManualAFat,
@@ -36,19 +35,18 @@ def imicusfat_installed() -> bool:
 
 
 if imicusfat_installed():
-    import requests
     import sys
 
+    import requests
     from imicusfat import __version__ as ifat_version_installed
     from imicusfat.models import (
-        IFat,
-        IFatLink,
         ClickIFatDuration,
+        IFat,
         IFatDelLog,
+        IFatLink,
         IFatLinkType,
         ManualIFat,
     )
-
     from packaging.specifiers import SpecifierSet
     from packaging.version import parse as version_parse
 

@@ -8,17 +8,9 @@ from bravado.exception import (
     HTTPNotFound,
     HTTPServiceUnavailable,
 )
-
 from celery import shared_task
 
 from django.core.cache import cache
-
-from esi.models import Token
-
-from afat import __title__
-from afat.models import AFat, AFatLink
-from afat.providers import esi
-from afat.utils import LoggerAddTag
 
 from allianceauth.eveonline.models import (
     EveAllianceInfo,
@@ -27,7 +19,12 @@ from allianceauth.eveonline.models import (
 )
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.services.tasks import QueueOnce
+from esi.models import Token
 
+from afat import __title__
+from afat.models import AFat, AFatLink
+from afat.providers import esi
+from afat.utils import LoggerAddTag
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 

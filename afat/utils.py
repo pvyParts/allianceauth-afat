@@ -9,7 +9,6 @@ from django.conf import settings
 from django.utils.functional import lazy
 from django.utils.html import format_html
 
-
 # Format for output of datetime for this app
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 

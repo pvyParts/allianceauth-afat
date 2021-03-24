@@ -4,15 +4,15 @@ views helper
 
 import random
 
-from afat.models import AFat, AFatLink
-
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission, User
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 
 from allianceauth.eveonline.models import EveCharacter
+
+from afat.models import AFat, AFatLink
 
 
 def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:

@@ -2,11 +2,11 @@
 auth hooks
 """
 
-from afat import urls
-from afat.app_settings import AFAT_APP_NAME, AFAT_BASE_URL
-
 from allianceauth import hooks
 from allianceauth.services.hooks import MenuItemHook, UrlHook
+
+from afat import urls
+from afat.app_settings import AFAT_APP_NAME, AFAT_BASE_URL
 
 
 class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods

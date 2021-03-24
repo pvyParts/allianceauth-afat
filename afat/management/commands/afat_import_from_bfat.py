@@ -2,24 +2,16 @@
 import FAT data from bFAT module
 """
 
+from bfat.models import ClickFatDuration as BfatClickFatDuration
+from bfat.models import DelLog as BfatDelLog
+from bfat.models import Fat as BfatFat
+from bfat.models import FatLink as BfatFatLink
+from bfat.models import ManualFat as BfatManualFat
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat.models import (
-    AFat,
-    AFatLink,
-    AFatDelLog,
-    ClickAFatDuration,
-    ManualAFat,
-)
-
-from bfat.models import (
-    ClickFatDuration as BfatClickFatDuration,
-    DelLog as BfatDelLog,
-    Fat as BfatFat,
-    FatLink as BfatFatLink,
-    ManualFat as BfatManualFat,
-)
+from afat.models import AFat, AFatDelLog, AFatLink, ClickAFatDuration, ManualAFat
 
 
 def get_input(text):
