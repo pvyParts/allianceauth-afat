@@ -5,9 +5,9 @@ import FAT data from alliance auth fat module
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat.models import AFat, AFatLink
+from allianceauth.fleetactivitytracking.models import Fat, Fatlink
 
-from allianceauth.fleetactivitytracking.models import Fatlink, Fat
+from afat.models import AFat, AFatLink
 
 
 def get_input(text):

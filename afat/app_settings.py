@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from afat.utils import clean_setting
 
-
 # set default panels if none are set in local.py
 AFAT_DEFAULT_FATLINK_EXPIRY_TIME = clean_setting("AFAT_DEFAULT_FATLINK_EXPIRY_TIME", 60)
 

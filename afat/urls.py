@@ -4,7 +4,7 @@ url configuration
 
 from django.conf.urls import url
 
-from afat.views import dashboard, statistics, fatlinks
+from afat.views import dashboard, fatlinks, statistics
 
 app_name: str = "afat"
 

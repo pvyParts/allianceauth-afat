@@ -2,17 +2,8 @@
 statistics related views
 """
 
-from datetime import datetime
-
 from collections import OrderedDict
-
-from afat import __title__
-from afat.helper.views_helper import (
-    characters_with_permission,
-    get_random_rgba_color,
-)
-from afat.models import AFat
-from afat.utils import LoggerAddTag
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
@@ -29,6 +20,10 @@ from allianceauth.eveonline.models import (
 )
 from allianceauth.services.hooks import get_extension_logger
 
+from afat import __title__
+from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
+from afat.models import AFat
+from afat.utils import LoggerAddTag
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 

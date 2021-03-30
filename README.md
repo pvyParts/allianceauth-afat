@@ -42,6 +42,7 @@ information see below.
 - [Permissions](#permissions)
 - [Changelog](#changelog)
 - [Credits](#credits)
+- [Contributing](#contributing)
 
 
 ## Installation
@@ -119,19 +120,55 @@ A later migration is **not** possible.
 
 ### Import from native FAT
 
-```bash
+To import from the native FAT module, simply run the following command:
+
+```shell
 python myauth/manage.py afat_import_from_allianceauth_fat
 ```
 
 ### Import from bFAT
 
-```bash
+To import from the bFAT module, simply run the following command:
+
+```shell
 python myauth/manage.py afat_import_from_bfat
 ```
 
 ### Import from ImicusFAT
 
-```bash
+First, you need to remove all "deleted" FAT links and FATs. To do so, login to your
+mysql database and run the following commands:
+
+```mysql
+# de-activate foreign key checks
+SET FOREIGN_KEY_CHECKS=0;
+
+# remove all "deleted" FATs
+delete from imicusfat_ifat where deleted_at is not null;
+
+# get all fatlink IDs of "deleted" fatlinks as comma separated list and make sure
+# to have that in your notepad saved, you need this list for the next comamnds
+select group_concat(id) from imicusfat_ifatlink where deleted_at is not null;
+
+# now remove everything that is related to those IDs
+# make sure to replace "id_list" with the comma separated
+# list of IDs from the earlier command
+delete from imicusfat_clickifatduration where fleet_id in (id_list);
+delete from imicusfat_ifat where ifatlink_id in (id_list);
+delete from imicusfat_ifatlink where id in(id_list);
+
+# re-activate foreign key checks
+SET FOREIGN_KEY_CHECKS=1;
+```
+
+This step needs to be done, because we cannot import entries markes as "deleted",
+but some other entries might rely on them, so we need to remove those. You don't
+need to worry, you are not losing any data besides what is already "deleted" and
+ImicusFAT is no longer working with them anyways.
+
+Once done, start the actual import script like this:
+
+```shell
 python myauth/manage.py afat_import_from_imicusfat
 ```
 
@@ -161,6 +198,14 @@ To customize the module, the following settings are available.
 
 To keep track of all changes, please read the
 [Changelog](https://github.com/ppfeufer/allianceauth-afat/blob/master/CHANGELOG.md).
+
+
+## Contributing
+
+You want to contribute to this project? That's cool!
+
+Please make sure to read the [contribution guidelines](https://github.com/ppfeufer/allianceauth-afat/blob/master/CONTRIBUTING.md)
+(I promise, it's not much, just some basics)
 
 
 ## Credits
