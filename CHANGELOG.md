@@ -24,14 +24,14 @@ delete from afat_afatlinktype where deleted_at is not null;
 
 # get all fatlink IDs of "deleted" fatlinks as comma separated list and make sure
 # to have that in your notepad saved, you need this list for the next comamnds
-select group_concat(id) from afat_aafatlink where deleted_at is not null;
+select group_concat(id) from afat_afatlink where deleted_at is not null;
 
 # now remove everything that is related to those IDs
 # make sure to replace "id_list" with the comma separated
 # list of IDs from the earlier command
-delete from afat_aclickifatduration where fleet_id in (id_list);
-delete from afat_aafat where ifatlink_id in (id_list);
-delete from afat_aafatlink where id in(id_list);
+delete from afat_clickafatduration where fleet_id in (id_list);
+delete from afat_afat where afatlink_id in (id_list);
+delete from afat_afatlink where id in(id_list);
 
 # re-activate foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
