@@ -4,7 +4,7 @@ dashboard related views
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -85,7 +85,7 @@ def dashboard_links_data(request: WSGIRequest) -> JsonResponse:
     """
 
     fatlinks = AFatLink.objects.order_by("-afattime").annotate(
-        number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True))
+        number_of_fats=Count("afat")
     )[:10]
 
     fatlink_rows = [

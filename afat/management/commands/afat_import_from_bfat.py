@@ -3,7 +3,6 @@ import FAT data from bFAT module
 """
 
 from bfat.models import ClickFatDuration as BfatClickFatDuration
-from bfat.models import DelLog as BfatDelLog
 from bfat.models import Fat as BfatFat
 from bfat.models import FatLink as BfatFatLink
 from bfat.models import ManualFat as BfatManualFat
@@ -11,7 +10,7 @@ from bfat.models import ManualFat as BfatManualFat
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat.models import AFat, AFatDelLog, AFatLink, ClickAFatDuration, ManualAFat
+from afat.models import AFat, AFatLink, ClickAFatDuration, ManualAFat
 
 
 def get_input(text):
@@ -47,14 +46,12 @@ class Command(BaseCommand):
 
             # first we check if the target tables are really empty ...
             current_afat_count = AFat.objects.all().count()
-            current_afat_dellog_count = AFatDelLog.objects.all().count()
             current_afat_links_count = AFatLink.objects.all().count()
             current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
             current_afat_manualfat_count = ManualAFat.objects.all().count()
 
             if (
                 current_afat_count > 0
-                or current_afat_dellog_count > 0
                 or current_afat_links_count > 0
                 or current_afat_clickduration_count > 0
                 or current_afat_manualfat_count > 0
@@ -123,24 +120,6 @@ class Command(BaseCommand):
                 afat_clickfatduration.fleet_id = bfat_clickfatduration.fleet_id
 
                 afat_clickfatduration.save()
-
-            # import dellog
-            bfat_dellogs = BfatDelLog.objects.all()
-            for bfat_dellog in bfat_dellogs:
-                self.stdout.write(
-                    "Importing FAT dellogwith ID '{dellog_id}'.".format(
-                        dellog_id=bfat_dellog.id
-                    )
-                )
-
-                afat_dellog = AFatDelLog()
-
-                afat_dellog.id = bfat_dellog.id
-                afat_dellog.deltype = bfat_dellog.deltype
-                afat_dellog.string = bfat_dellog.string
-                afat_dellog.remover_id = bfat_dellog.remover_id
-
-                afat_dellog.save()
 
             # import manual fat
             bfat_manualfats = BfatManualFat.objects.all()

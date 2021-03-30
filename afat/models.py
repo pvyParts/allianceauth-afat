@@ -4,7 +4,6 @@ the models
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.query import QuerySet
 from django.utils import timezone
 
 from allianceauth.eveonline.models import EveCharacter
@@ -54,109 +53,8 @@ class AaAfat(models.Model):
         verbose_name = "Alliance Auth AFAT"
 
 
-# Abstract model to allow for soft deletion
-class SoftDeletionManager(models.Manager):
-    """
-    SoftDeletionManager
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.alive_only = kwargs.pop("alive_only", True)
-        super().__init__(*args, **kwargs)
-
-    def get_queryset(self):
-        """
-        get_queryset
-        :return:
-        """
-
-        if self.alive_only:
-            return SoftDeletionQuerySet(self.model).filter(deleted_at=None)
-
-        return SoftDeletionQuerySet(self.model)
-
-    def hard_delete(self):
-        """
-        hard_delete
-        :return:
-        """
-
-        return self.get_queryset().hard_delete()
-
-
-class SoftDeletionModel(models.Model):
-    """
-    SoftDeletionModel
-    """
-
-    deleted_at = models.DateTimeField(blank=True, null=True)
-
-    objects = SoftDeletionManager()
-    all_objects = SoftDeletionManager(alive_only=False)
-
-    class Meta:  # pylint: disable=too-few-public-methods
-        """
-        Meta
-        """
-
-        abstract = True
-
-    def delete(self, using=None, keep_parents=False):
-        """
-        delete
-        """
-
-        self.deleted_at = timezone.now()
-        self.save()
-
-    def hard_delete(self):
-        """
-        hard_delete
-        """
-
-        super().delete()
-
-
-class SoftDeletionQuerySet(QuerySet):
-    """
-    SoftDeletionQuerySet
-    """
-
-    def delete(self):
-        """
-        delete
-        :return:
-        """
-
-        return super().update(deleted_at=timezone.now())
-
-    def hard_delete(self):
-        """
-        hard_delete
-        :return:
-        """
-
-        return super().delete()
-
-    def alive(self):
-        """
-        alive
-        :return:
-        """
-
-        return self.filter(deleted_at=None)
-
-    def dead(self):
-        """
-        dead
-        :return:
-        """
-
-        return self.exclude(deleted_at=None)
-
-
 # AFatLinkType Model (StratOp, ADM, HD etc)
-class AFatLinkType(SoftDeletionModel):
+class AFatLinkType(models.Model):
     """
     AFatLinkType
     """
@@ -173,10 +71,6 @@ class AFatLinkType(SoftDeletionModel):
         help_text="Whether this fleettype is active or not",
     )
 
-    deleted_at = models.DateTimeField(
-        blank=True, null=True, help_text="Has this been deleted?"
-    )
-
     def __str__(self):
         return "{} - {}".format(self.id, self.name)
 
@@ -191,7 +85,7 @@ class AFatLinkType(SoftDeletionModel):
 
 
 # AFatLink Model
-class AFatLink(SoftDeletionModel):
+class AFatLink(models.Model):
     """
     AFatLink
     """
@@ -220,10 +114,6 @@ class AFatLink(SoftDeletionModel):
         default=None,
         null=True,
         help_text="Character this fatlink has been created with",
-    )
-
-    deleted_at = models.DateTimeField(
-        blank=True, null=True, help_text="Has been deleted or not"
     )
 
     link_type = models.ForeignKey(
@@ -280,7 +170,7 @@ class ClickAFatDuration(models.Model):
 
 
 # AFat Model
-class AFat(SoftDeletionModel):
+class AFat(models.Model):
     """
     AFat
     """
@@ -303,10 +193,6 @@ class AFat(SoftDeletionModel):
 
     shiptype = models.CharField(
         max_length=100, null=True, help_text="The ship the character was flying"
-    )
-
-    deleted_at = models.DateTimeField(
-        blank=True, null=True, help_text="Has been deleted or not"
     )
 
     def __str__(self):
@@ -348,38 +234,3 @@ class ManualAFat(models.Model):
         default_permissions = ()
         verbose_name = "Manual FAT Log"
         verbose_name_plural = "Manual FAT Logs"
-
-
-# AFatDelLog Model
-class AFatDelLog(models.Model):
-    """
-    AFatDelLog
-    """
-
-    # 0 for FatLink, 1 for Fat
-    deltype = models.BooleanField(default=0)
-    remover = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
-    string = models.CharField(max_length=100)
-
-    def delt_to_str(self):
-        """
-        delt_to_str
-        :return:
-        """
-
-        if self.deltype == 0:
-            return "AFatLink"
-
-        return "AFat"
-
-    def __str__(self):
-        return "{}/{} - {}".format(self.delt_to_str(), self.string, self.remover)
-
-    class Meta:  # pylint: disable=too-few-public-methods
-        """
-        Meta
-        """
-
-        default_permissions = ()
-        verbose_name = "Delete Log"
-        verbose_name_plural = "Delete Logs"
