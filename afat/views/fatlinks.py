@@ -31,36 +31,15 @@ from afat.models import (
     AFat,
     AFatLink,
     AFatLinkType,
-    AFatLog,
     AFatLogEvent,
     ClickAFatDuration,
     ManualAFat,
 )
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
-from afat.utils import LoggerAddTag
+from afat.utils import LoggerAddTag, write_log
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
-
-
-@login_required()
-def write_log(
-    request: WSGIRequest,
-    log_event: str,
-    log_text: str,
-):
-    """
-    write the log
-    :param request:
-    :param log_event:
-    :param log_text:
-    """
-
-    afat_log = AFatLog()
-    afat_log.user = request.user
-    afat_log.log_event = log_event
-    afat_log.log_text = log_text
-    afat_log.save()
 
 
 @login_required()

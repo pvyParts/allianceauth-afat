@@ -6,6 +6,7 @@ import logging
 import os
 
 from django.conf import settings
+from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import lazy
 from django.utils.html import format_html
 
@@ -52,7 +53,8 @@ def clean_setting(
     max_value: int = None,
     required_type: type = None,
 ):
-    """cleans the input for a custom setting
+    """
+    cleans the input for a custom setting
 
     Will use `default_value` if settings does not exit or has the wrong type
     or is outside define boundaries (for int only)
@@ -89,3 +91,20 @@ def clean_setting(
             cleaned_value = default_value
 
     return cleaned_value
+
+
+def write_log(request: WSGIRequest, log_event: str, log_text: str):
+    """
+    write the log
+    :param request:
+    :param log_event:
+    :param log_text:
+    """
+
+    from afat.models import AFatLog
+
+    afat_log = AFatLog()
+    afat_log.user = request.user
+    afat_log.log_event = log_event
+    afat_log.log_text = log_text
+    afat_log.save()

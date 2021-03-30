@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- related_name to foreign keys in models
+- `related_name` to foreign keys in models
+- Proper log model
 
 
 ## [1.10.0] - 2021-03-30
