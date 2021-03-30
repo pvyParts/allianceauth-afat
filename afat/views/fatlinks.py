@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -80,11 +79,7 @@ def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
     if year is None:
         year = datetime.now().year
 
-    fatlinks = (
-        AFatLink.objects.filter(afattime__year=year)
-        .order_by("-afattime")
-        .annotate(number_of_fats=Count("afat"))
-    )
+    fatlinks = AFatLink.objects.filter(afattime__year=year).order_by("-afattime")
 
     fatlink_rows = [
         convert_fatlinks_to_dict(request=request, fatlink=fatlink)
