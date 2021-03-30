@@ -7,14 +7,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from afat import __version__ as afat_version_installed
-from afat.models import (
-    AFat,
-    AFatDelLog,
-    AFatLink,
-    AFatLinkType,
-    ClickAFatDuration,
-    ManualAFat,
-)
+from afat.models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, ManualAFat
 
 
 def get_input(text):
@@ -42,7 +35,6 @@ if imicusfat_installed():
     from imicusfat.models import (
         ClickIFatDuration,
         IFat,
-        IFatDelLog,
         IFatLink,
         IFatLinkType,
         ManualIFat,
@@ -129,7 +121,6 @@ class Command(BaseCommand):
     def _import_from_imicusfat(self) -> None:
         # first we check if the target tables are really empty ...
         current_afat_count = AFat.objects.all().count()
-        current_afat_dellog_count = AFatDelLog.objects.all().count()
         current_afat_links_count = AFatLink.objects.all().count()
         current_afat_linktype_count = AFatLinkType.objects.all().count()
         current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
@@ -137,7 +128,6 @@ class Command(BaseCommand):
 
         if (
             current_afat_count > 0
-            or current_afat_dellog_count > 0
             or current_afat_links_count > 0
             or current_afat_linktype_count > 0
             or current_afat_clickduration_count > 0
@@ -165,7 +155,6 @@ class Command(BaseCommand):
 
             afat_fleettype.id = imicusfat_fleettype.id
             afat_fleettype.name = imicusfat_fleettype.name
-            afat_fleettype.deleted_at = imicusfat_fleettype.deleted_at
             afat_fleettype.is_enabled = imicusfat_fleettype.is_enabled
 
             afat_fleettype.save()
@@ -187,7 +176,6 @@ class Command(BaseCommand):
             afatlink.fleet = imicusfat_fatlink.fleet
             afatlink.hash = imicusfat_fatlink.hash
             afatlink.creator_id = imicusfat_fatlink.creator_id
-            afatlink.deleted_at = imicusfat_fatlink.deleted_at
             afatlink.link_type_id = imicusfat_fatlink.link_type_id
             afatlink.is_esilink = imicusfat_fatlink.is_esilink
 
@@ -209,7 +197,6 @@ class Command(BaseCommand):
             afat.shiptype = imicusfat_fat.shiptype
             afat.character_id = imicusfat_fat.character_id
             afat.afatlink_id = imicusfat_fat.ifatlink_id
-            afat.deleted_at = imicusfat_fat.deleted_at
 
             afat.save()
 
@@ -229,24 +216,6 @@ class Command(BaseCommand):
             afat_clickfatduration.fleet_id = imicusfat_clickfatduration.fleet_id
 
             afat_clickfatduration.save()
-
-        # import dellog
-        imicusfat_dellogs = IFatDelLog.objects.all()
-        for imicusfat_dellog in imicusfat_dellogs:
-            self.stdout.write(
-                "Importing FAT dellogwith ID '{dellog_id}'.".format(
-                    dellog_id=imicusfat_dellog.id
-                )
-            )
-
-            afat_dellog = AFatDelLog()
-
-            afat_dellog.id = imicusfat_dellog.id
-            afat_dellog.deltype = imicusfat_dellog.deltype
-            afat_dellog.string = imicusfat_dellog.string
-            afat_dellog.remover_id = imicusfat_dellog.remover_id
-
-            afat_dellog.save()
 
         # import manual fat
         imicusfat_manualfats = ManualIFat.objects.all()

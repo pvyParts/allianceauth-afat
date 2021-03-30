@@ -48,21 +48,8 @@ class AFatLinkAdmin(admin.ModelAdmin):
     config for fat link model
     """
 
-    list_display = (
-        "afattime",
-        "creator",
-        "fleet",
-        "_link_type",
-        "is_esilink",
-        "hash",
-        "deleted_at",
-    )
-
-    list_filter = (
-        "is_esilink",
-        ("link_type__name", custom_filter(title="fleet type")),
-    )
-
+    list_display = ("afattime", "creator", "fleet", "_link_type", "is_esilink", "hash")
+    list_filter = ("is_esilink", ("link_type__name", custom_filter(title="fleet type")))
     ordering = ("-afattime",)
 
     def _link_type(self, obj):
@@ -81,10 +68,8 @@ class AFatAdmin(admin.ModelAdmin):
     config for fat model
     """
 
-    list_display = ("character", "system", "shiptype", "afatlink", "deleted_at")
-
+    list_display = ("character", "system", "shiptype", "afatlink")
     list_filter = ("character", "system", "shiptype")
-
     ordering = ("-character",)
 
 
@@ -94,14 +79,8 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
     config for fatlinktype model
     """
 
-    list_display = (
-        "id",
-        "_name",
-        "_is_enabled",
-    )
-
+    list_display = ("id", "_name", "_is_enabled")
     list_filter = ("is_enabled",)
-
     ordering = ("name",)
 
     def _name(self, obj):
@@ -172,13 +151,9 @@ class ManualAFatAdmin(admin.ModelAdmin):
     """
 
     list_display = ("creator", "_character", "_afatlink", "created_at")
-
     exclude = ("creator", "character", "afatlink", "created_at")
-
     readonly_fields = ("creator", "character", "afatlink", "created_at")
-
     ordering = ("-created_at",)
-
     list_filter = (
         ("creator", admin.RelatedOnlyFieldListFilter),
         ("character", admin.RelatedOnlyFieldListFilter),
