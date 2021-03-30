@@ -146,6 +146,9 @@ SET FOREIGN_KEY_CHECKS=0;
 # remove all "deleted" FATs
 delete from imicusfat_ifat where deleted_at is not null;
 
+# remove all "deleted" fat link types
+delete from imicusfat_ifatlinktype where deleted_at is not null;
+
 # get all fatlink IDs of "deleted" fatlinks as comma separated list and make sure
 # to have that in your notepad saved, you need this list for the next comamnds
 select group_concat(id) from imicusfat_ifatlink where deleted_at is not null;

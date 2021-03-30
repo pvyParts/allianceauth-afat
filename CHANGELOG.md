@@ -6,7 +6,53 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-### [1.9.0] - 2021-03-20
+## [1.10.0] - 2021-03-30
+
+### ⚠️ IMPORTANT ⚠️
+Before you update to this version, make sure you remove all "deleted" data from
+your tables. To do so, log in to your mysql console and run the following commands:
+
+```mysql
+# de-activate foreign key checks
+SET FOREIGN_KEY_CHECKS=0;
+
+# remove all "deleted" FATs
+delete from afat_afat where deleted_at is not null;
+
+# remove all "deleted" fat link types
+delete from afat_afatlinktype where deleted_at is not null;
+
+# get all fatlink IDs of "deleted" fatlinks as comma separated list and make sure
+# to have that in your notepad saved, you need this list for the next comamnds
+select group_concat(id) from afat_aafatlink where deleted_at is not null;
+
+# now remove everything that is related to those IDs
+# make sure to replace "id_list" with the comma separated
+# list of IDs from the earlier command
+delete from afat_aclickifatduration where fleet_id in (id_list);
+delete from afat_aafat where ifatlink_id in (id_list);
+delete from afat_aafatlink where id in(id_list);
+
+# re-activate foreign key checks
+SET FOREIGN_KEY_CHECKS=1;
+```
+This step is important before updating, because the "deleted" marker will be lost
+during migration! If you don't run this step, you'll have all yout FATlinks and FATs
+that were previously "deleted" as active again.
+
+### Removed
+
+- Soft deletion mechanism we inherited from ImicusFAT. It's more trouble than it's worth
+  and it's not used anyways. So we stick to "delete data when it should be deleted",
+  and not just mark it as deleted and keep it as stale data in the table.
+
+
+### Updated
+
+- Migration information for migration from ImicusFAT in README.md file
+
+
+## [1.9.0] - 2021-03-20
 
 ### Added
 
@@ -14,7 +60,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   ![Example](afat/docs/images/ship-type-overview.png)
 
 
-### [1.8.0] - 2021-03-07
+## [1.8.0] - 2021-03-07
 
 ### Added
 
@@ -23,14 +69,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   ![Example](afat/docs/images/manually-close-esi-links.png)
 
 
-### [1.7.0] - 2021-03-02
+## [1.7.0] - 2021-03-02
 
 ### Added
 
 - Setting to change the application name, in case you want it named something specific
 
 
-### [1.6.0] - 2021-02-04
+## [1.6.0] - 2021-02-04
 
 ### Added
 
@@ -40,14 +86,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   is a new fleet, the old fleet will be closed, and the new fleet will be registered.
 
 
-### [1.5.3] - 2021-02-03
+## [1.5.3] - 2021-02-03
 
 ### Fixed
 
 - An issue with sorting by date in datatables
 
 
-### [1.5.2] - 2021-02-02
+## [1.5.2] - 2021-02-02
 
 ### Changed
 
@@ -57,14 +103,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Added common table style
 
 
-### [1.5.1] - 2021-01-27
+## [1.5.1] - 2021-01-27
 
 ### Changed
 
 - EVE/UTC tz handling optimized
 
 
-### [1.5.0] - 2021-01-25
+## [1.5.0] - 2021-01-25
 
 ### Added
 
@@ -73,7 +119,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - More ESI error handling
 
 
-### [1.4.5] - 2021-01-20
+## [1.4.5] - 2021-01-20
 
 ### Changed
 

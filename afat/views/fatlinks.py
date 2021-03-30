@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -28,14 +28,7 @@ from afat.forms import (
     FatLinkEditForm,
 )
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from afat.models import (
-    AFat,
-    AFatDelLog,
-    AFatLink,
-    AFatLinkType,
-    ClickAFatDuration,
-    ManualAFat,
-)
+from afat.models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, ManualAFat
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
 from afat.utils import LoggerAddTag
@@ -90,7 +83,7 @@ def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
     fatlinks = (
         AFatLink.objects.filter(afattime__year=year)
         .order_by("-afattime")
-        .annotate(number_of_fats=Count("afat", filter=Q(afat__deleted_at__isnull=True)))
+        .annotate(number_of_fats=Count("afat"))
     )
 
     fatlink_rows = [
@@ -115,9 +108,7 @@ def link_add(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    link_types = AFatLinkType.objects.filter(
-        is_enabled=True,
-    ).order_by("name")
+    link_types = AFatLinkType.objects.filter(is_enabled=True).order_by("name")
 
     has_open_esi_fleets = False
     open_esi_fleets_list = list()
@@ -727,7 +718,7 @@ def del_link(request: WSGIRequest, fatlink_hash: str = None):
 
     link.delete()
 
-    AFatDelLog(remover=request.user, deltype=0, string=link.__str__()).save()
+    # AFatDelLog(remover=request.user, deltype=0, string=link.__str__()).save()
 
     request.session["msg"] = [
         "success",
@@ -772,7 +763,7 @@ def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
         return redirect("afat:dashboard")
 
     fat_details.delete()
-    AFatDelLog(remover=request.user, deltype=1, string=fat_details.__str__()).save()
+    # AFatDelLog(remover=request.user, deltype=1, string=fat_details.__str__()).save()
 
     request.session["msg"] = [
         "success",
