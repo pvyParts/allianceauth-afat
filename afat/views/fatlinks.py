@@ -27,12 +27,40 @@ from afat.forms import (
     FatLinkEditForm,
 )
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from afat.models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, ManualAFat
+from afat.models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLog,
+    AFatLogEvent,
+    ClickAFatDuration,
+    ManualAFat,
+)
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
 from afat.utils import LoggerAddTag
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
+
+
+@login_required()
+def write_log(
+    request: WSGIRequest,
+    log_event: str,
+    log_text: str,
+):
+    """
+    write the log
+    :param request:
+    :param log_event:
+    :param log_text:
+    """
+
+    afat_log = AFatLog()
+    afat_log.user = request.user
+    afat_log.log_event = log_event
+    afat_log.log_text = log_text
+    afat_log.save()
 
 
 @login_required()
@@ -170,15 +198,24 @@ def link_create_click(request: WSGIRequest):
                 "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
             ] = 202
 
-            logger.info(
+            # writing DB log
+            log_text = (
                 "FAT link {fatlink_hash} with name {name} and a "
-                "duration of {duration} minutes was created by {user}".format(
-                    fatlink_hash=fatlink_hash,
-                    name=form.cleaned_data["name"],
-                    duration=form.cleaned_data["duration"],
-                    user=request.user,
-                )
+                "duration of {duration} minutes was created by {user}"
+            ).format(
+                fatlink_hash=fatlink_hash,
+                name=form.cleaned_data["name"],
+                duration=form.cleaned_data["duration"],
+                user=request.user,
             )
+
+            write_log(
+                request=request,
+                log_event=AFatLogEvent.CREATE_FATLINK,
+                log_text=log_text,
+            )
+
+            logger.info(log_text)
 
             return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
 
@@ -333,6 +370,21 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
     # save it
     fatlink.save()
 
+    # writing DB log
+    log_text = (
+        "ESI FAT link {fatlink_hash} with name {name} and a "
+        "duration of {duration} minutes was created by {user}"
+    ).format(
+        fatlink_hash=fatlink_hash,
+        name=request.session["fatlink_form__name"],
+        duration=request.session["fatlink_form__type"],
+        user=request.user,
+    )
+
+    write_log(request=request, log_event=AFatLogEvent.CREATE_FATLINK, log_text=log_text)
+
+    logger.info(log_text)
+
     # clear session
     del request.session["fatlink_form__name"]
     del request.session["fatlink_form__type"]
@@ -345,12 +397,6 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
     request.session[
         "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
     ] = 200
-
-    logger.info(
-        "ESI FAT link {fatlink_hash} created by {user}".format(
-            fatlink_hash=fatlink_hash, user=request.user
-        )
-    )
 
     return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
 
@@ -565,6 +611,17 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
         if fatlink_edit_form.is_valid():
             link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
+
+            # writing DB log
+            write_log(
+                request=request,
+                log_event=AFatLogEvent.CHANGE_FATLINK,
+                log_text=(
+                    'FAT link with hash "{fatlink_hash}" changed. '
+                    'Fleet name was set to "{fleet_name}"'
+                ).format(fatlink_hash=link.hash, fleet_name=link.fleet),
+            )
+
             request.session[
                 "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
             ] = 1
@@ -594,6 +651,20 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
                 request.session[
                     "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
                 ] = 3
+
+                # writing DB log
+                write_log(
+                    request=request,
+                    log_event=AFatLogEvent.MANUAL_FAT,
+                    log_text=(
+                        "Pilot {pilot_name} flying a {ship_type} was manually added to "
+                        'FAT link with hash "{fatlink_hash}"'
+                    ).format(
+                        fatlink_hash=link.hash,
+                        pilot_name=character.character_name,
+                        ship_type=shiptype,
+                    ),
+                )
             else:
                 request.session[
                     "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
@@ -715,6 +786,14 @@ def del_link(request: WSGIRequest, fatlink_hash: str = None):
 
     # AFatDelLog(remover=request.user, deltype=0, string=link.__str__()).save()
 
+    write_log(
+        request=request,
+        log_event=AFatLogEvent.DELETE_FATLINK,
+        log_text='FAT link with hash "{fatlink_hash}" deleted.'.format(
+            fatlink_hash=fatlink_hash
+        ),
+    )
+
     request.session["msg"] = [
         "success",
         "The FAT Link ({fatlink_hash}) and all associated FATs "
@@ -758,12 +837,25 @@ def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
         return redirect("afat:dashboard")
 
     fat_details.delete()
-    # AFatDelLog(remover=request.user, deltype=1, string=fat_details.__str__()).save()
+
+    write_log(
+        request=request,
+        log_event=AFatLogEvent.DELETE_FAT,
+        log_text=(
+            "The FAT for {character_name} has been successfully "
+            "deleted from link {fatlink_hash}."
+        ).format(
+            character_name=fat_details.character.character_name,
+            fatlink_hash=fatlink_hash,
+        ),
+    )
 
     request.session["msg"] = [
         "success",
-        "The FAT for {character_name} has been successfully "
-        "deleted from link {fatlink_hash}.".format(
+        (
+            "The FAT for {character_name} has been successfully "
+            "deleted from link {fatlink_hash}."
+        ).format(
             character_name=fat_details.character.character_name,
             fatlink_hash=fatlink_hash,
         ),

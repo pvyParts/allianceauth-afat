@@ -4,7 +4,7 @@ admin pages configuration
 
 from django.contrib import admin
 
-from afat.models import AFat, AFatLink, AFatLinkType, ManualAFat
+from afat.models import AFat, AFatLink, AFatLinkType, AFatLog, ManualAFat
 
 
 def custom_filter(title):
@@ -173,3 +173,12 @@ class ManualAFatAdmin(admin.ModelAdmin):
 
     _character.short_description = "Pilot added"
     _character.admin_order_field = "character"
+
+
+@admin.register(AFatLog)
+class AFatLogAdmin(admin.ModelAdmin):
+    list_display = ("log_time", "log_event", "log_text", "user")
+    ordering = ("-log_time",)
+    readonly_fields = ("log_time", "log_event", "log_text", "user")
+
+    list_filter = ("log_event",)

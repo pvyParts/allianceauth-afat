@@ -5,6 +5,7 @@ the models
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
@@ -23,6 +24,19 @@ def get_sentinel_user():
     """
 
     return User.objects.get_or_create(username="deleted")[0]
+
+
+class AFatLogEvent(models.TextChoices):
+    """
+    Choices for SRP Status
+    """
+
+    CREATE_FATLINK = "CR_FAT_LINK", _("FAT Link Created")
+    CHANGE_FATLINK = "CH_FAT_LINK", _("FAT Link Changed")
+    DELETE_FATLINK = "RM_FAT_LINK", _("FAT Link Removed")
+    # CREATE_FAT = "CR_FAT", _("FAT Registered")
+    DELETE_FAT = "RM_FAT", _("FAT Removed")
+    MANUAL_FAT = "CR_FAT_MAN", _("Manual FAT Added")
 
 
 class AaAfat(models.Model):
@@ -254,3 +268,36 @@ class ManualAFat(models.Model):
     # Add property for getting the user for a character.
     def __str__(self):
         return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
+
+
+# AFat Log Model
+class AFatLog(models.Model):
+    """
+    AFatLog
+    """
+
+    log_time = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(
+        User,
+        related_name="+",
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET(get_sentinel_user),
+    )
+    log_event = models.CharField(
+        max_length=11,
+        blank=False,
+        choices=AFatLogEvent.choices,
+        default=AFatLogEvent.CREATE_FATLINK,
+    )
+    log_text = models.TextField()
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        """
+        AFatLog :: Meta
+        """
+
+        default_permissions = ()
+        verbose_name = "AFAT Log"
+        verbose_name_plural = "AFAT Logs"
