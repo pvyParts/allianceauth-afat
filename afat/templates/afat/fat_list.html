@@ -52,10 +52,7 @@
                         <th>{% translate "Creator" %}</th>
                         <th>{% translate "EVE Time" %}</th>
                         <th>{% translate "# of FATs" %}</th>
-
-                        {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
-                            <th><!-- {% translate "Actions" %} --></th>
-                        {% endif %}
+                        <th><!-- {% translate "Actions" %} --></th>
                     </tr>
                 </thead>
 
@@ -91,126 +88,27 @@
     <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
 
     <script type="application/javascript">
-        $(document).ready(function() {
-            const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
-
-            let esi_column = 5;
-
-            {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
-                esi_column = 6;
-            {% endif %}
-
-            let linkListTable = $('#link-list').DataTable({
-                ajax: {
-                    url: "{% url 'afat:links_data' year %}",
-                    dataSrc: '',
-                    cache: false
-                },
-                columns: [
-                    {data: 'fleet_name'},
-                    {data: 'fleet_type'},
-                    {data: 'creator_name'},
-                    {
-                        data: 'fleet_time',
-                        render: {
-                            display: function (data, type, row) {
-                                return moment(data.time).utc().format(DATETIME_FORMAT);
-                            },
-                            _: 'timestamp'
-                        },
-                    },
-                    {data: 'fats_number'},
-
-                    {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
-                        {data: 'actions'},
-                    {% endif %}
-
-                    // hidden column
-                    {data: 'via_esi'},
-                ],
-
-                columnDefs: [
-                    {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
-                        {
-                            targets: [5],
-                            orderable: false,
-                            createdCell: function (td) {
-                                $(td).addClass('text-right');
-                            }
-                        },
-                    {% endif %}
-                    {
-                        visible: false,
-                        targets: [esi_column]
+        let afatSettings = {
+            url: {
+                linkList: '{% url 'afat:links_data' year %}'
+            },
+            permissions: {
+                addFatLink: {% if perms.afat.add_fatlink %}true{% else %}false{% endif %},
+                manageAfat: {% if perms.afat.manage_afat %}true{% else %}false{% endif %}
+            },
+            translation: {
+                dataTable: {
+                    filter: {
+                        viaEsi: '{% translate 'via ESI' %}'
                     }
-                ],
-
-                order: [
-                    [3, 'desc']
-                ],
-
-                filterDropDown: {
-                    columns: [
-                        {
-                            idx: 1,
-                        },
-                        {
-                            idx: esi_column,
-                            title: "{% translate 'via ESI' %}"
-                        },
-                    ],
-                    autoSize: false,
-                    bootstrap: true
                 },
-            });
-
-            /**
-             * refresh the datatable information every 60 seconds
-             */
-            let intervalReloadDatatable = 60000; // ms
-            let expectedReloadDatatable = Date.now() + intervalReloadDatatable;
-
-            /**
-             * reload datatable "linkListTable"
-             */
-            let realoadDataTable = function() {
-                let dt = Date.now() - expectedReloadDatatable; // the drift (positive for overshooting)
-
-                if(dt > intervalReloadDatatable) {
-                    // something really bad happened. Maybe the browser (tab) was inactive?
-                    // possibly special handling to avoid futile "catch up" run
-                    console.log('Something went wrong, reloading page ...');
-
-                    window.location.replace(
-                        window.location.pathname + window.location.search + window.location.hash
-                    );
+                modal: {
+                    deleteModal: {
+                        body: '{% translate "Are you sure you want to delete" %} '
+                    }
                 }
-
-                linkListTable.ajax.reload();
-
-                expectedReloadDatatable += intervalReloadDatatable;
-
-                // take drift into account
-                setTimeout(
-                    realoadDataTable,
-                    Math.max(0, intervalReloadDatatable - dt)
-                );
-            };
-
-            setTimeout(
-                realoadDataTable,
-                intervalReloadDatatable
-            );
-        });
-
-        $('#deleteModal').on('show.bs.modal', function(event) {
-            let button = $(event.relatedTarget) // Button that triggered the modal
-            let url = button.data('url') // Extract info from data-* attributes
-            let name = button.data('name');
-            let modal = $(this)
-
-            modal.find('#fat-link').attr('href', url)
-            modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
-        });
+            }
+        }
     </script>
+    <script type="application/javascript" src="{% static 'afat/javascript/afat-fatlist.min.js' %}"></script>
 {% endblock %}
