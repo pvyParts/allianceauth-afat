@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `related_name` to foreign keys in models
 - Proper log model
 
+### Changed
+
+- Inline js for DataTables moved to their own js files
+
 
 ## [1.10.0] - 2021-03-30
 
