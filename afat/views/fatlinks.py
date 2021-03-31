@@ -763,8 +763,6 @@ def del_link(request: WSGIRequest, fatlink_hash: str = None):
 
     link.delete()
 
-    # AFatDelLog(remover=request.user, deltype=0, string=link.__str__()).save()
-
     write_log(
         request=request,
         log_event=AFatLogEvent.DELETE_FATLINK,
