@@ -9,6 +9,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
@@ -40,7 +41,10 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         if fatlink.is_registered_on_esi:
             esi_fleet_marker_classes += " afat-label-active-esi-fleet"
 
-        esi_fleet_marker += f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
+        marker_text = _("via ESI")
+        esi_fleet_marker += (
+            f'<span class="{esi_fleet_marker_classes}">{marker_text}</span>'
+        )
 
     # fleet type
     fatlink_type = ""
@@ -76,11 +80,8 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         button_edit_url = reverse("afat:fatlinks_edit_fatlink", args=[fatlink.hash])
 
         actions += (
-            '<a class="btn btn-afat-action btn-info btn-sm" href="'
-            + button_edit_url
-            + '">'
-            '<span class="fas fa-eye"></span>'
-            "</a>"
+            '<a class="btn btn-afat-action btn-info btn-sm" '
+            f'href="{button_edit_url}"><span class="fas fa-eye"></span></a>'
         )
 
     if request.user.has_perm("afat.manage_afat"):
@@ -88,10 +89,9 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
         actions += (
             '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
-            'data-target="#deleteModal" data-url="' + button_delete_url + '" '
-            'data-name="' + fatlink_fleet + '">'
-            '<span class="glyphicon glyphicon-trash"></span>'
-            "</a>"
+            f'data-target="#deleteModal" data-url="{button_delete_url}" '
+            f'data-name="{fatlink_fleet}"><span class="glyphicon glyphicon-trash">'
+            "</span></a>"
         )
 
     summary = {
@@ -136,7 +136,10 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
         if fat.afatlink.is_registered_on_esi:
             esi_fleet_marker_classes += " afat-label-active-esi-fleet"
 
-        esi_fleet_marker += f'<span class="{esi_fleet_marker_classes}">via ESI</span>'
+        marker_text = _("via ESI")
+        esi_fleet_marker += (
+            f'<span class="{esi_fleet_marker_classes}">{marker_text}</span>'
+        )
 
     # actions
     actions = ""
@@ -191,6 +194,7 @@ def get_random_rgba_color():
     get a random RGB(a) color
     :return:
     """
+
     return "rgba({red}, {green}, {blue}, 1)".format(
         red=random.randint(0, 255),
         green=random.randint(0, 255),
