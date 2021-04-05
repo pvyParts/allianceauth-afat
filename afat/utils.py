@@ -3,7 +3,6 @@ utilities
 """
 
 import logging
-import os
 
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
@@ -36,14 +35,6 @@ class LoggerAddTag(logging.LoggerAdapter):
 
 
 logger = LoggerAddTag(logging.getLogger(__name__), __package__)
-
-
-def get_swagger_spec_path() -> str:
-    """
-    returns the path to the current swagger spec file
-    """
-
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "swagger.json")
 
 
 def clean_setting(

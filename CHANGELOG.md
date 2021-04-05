@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Some changes in link names (mostly for ajax calls)
 - Function names
   - Following a proper naming convention
+- Use swagger spec provided by CCP instead of maintaining our own file
 
 
 ## [1.10.0] - 2021-03-30
