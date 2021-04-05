@@ -51,10 +51,11 @@ def overview(request: WSGIRequest) -> HttpResponse:
 
 @login_required
 @permission_required("afat.basic_access")
-def ajax_get_fats_by_character(request: WSGIRequest, charid: int) -> JsonResponse:
+def ajax_recent_get_fats_by_character(
+    request: WSGIRequest, charid: int
+) -> JsonResponse:
     """
-    ajax call
-    get fats for dashboard view
+    ajax call :: get all FATs for a given character
     :param request:
     :param charid:
     """
@@ -78,14 +79,10 @@ def ajax_get_fats_by_character(request: WSGIRequest, charid: int) -> JsonRespons
 @permission_required("afat.basic_access")
 def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     """
-    ajax call
-    get recent fat links for the dashboard datatable
+    ajax call :: get recent fat links for the dashboard datatable
     :param request:
     """
 
-    # fatlinks = AFatLink.objects.order_by("-afattime").annotate(
-    #     number_of_fats=Count("afat")
-    # )[:10]
     fatlinks = AFatLink.objects.order_by("-afattime")[:10]
 
     fatlink_rows = [

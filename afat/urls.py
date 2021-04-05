@@ -121,9 +121,9 @@ urlpatterns = [
         name="dashboard_ajax_get_recent_fatlinks",
     ),
     url(
-        r"^ajax/dashboard/fats/character/(?P<charid>[0-9]+)/$",
-        dashboard.ajax_get_fats_by_character,
-        name="dashboard_ajax_get_fats_by_character",
+        r"^ajax/dashboard/fats/recent/character/(?P<charid>[0-9]+)/$",
+        dashboard.ajax_recent_get_fats_by_character,
+        name="dashboard_ajax_get_recent_fats_by_character",
     ),
     # ajax calls :: fatlinks
     url(
