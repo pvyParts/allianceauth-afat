@@ -21,7 +21,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def dashboard(request: WSGIRequest) -> HttpResponse:
+def overview(request: WSGIRequest) -> HttpResponse:
     """
     dashboard
     :param request:
@@ -51,7 +51,7 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
 
 @login_required
 @permission_required("afat.basic_access")
-def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
+def ajax_get_fats_by_character(request: WSGIRequest, charid: int) -> JsonResponse:
     """
     ajax call
     get fats for dashboard view
@@ -76,7 +76,7 @@ def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
 
 @login_required
 @permission_required("afat.basic_access")
-def dashboard_links_data(request: WSGIRequest) -> JsonResponse:
+def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     """
     ajax call
     get recent fat links for the dashboard datatable

@@ -1,0 +1,70 @@
+{% load i18n %}
+
+<div class="col-md-6 ml-md-2">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% translate "Create a clickable FAT Link" %}
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <p>
+                {% translate "This option will create a clickable like just like that created by the standard FAT module." %}
+            </p>
+
+            <p>
+                {{ form.errors }}
+                {{ form.non_field_errors }}
+            </p>
+
+            <!-- Form Goes Here -->
+            <form class="form" role="form" action="{% url 'afat:fatlinks_create_clickable_fatlink' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label style="width: 100%; font-weight: normal;">
+                        <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">{% translate "Fleet Name" %}</span>
+                        <input type="text" class="form-control" name="name" placeholder='{% translate "Enter fleet name" %}' required>
+                    </label>
+                </div>
+
+                {% if link_types %}
+                    <div class="form-group">
+                        <label style="width: 100%; font-weight: normal;">
+                            <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
+                                {% translate "Fleet Type (optional)" %}
+                            </span>
+
+                            <select class="form-control" name="type">
+                                <option value="-1">{% translate "Please select a fleet type" %}</option>
+
+                                {% for type in link_types %}
+                                    <option value="{{type.id}}">{{type.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label style="width: 100%; font-weight: normal;">
+                        <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
+                            {% translate "FAT expiry in minutes" %}
+                        </span>
+
+                        <input type="number" class="form-control" name="duration" id="duration" value="{{ default_expiry_time }}" placeholder='{% translate "Expiry Time in Minutes" %}' required>
+                    </label>
+                </div>
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit" name="submit_click">
+                        <span class="fa fa-plus fa-fw"></span>
+
+                        {% translate "Create Link" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

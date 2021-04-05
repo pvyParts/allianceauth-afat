@@ -62,8 +62,8 @@
     <script type="application/javascript">
         let afatSettings = {
             url: {
-                characterFats: '{% url "afat:dashboard_fats_data" 0 %}',
-                recentFatLinks: '{% url "afat:dashboard_links_data" %}'
+                characterFats: '{% url "afat:dashboard_ajax_get_fats_by_character" 0 %}',
+                recentFatLinks: '{% url "afat:dashboard_ajax_get_recent_fatlinks" %}'
             },
             permissions: {
                 addFatLink: {% if perms.afat.add_fatlink %}true{% else %}false{% endif %},

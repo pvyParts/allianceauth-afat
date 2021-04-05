@@ -30,7 +30,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
+def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     statistics main view
     :type year: string
@@ -120,12 +120,12 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
 
     logger.info("Statistics overview called by {user}".format(user=request.user))
 
-    return render(request, "afat/stats_main.html", context)
+    return render(request, "afat/statistics_overview.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats_char(
+def character(
     request: WSGIRequest, charid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
@@ -212,12 +212,12 @@ def stats_char(
 
     logger.info("Character statistics called by {user}".format(user=request.user))
 
-    return render(request, "afat/char_stat.html", context)
+    return render(request, "afat/statistics_character.html", context)
 
 
 @login_required()
 @permissions_required(("afat.stats_corporation_other", "afat.stats_corporation_own"))
-def stats_corp(
+def corporation(
     request: WSGIRequest, corpid: int = 0000, year: int = None, month: int = None
 ) -> HttpResponse:
     """
@@ -377,12 +377,12 @@ def stats_corp(
         )
     )
 
-    return render(request, "afat/corp_stat.html", context)
+    return render(request, "afat/statistics_corporation.html", context)
 
 
 @login_required()
 @permission_required("afat.stats_corporation_other")
-def stats_alliance(
+def alliance(
     request: WSGIRequest, allianceid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
@@ -588,4 +588,4 @@ def stats_alliance(
         )
     )
 
-    return render(request, "afat/ally_stat.html", context)
+    return render(request, "afat/statistics_alliance.html", context)

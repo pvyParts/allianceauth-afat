@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <script type="application/javascript">
-    let characters = new Array();
+    let characters = [];
 </script>
 
 <div id="fats" class="tab-pane fade in active panel panel-default">
@@ -50,7 +50,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="{% if perms.afat.manage_afat %}5{% else %}4{% endif %}">
-                                            {% include "afat/partials/fatlink_list_legend.html" %}
+                                            {% include "afat/partials/fatlinks/fatlink_list_legend.html" %}
                                         </td>
                                     </tr>
                                 </tfoot>

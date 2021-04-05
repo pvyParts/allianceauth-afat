@@ -1,0 +1,92 @@
+{% load i18n %}
+{% load evelinks %}
+
+<div class="col-md-6 mr-md-1">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% translate "Create link using ESI" %}
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <p>
+                {% blocktranslate %}
+                    This option will automatically register and track the entire fleet
+                    without member clicks. Use this if you <b>are</b> Fleet Boss,
+                    otherwise please use the clickable FAT link option.
+                {% endblocktranslate %}
+            </p>
+
+            {% if esi_fleet.has_open_esi_fleets %}
+                <div class="alert alert-info">
+                    <p>
+                        {% translate 'You already have (a) registered fleet(s) under the following character(s):' %}<sup>*</sup>
+                    </p>
+
+                    <ul style="padding-left: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+                        {% for open_esi_fleet in esi_fleet.open_esi_fleets_list %}
+                            <li style="margin-bottom: 0.25rem; list-style: none;">
+                                <img class="img-circle" src="{{ open_esi_fleet.fleet_commander.character|character_portrait_url:32 }}" alt="{{ open_esi_fleet.fleet_commander.character.character_name }}" style="margin-right: 0.25rem;">
+                                {{ open_esi_fleet.fleet_commander.character.character_name }}
+                                <small>(ESI fleet ID: {{ open_esi_fleet.fleet_commander.esi_fleet_id }})</small>
+                                <a class="btn btn-primary btn-xs" href="{% url 'afat:fatlinks_close_esi_fatlink' open_esi_fleet.fleet_commander.hash %}" style="margin-left: 0.25rem;" title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}">
+                                    <i class="fas fa-times"></i>
+                                    <!-- {% translate 'Stop Tracking' %} -->
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <p>
+                        {% translate 'These fleets are already automatically tracked. However, you can still open more fleets with other alts, if that&apos;s what you like to do.' %}
+                    </p>
+
+                    <p>
+                        (<small><sup>(*)</sup> {% translate 'Note: Information about your registered fleets might be delayed by up to 5 minutes.' %})</small>
+                    </p>
+                </div>
+            {% endif %}
+
+            <form class="form" role="form" action="{% url 'afat:fatlinks_create_esi_fatlink' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label style="width: 100%; font-weight: normal;">
+                        <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
+                            {% translate "Fleet Name" %}
+                        </span>
+
+                        <input type="text" class="form-control" name="name_esi" placeholder='{% translate "Enter fleet name" %}' required>
+                    </label>
+                </div>
+
+                {% if link_types %}
+                    <div class="form-group">
+                        <label style="width: 100%; font-weight: normal;">
+                            <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
+                                {% translate "Fleet Type (optional)" %}
+                            </span>
+
+                            <select class="form-control" name="type_esi">
+                                <option value="-1">{% translate "Please select a fleet type" %}</option>
+
+                                {% for type in link_types %}
+                                    <option value="{{type.id}}">{{type.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                {% endif %}
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit" name="submit_click">
+                        <span class="fa fa-plus fa-fw"></span>
+
+                        {% translate "Add ESI Link" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -17,17 +17,17 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="{% navactive request 'afat:stats afat:stats_corp afat:stats_char afat:stats_ally' %}">
-                    <a href="{% url 'afat:stats' %}">{% translate "Statistics" %}</a>
+                <li class="{% navactive request 'afat:statistics_overview afat:statistics_corporation afat:statistics_character afat:stats_ally' %}">
+                    <a href="{% url 'afat:statistics_overview' %}">{% translate "Statistics" %}</a>
                 </li>
 
-                <li class="{% navactive request 'afat:links afat:link_edit' %}">
+                <li class="{% navactive request 'afat:links afat:fatlinks_edit_fatlink' %}">
                     <a href="{% url 'afat:links' %}">{% translate "FAT Links" %}</a>
                 </li>
 
                 {% if perms.afat.add_fatlink or perms.afat.manage_afat %}
-                    <li class="{% navactive request 'afat:link_add' %}">
-                        <a href="{% url 'afat:link_add' %}">{% translate "Add FAT Link" %}</a>
+                    <li class="{% navactive request 'afat:fatlinks_add_fatlink' %}">
+                        <a href="{% url 'afat:fatlinks_add_fatlink' %}">{% translate "Add FAT Link" %}</a>
                     </li>
                 {% endif %}
             </ul>

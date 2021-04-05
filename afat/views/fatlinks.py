@@ -44,7 +44,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def links(request: WSGIRequest, year: int = None) -> HttpResponse:
+def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     fatlinks view
     :param year:
@@ -70,12 +70,12 @@ def links(request: WSGIRequest, year: int = None) -> HttpResponse:
 
     logger.info("FAT link list called by {user}".format(user=request.user))
 
-    return render(request, "afat/fat_list.html", context)
+    return render(request, "afat/fatlinks_overview.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
+def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonResponse:
     """
     fatlinks view
     :param year:
@@ -98,7 +98,7 @@ def links_data(request: WSGIRequest, year: int = None) -> JsonResponse:
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def link_add(request: WSGIRequest) -> HttpResponse:
+def add_fatlink(request: WSGIRequest) -> HttpResponse:
     """
     add fatlink view
     :param request:
@@ -136,14 +136,14 @@ def link_add(request: WSGIRequest) -> HttpResponse:
 
     logger.info("Add FAT link view called by {user}".format(user=request.user))
 
-    return render(request, "afat/addlink.html", context)
+    return render(request, "afat/fatlinks_add_fatlink.html", context)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def link_create_click(request: WSGIRequest):
+def create_clickable_fatlink(request: WSGIRequest):
     """
-    create fatlink helper
+    create clickable fat link
     :param request:
     :return:
     """
@@ -196,7 +196,7 @@ def link_create_click(request: WSGIRequest):
 
             logger.info(log_text)
 
-            return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
+            return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
 
         request.session["msg"] = [
             "danger",
@@ -221,7 +221,7 @@ def link_create_click(request: WSGIRequest):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
-def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
+def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     """
     helper: create ESI link
     :param request:
@@ -248,7 +248,7 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         ]
 
         # return to "Add FAT Link" view
-        return redirect("afat:link_add")
+        return redirect("afat:fatlinks_add_fatlink")
 
     # Check if this character already has a fleet
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
@@ -286,7 +286,7 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         ]
 
         # return to "Add FAT Link" view
-        return redirect("afat:link_add")
+        return redirect("afat:fatlinks_add_fatlink")
 
     # remove all former registered fleets if there are any
     if (
@@ -321,7 +321,7 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         ]
 
         # return to "Add FAT Link" view
-        return redirect("afat:link_add")
+        return redirect("afat:fatlinks_add_fatlink")
 
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
 
@@ -377,13 +377,13 @@ def link_create_esi(request: WSGIRequest, token, fatlink_hash: str):
         "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
     ] = 200
 
-    return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
+    return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
 
 
 @login_required()
-def create_esi_fat(request: WSGIRequest):
+def create_esi_fatlink(request: WSGIRequest):
     """
-    create ESI fat helper
+    create ESI fat link
     :param request:
     :return:
     """
@@ -396,7 +396,9 @@ def create_esi_fat(request: WSGIRequest):
         request.session["fatlink_form__name"] = fatlink_form.cleaned_data["name_esi"]
         request.session["fatlink_form__type"] = fatlink_form.cleaned_data["type_esi"]
 
-        return redirect("afat:link_create_esi", fatlink_hash=fatlink_hash)
+        return redirect(
+            "afat:fatlinks_create_esi_fatlink_callback", fatlink_hash=fatlink_hash
+        )
 
     request.session["msg"] = [
         "danger",
@@ -415,7 +417,7 @@ def create_esi_fat(request: WSGIRequest):
         "esi-location.read_online.v1",
     ]
 )
-def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
+def add_fat(request: WSGIRequest, token, fatlink_hash: str = None):
     """
     click fatlink helper
     :param request:
@@ -563,7 +565,7 @@ def click_link(request: WSGIRequest, token, fatlink_hash: str = None):
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
+def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
     edit fatlink view
     :param request:
@@ -713,12 +715,12 @@ def link_edit(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
         )
     )
 
-    return render(request, "afat/fleet_edit.html", context)
+    return render(request, "afat/fatlinks_edit_fatlink.html", context)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
+def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
     """
     ajax call
     fat list in link edit view
@@ -735,7 +737,7 @@ def link_edit_fat_data(request: WSGIRequest, fatlink_hash):
 
 @login_required()
 @permissions_required(("afat.manage_afat"))
-def del_link(request: WSGIRequest, fatlink_hash: str = None):
+def delete_fatlink(request: WSGIRequest, fatlink_hash: str = None):
     """
     delete fatlink helper
     :param request:
@@ -784,7 +786,7 @@ def del_link(request: WSGIRequest, fatlink_hash: str = None):
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
-def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
+def delete_fat(request: WSGIRequest, fatlink_hash: str, fat):
     """
     delete fat helper
     :param request:
@@ -840,7 +842,7 @@ def del_fat(request: WSGIRequest, fatlink_hash: str, fat):
 
     logger.info("FAT %s deleted by %s", fat_details, request.user)
 
-    return redirect("afat:link_edit", fatlink_hash=fatlink_hash)
+    return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
 
 
 @login_required()
@@ -870,4 +872,4 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
             )
         )
 
-    return redirect("afat:link_add")
+    return redirect("afat:fatlinks_add_fatlink")

@@ -73,7 +73,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     if request.user.has_perm("afat.manage_afat") or request.user.has_perm(
         "afat.add_fatlink"
     ):
-        button_edit_url = reverse("afat:link_edit", args=[fatlink.hash])
+        button_edit_url = reverse("afat:fatlinks_edit_fatlink", args=[fatlink.hash])
 
         actions += (
             '<a class="btn btn-afat-action btn-info btn-sm" href="'
@@ -84,7 +84,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         )
 
     if request.user.has_perm("afat.manage_afat"):
-        button_delete_url = reverse("afat:link_delete", args=[fatlink.hash])
+        button_delete_url = reverse("afat:fatlinks_delete_fatlink", args=[fatlink.hash])
 
         actions += (
             '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
@@ -141,7 +141,9 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     # actions
     actions = ""
     if request.user.has_perm("afat.manage_afat"):
-        button_delete_fat = reverse("afat:fat_delete", args=[fat.afatlink.hash, fat.id])
+        button_delete_fat = reverse(
+            "afat:fatlinks_delete_fat", args=[fat.afatlink.hash, fat.id]
+        )
 
         actions += (
             '<a class="btn btn-danger btn-sm" '

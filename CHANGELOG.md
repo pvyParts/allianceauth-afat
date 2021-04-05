@@ -15,7 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Inline js for DataTables moved to their own js files
+- Inline JS for DataTables moved to their own files
+- Templates restructured
+  - Proper structure
+  - Proper names
+- Links restructured
+  - Some changes in link names (mostly for ajax calls)
+- Function names
+  - Following a proper naming convention
 
 
 ## [1.10.0] - 2021-03-30
