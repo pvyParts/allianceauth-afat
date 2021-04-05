@@ -23,6 +23,7 @@ def custom_filter(title):
             """
             expected parameters
             """
+
             pass
 
         def choices(self, changelist):
@@ -30,6 +31,7 @@ def custom_filter(title):
             choices
             :param changelist:
             """
+
             pass
 
         def __new__(cls, *args, **kwargs):
@@ -177,6 +179,10 @@ class ManualAFatAdmin(admin.ModelAdmin):
 
 @admin.register(AFatLog)
 class AFatLogAdmin(admin.ModelAdmin):
+    """
+    config for admin log
+    """
+
     list_display = ("log_time", "log_event", "log_text", "user")
     ordering = ("-log_time",)
     readonly_fields = ("log_time", "log_event", "log_text", "user")

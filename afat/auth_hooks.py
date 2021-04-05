@@ -10,7 +10,9 @@ from afat.app_settings import AFAT_APP_NAME, AFAT_BASE_URL
 
 
 class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
-    """ This class ensures only authorized users will see the menu entry """
+    """
+    This class ensures only authorized users will see the menu entry
+    """
 
     def __init__(self):
         # setup menu entry for sidebar

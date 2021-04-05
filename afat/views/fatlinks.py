@@ -77,7 +77,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 @permission_required("afat.basic_access")
 def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonResponse:
     """
-    fatlinks view
+    ajax call :: get all FAT links for a given year
     :param year:
     :param request:
     :return:
@@ -223,7 +223,8 @@ def create_clickable_fatlink(request: WSGIRequest):
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
 def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     """
-    helper: create ESI link
+    helper: create ESI link (callback, used when coming back from character selection)
+    finishing the ESI fatlink creation
     :param request:
     :param token:
     :param fatlink_hash:
@@ -513,7 +514,7 @@ def add_fat(request: WSGIRequest, token, fatlink_hash: str = None):
                     ]
 
                     logger.info(
-                        "Fleetparticipation for fleet {fleet_name} "
+                        "Participation for fleet {fleet_name} "
                         "registered for pilot {character_name}".format(
                             fleet_name=name, character_name=character.character_name
                         )
@@ -722,8 +723,7 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
     """
-    ajax call
-    fat list in link edit view
+    ajax call :: get all FATs for a given FAT link hash
     :param request:
     :param fatlink_hash:
     """

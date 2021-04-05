@@ -163,7 +163,8 @@ class Command(BaseCommand):
         imicusfat_fatlinks = IFatLink.objects.all()
         for imicusfat_fatlink in imicusfat_fatlinks:
             self.stdout.write(
-                "Importing FAT link for fleet '{fleet}' with hash '{fatlink_hash}'.".format(
+                "Importing FAT link for fleet '{fleet}' with "
+                "hash '{fatlink_hash}'.".format(
                     fleet=imicusfat_fatlink.fleet,
                     fatlink_hash=imicusfat_fatlink.hash,
                 )
@@ -285,7 +286,8 @@ class Command(BaseCommand):
 
                     self.stdout.write(
                         self.style.WARNING(
-                            "ImicusFAT version installed: {ifat_version_installed}".format(
+                            "ImicusFAT version installed: "
+                            "{ifat_version_installed}".format(
                                 ifat_version_installed=ifat_version_installed
                             )
                         )
@@ -293,7 +295,8 @@ class Command(BaseCommand):
 
                     self.stdout.write(
                         self.style.WARNING(
-                            "ImicusFAT version available: {ifat_version_available}".format(
+                            "ImicusFAT version available: "
+                            "{ifat_version_available}".format(
                                 ifat_version_available=ifat_version_available
                             )
                         )
@@ -339,7 +342,8 @@ class Command(BaseCommand):
                 self.stdout.write(
                     "Importing all FAT/FAT link data from ImicusFAT module. "
                     "This can only be done once during the very first installation. "
-                    "As soon as you have data collected with your AFAT module, this import will fail!"
+                    "As soon as you have data collected with your AFAT module, "
+                    "this import will fail!"
                 )
 
                 user_input = get_input("Are you sure you want to proceed? (yes/no)?")
@@ -352,7 +356,8 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING(
                     "ImicusFAT module is not active. "
-                    "Please make sure you have it in your INSTALLED_APPS in your local.py! "
+                    "Please make sure you have it in your "
+                    "INSTALLED_APPS in your local.py! "
                     "Aborting."
                 )
             )

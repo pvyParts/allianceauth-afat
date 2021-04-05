@@ -69,7 +69,8 @@ class Command(BaseCommand):
             bfat_fatlinks = BfatFatLink.objects.all()
             for bfat_fatlink in bfat_fatlinks:
                 self.stdout.write(
-                    "Importing FAT link for fleet '{fleet}' with hash '{fatlink_hash}'.".format(
+                    "Importing FAT link for fleet '{fleet}' with hash "
+                    "'{fatlink_hash}'.".format(
                         fleet=bfat_fatlink.fleet,
                         fatlink_hash=bfat_fatlink.hash,
                     )
@@ -149,7 +150,8 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING(
                     "bFAT module is not active. "
-                    "Please make sure you have it in your INSTALLED_APPS in your local.py!"
+                    "Please make sure you have it in your "
+                    "INSTALLED_APPS in your local.py!"
                 )
             )
 
@@ -163,7 +165,8 @@ class Command(BaseCommand):
         self.stdout.write(
             "Importing all FAT/FAT link data from bFAT module. "
             "This can only be done once during the very first installation. "
-            "As soon as you have data collected with your AFAT module, this import will fail!"
+            "As soon as you have data collected with your AFAT module, "
+            "this import will fail!"
         )
 
         user_input = get_input("Are you sure you want to proceed? (yes/no)?")

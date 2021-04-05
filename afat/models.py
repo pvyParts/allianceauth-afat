@@ -40,7 +40,9 @@ class AFatLogEvent(models.TextChoices):
 
 
 class AaAfat(models.Model):
-    """Meta model for app permissions"""
+    """
+    Meta model for app permissions
+    """
 
     class Meta:  # pylint: disable=too-few-public-methods
         """
@@ -166,7 +168,6 @@ class AFatLink(models.Model):
         verbose_name_plural = "FAT Links"
 
     def __str__(self):
-        # return self.hash[6:]
         return "{} - {}".format(self.fleet, self.hash)
 
     @property
@@ -175,6 +176,7 @@ class AFatLink(models.Model):
         returns the number of registered FATs
         :return:
         """
+
         return AFat.objects.filter(afatlink=self).count()
 
 
