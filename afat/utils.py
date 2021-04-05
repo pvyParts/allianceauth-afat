@@ -9,6 +9,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import lazy
 from django.utils.html import format_html
 
+from allianceauth.eveonline.models import EveAllianceInfo
+
 # Format for output of datetime for this app
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 
@@ -31,6 +33,7 @@ class LoggerAddTag(logging.LoggerAdapter):
         :param kwargs:
         :return:
         """
+
         return "[%s] %s" % (self.prefix, msg), kwargs
 
 
@@ -56,6 +59,7 @@ def clean_setting(
 
     Returns cleaned value for setting
     """
+
     if default_value is None and not required_type:
         raise ValueError("You must specify a required_type for None defaults")
 
@@ -99,3 +103,20 @@ def write_log(request: WSGIRequest, log_event: str, log_text: str):
     afat_log.log_event = log_event
     afat_log.log_text = log_text
     afat_log.save()
+
+
+def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
+    """
+    get or create alliance info
+    :param alliance_id:
+    :return:
+    """
+
+    try:
+        eve_alliance_info = EveAllianceInfo.objects.get(alliance_id=alliance_id)
+    except EveAllianceInfo.DoesNotExist:
+        eve_alliance_info = EveAllianceInfo.objects.create_alliance(
+            alliance_id=alliance_id
+        )
+
+    return eve_alliance_info

@@ -13,17 +13,13 @@ from django.shortcuts import redirect, render
 
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
-from allianceauth.eveonline.models import (
-    EveAllianceInfo,
-    EveCharacter,
-    EveCorporationInfo,
-)
+from allianceauth.eveonline.models import EveCharacter, EveCorporationInfo
 from allianceauth.services.hooks import get_extension_logger
 
 from afat import __title__
 from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
 from afat.models import AFat
-from afat.utils import LoggerAddTag
+from afat.utils import LoggerAddTag, get_or_create_alliance_info
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -53,22 +49,23 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
         sanity_check = dict()
 
         # first create the alliance keys in our dict
-        for character in characters_with_access:
-            if character.alliance_name is not None:
-                data[character.alliance_name] = [character.alliance_id]
+        for character_with_access in characters_with_access:
+            if character_with_access.alliance_name is not None:
+                data[character_with_access.alliance_name] = [
+                    character_with_access.alliance_id
+                ]
 
         # now append the alliance keys
-        for character in characters_with_access:
-            corp_id = character.corporation_id
+        for character_with_access in characters_with_access:
+            corp_id = character_with_access.corporation_id
+            corp_name = character_with_access.corporation_name
 
             if corp_id not in sanity_check.keys():
-                if character.alliance_name is None:
-                    data["No Alliance"].append(
-                        (character.corporation_id, character.corporation_name)
-                    )
+                if character_with_access.alliance_name is None:
+                    data["No Alliance"].append((corp_id, corp_name))
                 else:
-                    data[character.alliance_name].append(
-                        (character.corporation_id, character.corporation_name)
+                    data[character_with_access.alliance_name].append(
+                        (corp_id, corp_name)
                     )
 
             sanity_check[corp_id] = corp_id
@@ -401,7 +398,7 @@ def alliance(
         allianceid = None
 
     if allianceid is not None:
-        ally = EveAllianceInfo.objects.get(alliance_id=allianceid)
+        ally = get_or_create_alliance_info(alliance_id=allianceid)
         alliance_name = ally.alliance_name
     else:
         ally = None

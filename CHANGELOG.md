@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.0] - Unreleased
 
+### Fixed
+
+- Error 500 due to missing ``EveAllianceInfo`` object in statistics
+
 ### Added
 
 - `related_name` to foreign keys in models
