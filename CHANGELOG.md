@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Function names
   - Following a proper naming convention
 - Use swagger spec provided by CCP instead of maintaining our own file
+- Migration from ImicusFAT now writes into the new AFAT log table
 
 
 ## [1.10.0] - 2021-03-30

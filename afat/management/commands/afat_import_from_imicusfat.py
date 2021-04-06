@@ -7,7 +7,15 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from afat import __version__ as afat_version_installed
-from afat.models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, ManualAFat
+from afat.models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLog,
+    AFatLogEvent,
+    ClickAFatDuration,
+    ManualAFat,
+)
 
 
 def get_input(text):
@@ -182,6 +190,46 @@ class Command(BaseCommand):
 
             afatlink.save()
 
+            # write to log table
+            if imicusfat_fatlink.is_esilink:
+                log_text = (
+                    "ESI FAT link {fatlink_hash} with name {name} was created by {user}"
+                ).format(
+                    fatlink_hash=imicusfat_fatlink.hash,
+                    name=imicusfat_fatlink.fleet,
+                    user=imicusfat_fatlink.creator,
+                )
+            else:
+                try:
+                    fleet_duration = ClickIFatDuration.objects.get(
+                        fleet_id=imicusfat_fatlink.id
+                    )
+
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} and a "
+                        "duration of {duration} minutes was created by {user}"
+                    ).format(
+                        fatlink_hash=imicusfat_fatlink.hash,
+                        name=imicusfat_fatlink.fleet,
+                        duration=fleet_duration.duration,
+                        user=imicusfat_fatlink.creator,
+                    )
+                except ClickIFatDuration.DoesNotExist:
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} was created by {user}"
+                    ).format(
+                        fatlink_hash=imicusfat_fatlink.hash,
+                        name=imicusfat_fatlink.fleet,
+                        user=imicusfat_fatlink.creator,
+                    )
+
+            afatlog = AFatLog()
+            afatlog.log_time = imicusfat_fatlink.ifattime
+            afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+            afatlog.log_text = log_text
+            afatlog.user_id = imicusfat_fatlink.creator_id
+            afatlog.save()
+
         # import FATs
         imicustaf_fats = IFat.objects.all()
         for imicusfat_fat in imicustaf_fats:
@@ -218,7 +266,7 @@ class Command(BaseCommand):
 
             afat_clickfatduration.save()
 
-        # import manual fat
+        # import manual fat to log table
         imicusfat_manualfats = ManualIFat.objects.all()
         for imicusfat_manualfat in imicusfat_manualfats:
             self.stdout.write(
@@ -227,15 +275,21 @@ class Command(BaseCommand):
                 )
             )
 
-            afat_manualfat = ManualAFat()
+            fatlink = IFatLink.objects.get(manualifat=imicusfat_manualfat)
+            log_text = (
+                "Pilot {pilot_name} was manually added to "
+                'FAT link with hash "{fatlink_hash}"'
+            ).format(
+                pilot_name=imicusfat_manualfat.character.character_name,
+                fatlink_hash=fatlink.hash,
+            )
 
-            afat_manualfat.id = imicusfat_manualfat.id
-            afat_manualfat.character_id = imicusfat_manualfat.character_id
-            afat_manualfat.creator_id = imicusfat_manualfat.creator_id
-            afat_manualfat.afatlink_id = imicusfat_manualfat.ifatlink_id
-            afat_manualfat.created_at = imicusfat_manualfat.created_at
-
-            afat_manualfat.save()
+            afatlog = AFatLog()
+            afatlog.log_time = imicusfat_manualfat.created_at
+            afatlog.log_event = AFatLogEvent.MANUAL_FAT
+            afatlog.log_text = log_text
+            afatlog.user_id = imicusfat_manualfat.creator_id
+            afatlog.save()
 
         self.stdout.write(
             self.style.SUCCESS(
