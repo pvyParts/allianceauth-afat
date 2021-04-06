@@ -60,8 +60,9 @@ delete from afat_afatlink where id in(id_list);
 # re-activate foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
 ```
+
 This step is important before updating, because the "deleted" marker will be lost
-during migration! If you don't run this step, you'll have all yout FATlinks and FATs
+during migration! If you don't run this step, you'll have all your FATlinks and FATs
 that were previously "deleted" as active again.
 
 ### Removed
