@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 
 from allianceauth.fleetactivitytracking.models import Fat, Fatlink
 
-from afat.models import AFat, AFatLink
+from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 
 
 def get_input(text):
@@ -73,6 +73,22 @@ class Command(BaseCommand):
                 afatlink.creator_id = aa_fatlink.creator_id
 
                 afatlink.save()
+
+                # write to log table
+                log_text = (
+                    "FAT link {fatlink_hash} with name {name} was created by {user}"
+                ).format(
+                    fatlink_hash=aa_fatlink.hash,
+                    name=aa_fatlink.fleet,
+                    user=aa_fatlink.creator,
+                )
+
+                afatlog = AFatLog()
+                afatlog.log_time = aa_fatlink.fatdatetime
+                afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+                afatlog.log_text = log_text
+                afatlog.user_id = aa_fatlink.creator_id
+                afatlog.save()
 
             aa_fats = Fat.objects.all()
             for aa_fat in aa_fats:
