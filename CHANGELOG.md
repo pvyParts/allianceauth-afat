@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- Manual FAT log, this has been replaced by a general log model
+- Manual FAT log, this has been replaced by a general log
 
 
 ## [1.10.0] - 2021-03-30
