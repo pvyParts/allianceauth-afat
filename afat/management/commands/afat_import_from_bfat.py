@@ -10,7 +10,7 @@ from bfat.models import ManualFat as BfatManualFat
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat.models import AFat, AFatLink, ClickAFatDuration, ManualAFat
+from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent, ClickAFatDuration
 
 
 def get_input(text):
@@ -48,13 +48,11 @@ class Command(BaseCommand):
             current_afat_count = AFat.objects.all().count()
             current_afat_links_count = AFatLink.objects.all().count()
             current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
-            current_afat_manualfat_count = ManualAFat.objects.all().count()
 
             if (
                 current_afat_count > 0
                 or current_afat_links_count > 0
                 or current_afat_clickduration_count > 0
-                or current_afat_manualfat_count > 0
             ):
                 self.stdout.write(
                     self.style.WARNING(
@@ -85,6 +83,37 @@ class Command(BaseCommand):
                 afatlink.creator_id = bfat_fatlink.creator_id
 
                 afatlink.save()
+
+                # write to log table
+                try:
+                    fleet_duration = BfatClickFatDuration.objects.get(
+                        fleet_id=bfat_fatlink.id
+                    )
+
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} and a "
+                        "duration of {duration} minutes was created by {user}"
+                    ).format(
+                        fatlink_hash=bfat_fatlink.hash,
+                        name=bfat_fatlink.fleet,
+                        duration=fleet_duration.duration,
+                        user=bfat_fatlink.creator,
+                    )
+                except BfatClickFatDuration.DoesNotExist:
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} was created by {user}"
+                    ).format(
+                        fatlink_hash=bfat_fatlink.hash,
+                        name=bfat_fatlink.fleet,
+                        user=bfat_fatlink.creator,
+                    )
+
+                afatlog = AFatLog()
+                afatlog.log_time = bfat_fatlink.fattime
+                afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+                afatlog.log_text = log_text
+                afatlog.user_id = bfat_fatlink.creator_id
+                afatlog.save()
 
             # import FATs
             bfat_fats = BfatFat.objects.all()
@@ -131,14 +160,21 @@ class Command(BaseCommand):
                     )
                 )
 
-                afat_manualfat = ManualAFat()
+                fatlink = BfatFatLink.objects.get(manualfat=bfat_manualfat)
+                log_text = (
+                    "Pilot {pilot_name} was manually added to "
+                    'FAT link with hash "{fatlink_hash}"'
+                ).format(
+                    pilot_name=bfat_manualfat.character.character_name,
+                    fatlink_hash=fatlink.hash,
+                )
 
-                afat_manualfat.id = bfat_manualfat.id
-                afat_manualfat.character_id = bfat_manualfat.character_id
-                afat_manualfat.creator_id = bfat_manualfat.creator_id
-                afat_manualfat.afatlink_id = bfat_manualfat.fatlink_id
-
-                afat_manualfat.save()
+                afatlog = AFatLog()
+                afatlog.log_time = bfat_manualfat.created_at
+                afatlog.log_event = AFatLogEvent.MANUAL_FAT
+                afatlog.log_text = log_text
+                afatlog.user_id = bfat_manualfat.creator_id
+                afatlog.save()
 
             self.stdout.write(
                 self.style.SUCCESS(

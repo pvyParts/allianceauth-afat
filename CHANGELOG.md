@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Following a proper naming convention
 - Use swagger spec provided by CCP instead of maintaining our own file
 - Migration from ImicusFAT now writes into the new AFAT log table
+- Migration from bFAT now writes into the new AFAT log table
 
 ### Removed
 
