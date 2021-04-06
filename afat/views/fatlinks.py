@@ -352,12 +352,10 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
 
     # writing DB log
     log_text = (
-        "ESI FAT link {fatlink_hash} with name {name} and a "
-        "duration of {duration} minutes was created by {user}"
+        "ESI FAT link {fatlink_hash} with name {name} was created by {user}"
     ).format(
         fatlink_hash=fatlink_hash,
         name=request.session["fatlink_form__name"],
-        duration=request.session["fatlink_form__type"],
         user=request.user,
     )
 
