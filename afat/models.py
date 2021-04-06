@@ -241,37 +241,6 @@ class AFat(models.Model):
         return "{} - {}".format(self.afatlink, self.character)
 
 
-# ManualAFat Model
-class ManualAFat(models.Model):
-    """
-    ManualAFat
-    """
-
-    creator = models.ForeignKey(
-        User, related_name="+", on_delete=models.SET(get_sentinel_user)
-    )
-    afatlink = models.ForeignKey(AFatLink, related_name="+", on_delete=models.CASCADE)
-    character = models.ForeignKey(
-        EveCharacter, related_name="+", on_delete=models.CASCADE
-    )
-    created_at = models.DateTimeField(
-        blank=True, null=True, help_text="Time this FAT has been added manually"
-    )
-
-    class Meta:  # pylint: disable=too-few-public-methods
-        """
-        ManualAFat :: Meta
-        """
-
-        default_permissions = ()
-        verbose_name = "Manual FAT"
-        verbose_name_plural = "Manual FATs"
-
-    # Add property for getting the user for a character.
-    def __str__(self):
-        return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
-
-
 # AFat Log Model
 class AFatLog(models.Model):
     """

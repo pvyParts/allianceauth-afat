@@ -27,14 +27,7 @@ from afat.forms import (
     FatLinkEditForm,
 )
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from afat.models import (
-    AFat,
-    AFatLink,
-    AFatLinkType,
-    AFatLogEvent,
-    ClickAFatDuration,
-    ManualAFat,
-)
+from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
 from afat.tasks import get_or_create_char, process_fats
 from afat.utils import LoggerAddTag, write_log
@@ -609,9 +602,7 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
             shiptype = manual_fat_form.cleaned_data["shiptype"]
-            creator = request.user
             character = get_or_create_char(name=character_name)
-            created_at = timezone.now()
 
             if character is not None:
                 AFat(
@@ -619,13 +610,6 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
                     character=character,
                     system=system,
                     shiptype=shiptype,
-                ).save()
-
-                ManualAFat(
-                    afatlink_id=link.pk,
-                    creator=creator,
-                    character=character,
-                    created_at=created_at,
                 ).save()
 
                 request.session[

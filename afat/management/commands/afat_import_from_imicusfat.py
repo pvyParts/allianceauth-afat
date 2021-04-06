@@ -14,7 +14,6 @@ from afat.models import (
     AFatLog,
     AFatLogEvent,
     ClickAFatDuration,
-    ManualAFat,
 )
 
 
@@ -132,14 +131,12 @@ class Command(BaseCommand):
         current_afat_links_count = AFatLink.objects.all().count()
         current_afat_linktype_count = AFatLinkType.objects.all().count()
         current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
-        current_afat_manualfat_count = ManualAFat.objects.all().count()
 
         if (
             current_afat_count > 0
             or current_afat_links_count > 0
             or current_afat_linktype_count > 0
             or current_afat_clickduration_count > 0
-            or current_afat_manualfat_count > 0
         ):
             self.stdout.write(
                 self.style.WARNING(

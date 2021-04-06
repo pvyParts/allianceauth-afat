@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Use swagger spec provided by CCP instead of maintaining our own file
 - Migration from ImicusFAT now writes into the new AFAT log table
 
+### Removed
+
+- Manual FAT log, this has been replaced by a general log model
+
 
 ## [1.10.0] - 2021-03-30
 
