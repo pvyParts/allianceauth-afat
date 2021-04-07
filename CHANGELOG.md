@@ -89,6 +89,7 @@ that were previously "deleted" as active again.
 ### Added
 
 - Ship type overview to FAT link detail page (#72)
+
   ![Example](afat/docs/images/ship-type-overview.png)
 
 
@@ -98,6 +99,7 @@ that were previously "deleted" as active again.
 
 - Ability to "close" ESI fat links manually. (Only the FC creating the link has this
   ability when creating new ESI fat links when he still has registered fleets.)
+
   ![Example](afat/docs/images/manually-close-esi-links.png)
 
 
