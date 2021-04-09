@@ -92,8 +92,6 @@ $(document).ready(function() {
         if(dt > intervalReloadDatatable) {
             // something really bad happened. Maybe the browser (tab) was inactive?
             // possibly special handling to avoid futile "catch up" run
-            console.log('Something went wrong, reloading page ...');
-
             window.location.replace(
                 window.location.pathname + window.location.search + window.location.hash
             );
