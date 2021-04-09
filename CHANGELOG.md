@@ -10,12 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Error 500 due to missing ``EveAllianceInfo`` object in statistics
+- Error 500 due to missing ``EveAllianceInfo`` object in statistics view
 
 ### Added
 
 - `related_name` to foreign keys in models
 - Proper log model
+- Proper log messages to fatlink detail view and edit actions
 
 ### Changed
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Proper names
 - Links restructured
   - Some changes in link names (mostly for ajax calls)
+  - Link segment order unified
 - Function names
   - Following a proper naming convention
 - Use swagger spec provided by CCP instead of maintaining our own file
@@ -213,7 +215,7 @@ that were previously "deleted" as active again.
     python manage.py migrate
     ```
 
-  **Keep in mind, you have to set the new permission to the state/grous that
+  **Keep in mind, you have to set the new permission to the states/groups that
   previously had permissions.**
 
 
