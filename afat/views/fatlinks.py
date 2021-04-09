@@ -189,7 +189,7 @@ def create_clickable_fatlink(request: WSGIRequest):
 
             logger.info(log_text)
 
-            return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
+            return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
         request.session["msg"] = [
             "danger",
@@ -369,7 +369,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
         "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
     ] = 200
 
-    return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
+    return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
 
 @login_required()
@@ -557,9 +557,9 @@ def add_fat(request: WSGIRequest, token, fatlink_hash: str = None):
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
+def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
-    edit fatlink view
+    fatlink view
     :param request:
     :param fatlink_hash:
     :return:
@@ -585,15 +585,19 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
             link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
 
+            log_message = (
+                'FAT link with hash "{fatlink_hash}" changed. '
+                'Fleet name was set to "{fleet_name}" by {user}'
+            ).format(fatlink_hash=link.hash, fleet_name=link.fleet, user=request.user)
+
             # writing DB log
             write_log(
                 request=request,
                 log_event=AFatLogEvent.CHANGE_FATLINK,
-                log_text=(
-                    'FAT link with hash "{fatlink_hash}" changed. '
-                    'Fleet name was set to "{fleet_name}"'
-                ).format(fatlink_hash=link.hash, fleet_name=link.fleet),
+                log_text=log_message,
             )
+
+            logger.info(log_message)
 
             request.session[
                 "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
@@ -616,19 +620,24 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
                     "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
                 ] = 3
 
+                log_message = (
+                    "Pilot {pilot_name} flying a {ship_type} was manually added to "
+                    'FAT link with hash "{fatlink_hash}" by {user}'
+                ).format(
+                    fatlink_hash=link.hash,
+                    pilot_name=character.character_name,
+                    ship_type=shiptype,
+                    user=request.user,
+                )
+
                 # writing DB log
                 write_log(
                     request=request,
                     log_event=AFatLogEvent.MANUAL_FAT,
-                    log_text=(
-                        "Pilot {pilot_name} flying a {ship_type} was manually added to "
-                        'FAT link with hash "{fatlink_hash}"'
-                    ).format(
-                        fatlink_hash=link.hash,
-                        pilot_name=character.character_name,
-                        ship_type=shiptype,
-                    ),
+                    log_text=log_message,
                 )
+
+                logger.info(log_message)
             else:
                 request.session[
                     "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
@@ -637,6 +646,12 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
             request.session[
                 "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
             ] = 0
+
+    logger.info(
+        "FAT link {fatlink_hash} details view opened by {user}".format(
+            fatlink_hash=fatlink_hash, user=request.user
+        )
+    )
 
     msg_code = None
     message = None
@@ -692,13 +707,7 @@ def edit_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse
         "link_ongoing": link_ongoing,
     }
 
-    logger.info(
-        "FAT link {fatlink_hash} edited by {user}".format(
-            fatlink_hash=fatlink_hash, user=request.user
-        )
-    )
-
-    return render(request, "afat/fatlinks_edit_fatlink.html", context)
+    return render(request, "afat/fatlinks_details_fatlink.html", context)
 
 
 @login_required()
@@ -824,7 +833,7 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat):
 
     logger.info("FAT %s deleted by %s", fat_details, request.user)
 
-    return redirect("afat:fatlinks_edit_fatlink", fatlink_hash=fatlink_hash)
+    return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
 
 @login_required()

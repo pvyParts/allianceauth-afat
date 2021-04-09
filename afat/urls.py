@@ -87,30 +87,29 @@ urlpatterns = [
         name="fatlinks_create_clickable_fatlink",
     ),
     url(r"^fatlinks/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
-    url(r"^fatlinks/edit/$", fatlinks.edit_fatlink, name="fatlinks_edit_fatlink"),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
-        fatlinks.edit_fatlink,
-        name="fatlinks_edit_fatlink",
+        r"^fatlinks/details/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        fatlinks.details_fatlink,
+        name="fatlinks_details_fatlink",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/del/$",
+        r"^fatlinks/delete/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         fatlinks.delete_fatlink,
         name="fatlinks_delete_fatlink",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
+        r"^fatlinks/stop-esi-tracking/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         fatlinks.close_esi_fatlink,
         name="fatlinks_close_esi_fatlink",
     ),
     # fats
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/register/$",
+        r"^fatlinks/register/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         fatlinks.add_fat,
         name="fatlinks_add_fat",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/del/$",
+        r"^fatlinks/delete/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/$",
         fatlinks.delete_fat,
         name="fatlinks_delete_fat",
     ),

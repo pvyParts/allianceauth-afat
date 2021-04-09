@@ -77,7 +77,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     if request.user.has_perm("afat.manage_afat") or request.user.has_perm(
         "afat.add_fatlink"
     ):
-        button_edit_url = reverse("afat:fatlinks_edit_fatlink", args=[fatlink.hash])
+        button_edit_url = reverse("afat:fatlinks_details_fatlink", args=[fatlink.hash])
 
         actions += (
             '<a class="btn btn-afat-action btn-info btn-sm" '
