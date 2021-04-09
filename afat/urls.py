@@ -68,48 +68,49 @@ urlpatterns = [
         statistics.alliance,
         name="statistics_alliance",
     ),
-    # fatlinks
+    # fatlinks list actions
     url(r"^fatlinks/$", fatlinks.overview, name="links"),
     url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.overview, name="links"),
     url(
-        r"^fatlinks/create/esi-fatlink/$",
+        r"^fatlinks/link/create/esi-fatlink/$",
         fatlinks.create_esi_fatlink,
         name="fatlinks_create_esi_fatlink",
     ),
+    # fatlink actions
+    url(r"^fatlink/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
-        r"^fatlinks/create/esi-fatlink/callback/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^fatlink/create/esi-fatlink/callback/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         fatlinks.create_esi_fatlink_callback,
         name="fatlinks_create_esi_fatlink_callback",
     ),
     url(
-        r"^fatlinks/create/clickable-fatlink/$",
+        r"^fatlink/create/clickable-fatlink/$",
         fatlinks.create_clickable_fatlink,
         name="fatlinks_create_clickable_fatlink",
     ),
-    url(r"^fatlinks/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
-        r"^fatlinks/details/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/details/$",
         fatlinks.details_fatlink,
         name="fatlinks_details_fatlink",
     ),
     url(
-        r"^fatlinks/delete/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/delete/$",
         fatlinks.delete_fatlink,
         name="fatlinks_delete_fatlink",
     ),
     url(
-        r"^fatlinks/stop-esi-tracking/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
         fatlinks.close_esi_fatlink,
         name="fatlinks_close_esi_fatlink",
     ),
-    # fats
+    # fat actions
     url(
-        r"^fatlinks/register/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/register/$",
         fatlinks.add_fat,
         name="fatlinks_add_fat",
     ),
     url(
-        r"^fatlinks/delete/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/fat/(?P<fat>[0-9]+)/delete/$",
         fatlinks.delete_fat,
         name="fatlinks_delete_fat",
     ),
@@ -131,7 +132,7 @@ urlpatterns = [
         name="fatlinks_ajax_get_fatlinks_by_year",
     ),
     url(
-        r"^ajax/fatlinks/fats/fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        r"^ajax/fatlinks/fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/fats/$",
         fatlinks.ajax_get_fats_by_fatlink,
         name="fatlinks_ajax_get_fats_by_fatlink",
     ),
