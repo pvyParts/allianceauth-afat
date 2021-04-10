@@ -41,3 +41,26 @@
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
 {% endblock %}
+
+{% block extra_javascript %}
+    <script type="application/javascript">
+        jQuery(document).ready(function($) {
+            $('#deleteEsiFleetModal').on('show.bs.modal', function(event) {
+                let button = $(event.relatedTarget) // Button that triggered the modal
+                let url = button.data('url') // Extract info from data-* attributes
+                let name = button.data('name');
+                let modal = $(this)
+
+                modal.find('#a-delete-esi-fleet').attr('href', url)
+                modal.find('.modal-body').text(
+                    '{% translate "Are you sure you want to close" %} ' + name + '?'
+                );
+            }).on('hide.bs.modal', function () {
+                let modal = $(this);
+
+                modal.find('.modal-body').html('');
+                modal.find('#a-delete-esi-fleet').attr('href', '');
+            });
+        });
+    </script>
+{% endblock %}

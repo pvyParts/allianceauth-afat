@@ -13,7 +13,15 @@
                     <img class="img-circle" src="{{ open_esi_fleet.fleet_commander.character|character_portrait_url:32 }}" alt="{{ open_esi_fleet.fleet_commander.character.character_name }}" style="margin-right: 0.25rem;">
                     {{ open_esi_fleet.fleet_commander.character.character_name }}
                     <small>(ESI fleet ID: {{ open_esi_fleet.fleet_commander.esi_fleet_id }})</small>
-                    <btn class="btn btn-primary btn-xs" data-url="{% url 'afat:fatlinks_close_esi_fatlink' open_esi_fleet.fleet_commander.hash %}" style="margin-left: 0.25rem;" title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}">
+
+                    <btn class="btn btn-primary btn-xs"
+                         style="margin-left: 0.25rem;"
+                         title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}"
+                         data-toggle="modal"
+                         data-target="#deleteEsiFleetModal"
+                         data-url="{% url 'afat:fatlinks_close_esi_fatlink' open_esi_fleet.fleet_commander.hash %}"
+                         data-name="ESI fleet with ID {{ open_esi_fleet.fleet_commander.esi_fleet_id }} from {{ open_esi_fleet.fleet_commander.character.character_name }}"
+                    >
                         <i class="fas fa-times"></i>
                         <!-- {% translate 'Stop Tracking' %} -->
                     </btn>
@@ -29,4 +37,6 @@
             (<small><sup>(*)</sup> {% translate 'Note: Information about your registered fleets might be delayed by up to 5 minutes.' %})</small>
         </p>
     </div>
+
+    {% include 'afat/modals/delete-esi-fleet.html' %}
 {% endif %}
