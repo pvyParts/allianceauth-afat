@@ -26,6 +26,7 @@ from afat.forms import (
     AFatManualFatForm,
     FatLinkEditForm,
 )
+from afat.helper.fatlinks import get_esi_fleet_information_by_user
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
@@ -105,26 +106,11 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
 
     link_types = AFatLinkType.objects.filter(is_enabled=True).order_by("name")
 
-    has_open_esi_fleets = False
-    open_esi_fleets_list = list()
-    open_esi_fleets = AFatLink.objects.filter(
-        creator=request.user, is_esilink=True, is_registered_on_esi=True
-    ).order_by("character__character_name")
-
-    if open_esi_fleets.count() > 0:
-        has_open_esi_fleets = True
-
-        for open_esi_fleet in open_esi_fleets:
-            open_esi_fleets_list.append({"fleet_commander": open_esi_fleet})
-
     context = {
         "link_types": link_types,
         "msg": msg,
         "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
-        "esi_fleet": {
-            "has_open_esi_fleets": has_open_esi_fleets,
-            "open_esi_fleets_list": open_esi_fleets_list,
-        },
+        "esi_fleet": get_esi_fleet_information_by_user(request.user),
     }
 
     logger.info("Add FAT link view called by {user}".format(user=request.user))
