@@ -634,7 +634,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             ] = 0
 
     logger.info(
-        "FAT link {fatlink_hash} details view opened by {user}".format(
+        "FAT link {fatlink_hash} details view called by {user}".format(
             fatlink_hash=fatlink_hash, user=request.user
         )
     )
