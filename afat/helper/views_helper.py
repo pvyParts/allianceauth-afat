@@ -89,7 +89,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
         actions += (
             '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
-            f'data-target="#deleteModal" data-url="{button_delete_url}" '
+            f'data-target="#deleteFatLinkModal" data-url="{button_delete_url}" '
             f'data-name="{fatlink_fleet}"><span class="glyphicon glyphicon-trash">'
             "</span></a>"
         )
@@ -151,7 +151,7 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
         actions += (
             '<a class="btn btn-danger btn-sm" '
             'data-toggle="modal" '
-            'data-target="#deleteModal" '
+            'data-target="#deleteFatModal" '
             'data-url="{data_url}" '
             'data-name="{data_name}">'
             '<span class="glyphicon glyphicon-trash"></span>'

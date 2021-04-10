@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Error 500 due to missing ``EveAllianceInfo`` object in statistics view
 - Clear content of modal windows ehen they are closed
+- Unique IDs for modals
 
 ### Added
 

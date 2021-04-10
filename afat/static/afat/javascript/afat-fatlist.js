@@ -116,7 +116,7 @@ $(document).ready(function() {
     /**
      * Modal :: Delete FAT link
      */
-    $('#deleteModal').on('show.bs.modal', function (event) {
+    $('#deleteFatLinkModal').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget); // Button that triggered the modal
         let url = button.data('url'); // Extract info from data-* attributes
         let name = button.data('name');
