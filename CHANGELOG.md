@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Migration from ImicusFAT now writes into the new AFAT log table
 - Migration from bFAT now writes into the new AFAT log table
 - Migration from native FAT module now writes into the new AFAT log table
+- Wording in modal windows
 
 ### Removed
 
