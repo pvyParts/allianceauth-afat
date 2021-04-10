@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `related_name` to foreign keys in models
 - Proper log model
 - Proper log messages to fatlink detail view and edit actions
+- Modal window when closing ESI fleets manually
 
 ### Changed
 
