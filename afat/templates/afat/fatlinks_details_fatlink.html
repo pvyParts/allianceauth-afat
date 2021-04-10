@@ -8,24 +8,24 @@
 {% block afat_header %}
     <br>
     {% include "afat/partials/menu.html" %}
-    {% include "afat/partials/fatlinks/edit_fatlink/message.html" %}
+    {% include "afat/partials/fatlinks/details/message.html" %}
 
     <h2>{% translate "FAT Link Details" %}</h2>
 {% endblock %}
 
 {% block afat_body %}
     {% if perms.afat.manage_afat %}
-        {% include "afat/partials/fatlinks/edit_fatlink/fatlink_name_form.html" %}
+        {% include "afat/partials/fatlinks/details/fatlink_name_form.html" %}
     {% endif %}
 
     <p>&nbsp;</p>
 
-    {% include "afat/partials/fatlinks/edit_fatlink/tabs_navigation.html" %}
+    {% include "afat/partials/fatlinks/details/tabs_navigation.html" %}
 
     <div class="tab-content">
-        {% include "afat/partials/fatlinks/edit_fatlink/tabs/fats.html" %}
-        {% include "afat/partials/fatlinks/edit_fatlink/tabs/manualfat.html" %}
-{#        {% include "afat/partials/fatlinks/edit_fatlink/tabs/flatlist.html" %}#}
+        {% include "afat/partials/fatlinks/details/tabs/fats.html" %}
+        {% include "afat/partials/fatlinks/details/tabs/manualfat.html" %}
+{#        {% include "afat/partials/fatlinks/details/tabs/flatlist.html" %}#}
     </div>
 
     {% include "afat/modals/delete-fat.html" %}
