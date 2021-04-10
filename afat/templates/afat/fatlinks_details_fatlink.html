@@ -181,8 +181,10 @@
                 let name = button.data('name');
                 let modal = $(this)
 
-                modal.find('#fat-link').attr('href', url)
-                modal.find('.modal-body').text('{% translate "Are you sure you want to delete" %} ' + name + '?');
+                modal.find('#a-delete-fat').attr('href', url)
+                modal.find('.modal-body').text(
+                    '{% translate "Are you sure you want to delete" %} ' + name + '?'
+                );
             });
         });
     </script>

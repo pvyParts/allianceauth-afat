@@ -122,7 +122,7 @@ $(document).ready(function() {
         let name = button.data('name');
         let modal = $(this);
 
-        modal.find('#fat-link').attr('href', url);
+        modal.find('#a-delete-fatlink').attr('href', url);
         modal.find('.modal-body').text(
             afatSettings.translation.modal.deleteModal.body + name + '?'
         );
@@ -130,5 +130,6 @@ $(document).ready(function() {
         let modal = $(this);
 
         modal.find('.modal-body').html('');
+        modal.find('#a-delete-fatlink').attr('href', '');
     });
 });
