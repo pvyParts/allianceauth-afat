@@ -183,7 +183,7 @@
 
                 modal.find('#a-delete-fat').attr('href', url)
                 modal.find('.modal-body').text(
-                    '{% translate "Are you sure you want to delete" %} ' + name + '?'
+                    '{% translate "Are you sure you want to remove" %} ' + name + '?'
                 );
             }).on('hide.bs.modal', function () {
                 let modal = $(this);
