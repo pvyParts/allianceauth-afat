@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Error 500 due to missing ``EveAllianceInfo`` object in statistics view
+- Clear content of modal windows ehen they are closed
 
 ### Added
 
@@ -22,13 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Inline JS for DataTables moved to their own files
 - Templates restructured
-  - Proper structure
+  - Proper directory structure
   - Proper names
 - Links restructured
   - Some changes in link names (mostly for ajax calls)
   - Link segment order unified
-- Function names
-  - Following a proper naming convention
+- Function names following a proper naming convention
 - Use swagger spec provided by CCP instead of maintaining our own file
 - Migration from ImicusFAT now writes into the new AFAT log table
 - Migration from bFAT now writes into the new AFAT log table
