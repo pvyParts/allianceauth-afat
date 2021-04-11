@@ -113,7 +113,6 @@ $(document).ready(function () {
      */
     let deleteFatLinkModal = $(afatSettings.modal.deleteModal.element);
     deleteFatLinkModal.on('show.bs.modal', function (event) {
-        console.log('modal opened');
         let button = $(event.relatedTarget); // Button that triggered the modal
         let url = button.data('url'); // Extract info from data-* attributes
         let name = button.data('name');
