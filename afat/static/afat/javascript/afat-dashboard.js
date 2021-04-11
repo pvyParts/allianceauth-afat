@@ -1,6 +1,6 @@
 /* global afatSettings, characters, moment */
 
-$(document).ready(function() {
+$(document).ready(function () {
     'use strict';
 
     const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
@@ -13,7 +13,7 @@ $(document).ready(function() {
             '<p>' + afatSettings.translation.dataTable.noFatsWarning + ' ###CHARACTER_NAME###</p>' +
             '</div>';
 
-        characters.forEach(function(character) {
+        characters.forEach(function (character) {
             $('#recent-fats-character-' + character.charId).DataTable({
                 ajax: {
                     url: afatSettings.url.characterFats.replace(
@@ -37,8 +37,8 @@ $(document).ready(function() {
                                 );
                             },
                             _: 'timestamp'
-                        },
-                    },
+                        }
+                    }
                 ],
                 language: {
                     emptyTable: noFatsWarning.replace(
@@ -78,7 +78,7 @@ $(document).ready(function() {
                         return moment(data.time).utc().format(DATETIME_FORMAT);
                     },
                     _: 'timestamp'
-                },
+                }
             },
             {
                 data: 'actions',
@@ -89,7 +89,7 @@ $(document).ready(function() {
                         return '';
                     }
                 }
-            },
+            }
         ],
         columnDefs: [
             {

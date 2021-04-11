@@ -4,9 +4,9 @@
     }
 
     .fatlink-list-legend {
+        border-top: 1px solid rgb(236, 240, 241);
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid rgb(236, 240, 241);
     }
 
     .template-dark-mode .fatlink-list-legend {
@@ -30,9 +30,9 @@
 ------------------------------------------------------------------------------------- */
 @media all {
     .afat-label-via-esi {
+        background-color: rgb(192, 192, 192);
+        color: rgb(54, 54, 54);
         margin-left: 1rem;
-        background-color: rgb(192,192,192);
-        color: rgb(54,54,54);
     }
 
     .afat-label-active-esi-fleet {
@@ -40,10 +40,10 @@
     }
 
     .afat-label-statistics {
-        position: relative;
-        top: 0.2rem;
         margin-left: 1rem;
         margin-right: 1rem;
+        position: relative;
+        top: 0.2rem;
     }
 }
 
@@ -55,8 +55,8 @@
     }
 
     .dataTables_wrapper > .form-inline select {
-        margin-right: 1rem;
         margin-bottom: 1rem;
+        margin-right: 1rem;
     }
 
     .dataTables_wrapper > .form-inline select:last-child {

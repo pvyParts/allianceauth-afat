@@ -1,6 +1,6 @@
 /* global afatSettings, moment, console */
 
-$(document).ready(function() {
+$(document).ready(function () {
     'use strict';
 
     const DATETIME_FORMAT = 'YYYY-MMM-DD, HH:mm';
@@ -25,7 +25,7 @@ $(document).ready(function() {
                         return moment(data.time).utc().format(DATETIME_FORMAT);
                     },
                     _: 'timestamp'
-                },
+                }
             },
             {data: 'fats_number'},
 
@@ -41,7 +41,7 @@ $(document).ready(function() {
             },
 
             // hidden column
-            {data: 'via_esi'},
+            {data: 'via_esi'}
         ],
 
         columnDefs: [
@@ -65,16 +65,16 @@ $(document).ready(function() {
         filterDropDown: {
             columns: [
                 {
-                    idx: 1,
+                    idx: 1
                 },
                 {
                     idx: 6,
                     title: afatSettings.translation.dataTable.filter.viaEsi
-                },
+                }
             ],
             autoSize: false,
             bootstrap: true
-        },
+        }
     });
 
     /**
@@ -86,10 +86,10 @@ $(document).ready(function() {
     /**
      * reload datatable "linkListTable"
      */
-    let realoadDataTable = function() {
+    let realoadDataTable = function () {
         let dt = Date.now() - expectedReloadDatatable; // the drift (positive for overshooting)
 
-        if(dt > intervalReloadDatatable) {
+        if (dt > intervalReloadDatatable) {
             // something really bad happened. Maybe the browser (tab) was inactive?
             // possibly special handling to avoid futile "catch up" run
             window.location.replace(
