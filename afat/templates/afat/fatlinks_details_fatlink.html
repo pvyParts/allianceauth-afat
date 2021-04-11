@@ -45,152 +45,18 @@
     {% include 'bundles/clipboard-js.html' %}
 
     <script type="application/javascript">
-        $(document).ready(function() {
-            let fatListTable = $('#fleet-edit-fat-list').DataTable({
-                ajax: {
-                    url: '{% url "afat:fatlinks_ajax_get_fats_by_fatlink" 0 %}'.replace(
-                        '0',
-                        '{{ link.hash }}'
-                    ),
-                    dataSrc: '',
-                    cache: false
-                },
-                columns: [
-                    {data: 'character_name'},
-                    {data: 'system'},
-                    {data: 'ship_type'},
-                    {% if perms.afat.manage_afat %}
-                        {data: 'actions'},
-                    {% endif %}
-                ],
-                columnDefs: [
-                    {% if perms.afat.manage_afat %}
-                        {
-                            targets: [3],
-                            orderable: false,
-                            createdCell: function (td) {
-                                $(td).addClass('text-right');
-                            }
-                        }
-                    {% endif %}
-                ],
-                order: [
-                    [0, 'asc']
-                ],
-                createdRow: function(row, data, rowIndex) {
-                    let shipTypeOverviewTable = $('#fleet-edit-ship-types');
-
-                    let shipTypeSlug = convertStringToSlug(data.ship_type);
-
-                    if($('tr.shiptype-' + shipTypeSlug).length) {
-                        let currentCount = shipTypeOverviewTable.find(
-                            'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
-                        ).html();
-                        let newCount = parseInt(currentCount) + 1;
-
-                        shipTypeOverviewTable.find(
-                            'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
-                        ).html(newCount);
-                    } else {
-                        shipTypeOverviewTable.append(
-                            '<tr class="shiptype-' + shipTypeSlug + '">' +
-                            '<td class="ship-type">' + data.ship_type + '</td>' +
-                            '<td class="ship-type-count text-right">1</td>' +
-                            '</tr>'
-                        );
-                    }
-
-                    sortTable($('#fleet-edit-ship-types'), 'asc');
-                },
-            });
-
-            /**
-             * refresh the datatable information every 15 seconds
-             */
-            let intervalReloadDatatable = 15000; // ms
-            let expectedReloadDatatable = Date.now() + intervalReloadDatatable;
-
-            /**
-             * reload datatable "linkListTable"
-             */
-            let realoadDataTable = function() {
-                let dt = Date.now() - expectedReloadDatatable; // the drift (positive for overshooting)
-
-                if(dt > intervalReloadDatatable) {
-                    // something really bad happened. Maybe the browser (tab) was inactive?
-                    // possibly special handling to avoid futile "catch up" run
-                    console.log('Something went wrong, reloading page ...');
-
-                    window.location.replace(
-                        window.location.pathname + window.location.search + window.location.hash
-                    );
+        let afatSettings = {
+            url: '{% url "afat:fatlinks_ajax_get_fats_by_fatlink" 0 %}'.replace(
+                    '0',
+                    '{{ link.hash }}'
+                ),
+            modal: {
+                deleteFatModal: {
+                    element: '#deleteFatModal',
+                    body: '{% translate "Are you sure you want to remove ##NAME## from this FAT link?" %}'
                 }
-
-                fatListTable.ajax.reload(function(tableData) {
-                    let shipTypeOverviewTable = $('#fleet-edit-ship-types');
-                    shipTypeOverviewTable.find('tbody').html('');
-
-                    $.each(tableData, function(i, item) {
-                        let shipTypeSlug = convertStringToSlug(item.ship_type);
-
-                        if($('tr.shiptype-' + shipTypeSlug).length) {
-                            let currentCount = shipTypeOverviewTable.find(
-                                'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
-                            ).html();
-                            let newCount = parseInt(currentCount) + 1;
-
-                            shipTypeOverviewTable.find(
-                                'tr.shiptype-' + shipTypeSlug + ' td.ship-type-count'
-                            ).html(newCount);
-                        } else {
-                            shipTypeOverviewTable.append(
-                                '<tr class="shiptype-' + shipTypeSlug + '">' +
-                                '<td class="ship-type">' + item.ship_type + '</td>' +
-                                '<td class="ship-type-count text-right">1</td>' +
-                                '</tr>'
-                            );
-                        }
-                    });
-
-                    sortTable($('#fleet-edit-ship-types'), 'asc');
-                });
-
-                expectedReloadDatatable += intervalReloadDatatable;
-
-                // take drift into account
-                setTimeout(
-                    realoadDataTable,
-                    Math.max(0, intervalReloadDatatable - dt)
-                );
-            };
-
-            setTimeout(
-                realoadDataTable,
-                intervalReloadDatatable
-            );
-
-            let clipboard = new ClipboardJS('.copy-btn');
-
-            clipboard.on('success', function() {
-                $('.copy-btn').tooltip('show');
-            });
-
-            $('#deleteFatModal').on('show.bs.modal', function(event) {
-                let button = $(event.relatedTarget) // Button that triggered the modal
-                let url = button.data('url') // Extract info from data-* attributes
-                let name = button.data('name');
-                let modal = $(this)
-
-                modal.find('#a-delete-fat').attr('href', url)
-                modal.find('.modal-body').text(
-                    '{% translate "Are you sure you want to remove" %} ' + name + '?'
-                );
-            }).on('hide.bs.modal', function () {
-                let modal = $(this);
-
-                modal.find('.modal-body').html('');
-                modal.find('#a-delete-fat').attr('href', '');
-            });
-        });
+            }
+        }
     </script>
+    <script type="application/javascript" src="{% static 'afat/javascript/afat-fatlink-details.min.js' %}"></script>
 {% endblock %}
