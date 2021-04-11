@@ -1,0 +1,29 @@
+{% load i18n %}
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">{% translate "Creator:" %} {{ link.creator.profile.main_character.character_name }}</div>
+        <div class="col-md-6 text-right">{% translate "Eve Time:" %} {{ link.afattime| date:"d. F Y H:i" }}</div>
+
+        {% if link_ongoing %}
+            <div class="col-md-10">
+                <p>Link:
+                    <i>
+                        {{ request.scheme }}://{{ request.get_host }}{% url 'afat:fatlinks_add_fat' link.hash %}
+                        <a class="label label-success copy-link" href="{% url 'afat:fatlinks_add_fat' link.hash %}"></a>
+                    </i>
+
+                    <button class="copy-btn btn btn-success btn-sm"
+                            data-toggle="tooltip"
+                            data-html="true"
+{#                            title='{% translate "Copied!" %}'#}
+                            data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:fatlinks_add_fat' link.hash %}"
+                            style="margin-left: 1rem;"
+                    >
+                        {% translate "Copy me!" %}
+                    </button>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
