@@ -69,7 +69,8 @@
         </div>
     </div>
 
-    {% include "afat/modals/delete-fat-link.html" %}
+    {% translate "Delete FAT Link" as translated_title %}
+    {% include "afat/modals/delete-general.html" with modal_name='deleteFatLink' modal_title=translated_title %}
 {% endblock %}
 
 {% block extra_css %}
@@ -106,6 +107,11 @@
                     deleteModal: {
                         body: '{% translate "Are you sure you want to delete" %} '
                     }
+                }
+            },
+            modal: {
+                deleteModal: {
+                    element: '#deleteFatLinkModal'
                 }
             }
         }

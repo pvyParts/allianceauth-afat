@@ -127,15 +127,15 @@ $(document).ready(function () {
     /**
      * Modal :: Delete FAT from FAT link
      */
-    let deleteFatModal = $(afatSettings.modal.deleteFatModal.element);
+    let deleteFatModal = $(afatSettings.modal.deleteModal.element);
     deleteFatModal.on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget); // Button that triggered the modal
         let url = button.data('url'); // Extract info from data-* attributes
         let name = button.data('name');
         let modal = $(this);
 
-        modal.find('#a-delete-fat').attr('href', url);
-        modal.find('.modal-body').text(afatSettings.modal.deleteFatModal.body.replace(
+        modal.find('#confirm-action').attr('href', url);
+        modal.find('.modal-body').text(afatSettings.translation.modal.deleteModal.body.replace(
             '##NAME##',
             name
         ));
@@ -143,6 +143,6 @@ $(document).ready(function () {
         let modal = $(this);
 
         modal.find('.modal-body').html('');
-        modal.find('#a-delete-fat').attr('href', '');
+        modal.find('#confirm-action').attr('href', '');
     });
 });

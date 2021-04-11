@@ -41,7 +41,8 @@
         {% include "afat/partials/dashboard/tabs/fatlinks.html" %}
     </div>
 
-    {% include "afat/modals/delete-fat.html" %}
+    {% translate "Delete FAT Link" as translated_title %}
+    {% include "afat/modals/delete-general.html" with modal_name='deleteFatLink' modal_title=translated_title %}
 {% endblock %}
 
 {% block extra_css %}
@@ -79,8 +80,13 @@
                         body: '{% translate "Are you sure you want to delete" %} '
                     }
                 }
+            },
+            modal: {
+                deleteModal: {
+                    element: '#deleteFatLinkModal'
+                }
             }
         }
     </script>
-    <script type="application/javascript" src="{% static 'afat/javascript/afat-dashboard.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/javascript/afat-dashboard.js' %}"></script>
 {% endblock %}

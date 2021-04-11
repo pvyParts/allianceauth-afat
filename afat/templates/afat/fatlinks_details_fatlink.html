@@ -28,7 +28,8 @@
 {#        {% include "afat/partials/fatlinks/details/tabs/flatlist.html" %}#}
     </div>
 
-    {% include "afat/modals/delete-fat.html" %}
+    {% translate "Delete FAT" as translated_title %}
+    {% include "afat/modals/delete-general.html" with modal_name='deleteFat' modal_title=translated_title %}
 {% endblock %}
 
 {% block extra_css %}
@@ -50,10 +51,16 @@
                     '0',
                     '{{ link.hash }}'
                 ),
+            translation: {
+                modal: {
+                    deleteModal: {
+                        body: '{% translate "Are you sure you want to remove ##NAME## from this FAT link?" %}'
+                    }
+                }
+            },
             modal: {
-                deleteFatModal: {
+                deleteModal: {
                     element: '#deleteFatModal',
-                    body: '{% translate "Are you sure you want to remove ##NAME## from this FAT link?" %}'
                 }
             }
         }

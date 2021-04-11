@@ -1,7 +1,7 @@
 {% load i18n %}
 
-<!-- Delete FAT Modal -->
-<div class="modal fade" id="deleteFatModal" tabindex="-1" role="dialog" aria-labelledby="deleteFatModalTitle" aria-hidden="true">
+<!-- Delete Modal -->
+<div class="modal fade" id="{{ modal_name }}Modal" tabindex="-1" role="dialog" aria-labelledby="{{ modal_name }}ModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,8 +9,8 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
 
-                <h5 class="modal-title" id="deleteFatModalLongTitle">
-                    {% translate "Delete FAT" %}
+                <h5 class="modal-title" id="{{ modal_name }}ModalLongTitle">
+                    {{ modal_title }}
                 </h5>
             </div>
 
@@ -18,11 +18,11 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
-                    {% translate "Cancel" %}
+                    {% translate "No" %}
                 </button>
 
-                <a id="a-delete-fat" class="btn btn-danger btn-sm" role="button" href="">
-                    {% translate "Delete" %}
+                <a id="confirm-action" class="btn btn-danger btn-sm" role="button" href="">
+                    {% translate "Yes" %}
                 </a>
             </div>
         </div>

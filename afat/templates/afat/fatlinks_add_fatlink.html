@@ -51,7 +51,7 @@
                 let name = button.data('name');
                 let modal = $(this)
 
-                modal.find('#a-delete-esi-fleet').attr('href', url)
+                modal.find('#confirm-action').attr('href', url)
                 modal.find('.modal-body').text(
                     '{% translate "Are you sure you want to close" %} ' + name + '?'
                 );
@@ -59,7 +59,7 @@
                 let modal = $(this);
 
                 modal.find('.modal-body').html('');
-                modal.find('#a-delete-esi-fleet').attr('href', '');
+                modal.find('#confirm-action').attr('href', '');
             });
         });
     </script>

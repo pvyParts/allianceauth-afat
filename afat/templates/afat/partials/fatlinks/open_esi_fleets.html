@@ -38,5 +38,6 @@
         </p>
     </div>
 
-    {% include 'afat/modals/delete-esi-fleet.html' %}
+    {% translate "Close ESI Fleet Tracking" as translated_title %}
+    {% include 'afat/modals/delete-general.html' with modal_name='deleteEsiFleet' modal_title=translated_title %}
 {% endif %}

@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Migration from bFAT now writes into the new AFAT log table
 - Migration from native FAT module now writes into the new AFAT log table
 - Wording in modal windows
+- Modal windows merged into one file which is loaded conditionally
 
 ### Removed
 
