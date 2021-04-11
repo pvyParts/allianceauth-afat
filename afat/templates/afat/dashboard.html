@@ -59,6 +59,7 @@
     <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/dataTables.rowGroup.min.js' %}"></script>
     <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/datetime.min.js' %}"></script>
     <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/javascript/allianceauth-afat.min.js' %}"></script>
 
     <script type="application/javascript">
         let afatSettings = {
@@ -77,7 +78,7 @@
                 },
                 modal: {
                     deleteModal: {
-                        body: '{% translate "Are you sure you want to delete" %} '
+                        body: '{% translate "Are you sure you want to delete ##NAME##?" %}'
                     }
                 }
             },

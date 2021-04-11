@@ -1,4 +1,4 @@
-/* global afatSettings, convertStringToSlug, sortTable, ClipboardJS */
+/* global afatSettings, convertStringToSlug, sortTable, ClipboardJS, manageModal */
 
 $(document).ready(function () {
     'use strict';
@@ -128,21 +128,5 @@ $(document).ready(function () {
      * Modal :: Delete FAT from FAT link
      */
     let deleteFatModal = $(afatSettings.modal.deleteModal.element);
-    deleteFatModal.on('show.bs.modal', function (event) {
-        let button = $(event.relatedTarget); // Button that triggered the modal
-        let url = button.data('url'); // Extract info from data-* attributes
-        let name = button.data('name');
-        let modal = $(this);
-
-        modal.find('#confirm-action').attr('href', url);
-        modal.find('.modal-body').text(afatSettings.translation.modal.deleteModal.body.replace(
-            '##NAME##',
-            name
-        ));
-    }).on('hide.bs.modal', function () {
-        let modal = $(this);
-
-        modal.find('.modal-body').html('');
-        modal.find('#confirm-action').attr('href', '');
-    });
+    manageModal(deleteFatModal, afatSettings.translation.modal.deleteModal.body);
 });

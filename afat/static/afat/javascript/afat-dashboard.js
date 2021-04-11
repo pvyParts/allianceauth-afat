@@ -1,4 +1,4 @@
-/* global afatSettings, characters, moment */
+/* global afatSettings, characters, moment, manageModal */
 
 $(document).ready(function () {
     'use strict';
@@ -112,20 +112,5 @@ $(document).ready(function () {
      * Modal :: Delete FAT link
      */
     let deleteFatLinkModal = $(afatSettings.modal.deleteModal.element);
-    deleteFatLinkModal.on('show.bs.modal', function (event) {
-        let button = $(event.relatedTarget); // Button that triggered the modal
-        let url = button.data('url'); // Extract info from data-* attributes
-        let name = button.data('name');
-        let modal = $(this);
-
-        modal.find('#confirm-action').attr('href', url);
-        modal.find('.modal-body').text(
-            afatSettings.translation.modal.deleteModal.body + name + '?'
-        );
-    }).on('hide.bs.modal', function () {
-        let modal = $(this);
-
-        modal.find('.modal-body').html('');
-        modal.find('#confirm-action').attr('href', '');
-    });
+    manageModal(deleteFatLinkModal, afatSettings.translation.modal.deleteModal.body);
 });
