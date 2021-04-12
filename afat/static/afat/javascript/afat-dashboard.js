@@ -112,5 +112,5 @@ $(document).ready(function () {
      * Modal :: Delete FAT link
      */
     let deleteFatLinkModal = $(afatSettings.modal.deleteModal.element);
-    manageModal(deleteFatLinkModal, afatSettings.translation.modal.deleteModal.body);
+    manageModal(deleteFatLinkModal);
 });

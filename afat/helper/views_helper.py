@@ -86,11 +86,17 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
     if request.user.has_perm("afat.manage_afat"):
         button_delete_url = reverse("afat:fatlinks_delete_fatlink", args=[fatlink.hash])
+        button_delete_text = _("Delete")
+        modal_body_text = _(
+            f"<p>Are you sure you want to delete FAT link {fatlink_fleet}?</p>"
+        )
 
         actions += (
             '<a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" '
             f'data-target="#deleteFatLinkModal" data-url="{button_delete_url}" '
-            f'data-name="{fatlink_fleet}"><span class="glyphicon glyphicon-trash">'
+            f'data-confirm-text="{button_delete_text}"'
+            f'data-body-text="{modal_body_text}">'
+            f'<span class="glyphicon glyphicon-trash">'
             "</span></a>"
         )
 
@@ -147,18 +153,21 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
         button_delete_fat = reverse(
             "afat:fatlinks_delete_fat", args=[fat.afatlink.hash, fat.id]
         )
+        button_delete_text = _("Delete")
+        modal_body_text = _(
+            "<p>Are you sure you want to remove "
+            f"{fat.character.character_name} from this FAT link?</p>"
+        )
 
         actions += (
             '<a class="btn btn-danger btn-sm" '
             'data-toggle="modal" '
             'data-target="#deleteFatModal" '
-            'data-url="{data_url}" '
-            'data-name="{data_name}">'
+            f'data-url="{button_delete_fat}" '
+            f'data-confirm-text="{button_delete_text}"'
+            f'data-body-text="{modal_body_text}">'
             '<span class="glyphicon glyphicon-trash"></span>'
-            "</a>".format(
-                data_url=button_delete_fat,
-                data_name=fat.character.character_name,
-            )
+            "</a>"
         )
 
     fleet_time = fat.afatlink.afattime

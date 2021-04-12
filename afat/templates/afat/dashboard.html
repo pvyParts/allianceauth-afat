@@ -42,7 +42,7 @@
     </div>
 
     {% translate "Delete FAT Link" as translated_title %}
-    {% include "afat/modals/delete-general.html" with modal_name='deleteFatLink' modal_title=translated_title %}
+    {% include "afat/modals/general.html" with modal_name='deleteFatLink' modal_title=translated_title confirm_button_class='btn-danger' %}
 {% endblock %}
 
 {% block extra_css %}
@@ -76,11 +76,6 @@
                     noFatsWarning: '{% translate "No recent FATs for" %}',
                     noFatlinksWarning: '{% translate "No recent FAT links" %}'
                 },
-                modal: {
-                    deleteModal: {
-                        body: '{% translate "Are you sure you want to delete ##NAME##?" %}'
-                    }
-                }
             },
             modal: {
                 deleteModal: {

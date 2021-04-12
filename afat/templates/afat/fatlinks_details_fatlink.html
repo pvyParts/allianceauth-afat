@@ -31,7 +31,7 @@
     </div>
 
     {% translate "Delete FAT" as translated_title %}
-    {% include "afat/modals/delete-general.html" with modal_name='deleteFat' modal_title=translated_title %}
+    {% include "afat/modals/general.html" with modal_name='deleteFat' modal_title=translated_title confirm_button_class='btn-danger' %}
 {% endblock %}
 
 {% block extra_css %}
@@ -53,13 +53,6 @@
                     '0',
                     '{{ link.hash }}'
                 ),
-            translation: {
-                modal: {
-                    deleteModal: {
-                        body: '{% translate "Are you sure you want to remove ##NAME## from this FAT link?" %}'
-                    }
-                }
-            },
             modal: {
                 deleteModal: {
                     element: '#deleteFatModal',

@@ -20,7 +20,8 @@
                          data-toggle="modal"
                          data-target="#deleteEsiFleetModal"
                          data-url="{% url 'afat:fatlinks_close_esi_fatlink' open_esi_fleet.fleet_commander.hash %}"
-                         data-name="ESI fleet with ID {{ open_esi_fleet.fleet_commander.esi_fleet_id }} from {{ open_esi_fleet.fleet_commander.character.character_name }}"
+                         data-body-text="{% blocktranslate with esi_fleet_id=open_esi_fleet.fleet_commander.esi_fleet_id character_name=open_esi_fleet.fleet_commander.character.character_name %}<p>Are you sure you want to close ESI fleet with ID {{ esi_fleet_id }} from {{ character_name }}</p>{% endblocktranslate %}"
+                         data-confirm-text="{% translate 'Stop Tracking' %}"
                     >
                         <i class="fas fa-times"></i>
                         <!-- {% translate 'Stop Tracking' %} -->
@@ -39,5 +40,5 @@
     </div>
 
     {% translate "Close ESI Fleet Tracking" as translated_title %}
-    {% include 'afat/modals/delete-general.html' with modal_name='deleteEsiFleet' modal_title=translated_title %}
+    {% include 'afat/modals/general.html' with modal_name='deleteEsiFleet' modal_title=translated_title confirm_button_class='btn-danger' %}
 {% endif %}
