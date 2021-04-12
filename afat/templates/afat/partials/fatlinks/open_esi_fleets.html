@@ -14,7 +14,7 @@
                     {{ open_esi_fleet.fleet_commander.character.character_name }}
                     <small>(ESI fleet ID: {{ open_esi_fleet.fleet_commander.esi_fleet_id }})</small>
 
-                    <btn class="btn btn-primary btn-xs"
+                    <button class="btn btn-primary btn-xs"
                          style="margin-left: 0.25rem;"
                          title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}"
                          data-toggle="modal"
@@ -25,7 +25,7 @@
                     >
                         <i class="fas fa-times"></i>
                         <!-- {% translate 'Stop Tracking' %} -->
-                    </btn>
+                    </button>
                 </li>
             {% endfor %}
         </ul>
