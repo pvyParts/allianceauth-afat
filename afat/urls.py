@@ -103,6 +103,11 @@ urlpatterns = [
         fatlinks.close_esi_fatlink,
         name="fatlinks_close_esi_fatlink",
     ),
+    url(
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/re-open/$",
+        fatlinks.reopen_fatlink,
+        name="fatlinks_reopen_fatlink",
+    ),
     # fat actions
     url(
         r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/register/$",

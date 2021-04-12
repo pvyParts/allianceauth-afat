@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<!-- Delete Modal -->
+<!-- AFAT Modal -->
 <div class="modal fade" id="{{ modal_name }}Modal" tabindex="-1" role="dialog" aria-labelledby="{{ modal_name }}ModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -17,9 +17,9 @@
             <div class="modal-body"></div>
 
             <div class="modal-footer">
-                <button type="button" id="cancel-action" class="btn btn-secondary btn-sm" data-dismiss="modal"></button>
+                <button type="button" id="cancel-action" class="btn btn-default btn-sm" data-dismiss="modal"></button>
 
-                <a id="confirm-action" class="btn {% if confirm_button_class %}{{ confirm_button_class }}{% else %}btn-default{% endif %} btn-sm" role="button" href=""></a>
+                <a id="confirm-action" class="btn {% if confirm_button_class %}{{ confirm_button_class }}{% else %}btn-primary{% endif %} btn-sm" role="button" href=""></a>
             </div>
         </div>
 

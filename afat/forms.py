@@ -44,3 +44,11 @@ class FatLinkEditForm(forms.Form):
     """
 
     fleet = forms.CharField(label=_("Fleet Name"), max_length=255)
+
+
+# class ExtendFatLinkDuration(forms.Form):
+#     """
+#     extending the duration time of a fatlink
+#     """
+#
+#     duration = forms.IntegerField(label=_("Re-open for (in minutes)"), min_value=1)

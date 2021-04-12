@@ -12,7 +12,9 @@
         <p>&#9642; {% translate "FATs have been queued, they may take a few mins to show up." %}</p>
         <p>&#9642; {% translate "Pilots who join later will be automatically added until you close or leave the fleet in-game." %}</p>
     </div>
-{% elif msg_code == 0 %}
+{% endif %}
+
+{% if msg_code == 0 %}
     <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>
@@ -22,7 +24,9 @@
 
         <p>{% translate "Something went wrong!" %}</p>
     </div>
-{% elif msg_code == 202 %}
+{% endif %}
+
+{% if msg_code == 202 %}
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>
@@ -33,7 +37,9 @@
         <p>&#9642; {% translate "Clickable FAT Link Created!" %}</p>
         <p>&#9642; {% translate "Make sure to give your fleet members the link to click so that they get credit for this fleet." %}</p>
     </div>
-{% elif msg_code == 1 %}
+{% endif %}
+
+{% if msg_code == 1 %}
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>
@@ -43,7 +49,9 @@
 
         <p>{% translate "Fleet name successfully changed." %}</p>
     </div>
-{% elif msg_code == 3 %}
+{% endif %}
+
+{% if msg_code == 3 %}
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>
@@ -53,7 +61,9 @@
 
         <p>{% translate "Manual FAT processed." %}</p>
     </div>
-{% elif msg_code == 4 %}
+{% endif %}
+
+{% if msg_code == 4 %}
     <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>
@@ -63,7 +73,33 @@
 
         <p>{% translate "Manual FAT processing failed! The character name you entered was not found." %}</p>
     </div>
-{% elif msg_code == 999 %}
+{% endif %}
+
+{% if msg_code == 5 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success" %}</h4>
+
+        <p>{% translate "The FAT link has been successfully re-opened." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 6 %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Error" %}</h4>
+
+        <p>{% translate "The hash you provided does not match with any FAT link." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 999 %}
     <div class="alert alert-{{ message.0 }} alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="close">
             <span aria-hidden="true">&times</span>

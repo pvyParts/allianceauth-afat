@@ -19,14 +19,19 @@ from esi.decorators import token_required
 from esi.models import Token
 
 from afat import __title__
-from afat.app_settings import AFAT_DEFAULT_FATLINK_EXPIRY_TIME
-from afat.forms import (
+from afat.app_settings import (
+    AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
+    AFAT_DEFAULT_FATLINK_REOPEN_DURATION,
+    AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME,
+)
+from afat.forms import (  # ExtendFatLinkDuration,
     AFatClickFatForm,
     AFatLinkForm,
     AFatManualFatForm,
     FatLinkEditForm,
 )
 from afat.helper.fatlinks import get_esi_fleet_information_by_user
+from afat.helper.time import get_time_delta
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
@@ -276,7 +281,9 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     ):
         for registered_fleet_to_close in registered_fleets_to_close:
             logger.info(
-                "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
+                (
+                    "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}"
+                ).format(
                     fatlink_hash=registered_fleet_to_close["registered_fleet"].hash,
                     reason=(
                         "FC has opened a new fleet with the character {character}"
@@ -671,15 +678,25 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     #
     #     flatlist = "\r\n".join(flatlist)
 
-    # let's see if the link is still valid or has expired already
+    # let's see if the link is still valid or has expired already and can be re-opened
     link_ongoing = True
+    link_can_be_reopened = False
+    link_expires = None
+
     try:
         dur = ClickAFatDuration.objects.get(fleet=link)
-        now = timezone.now() - timedelta(minutes=dur.duration)
+        link_expires = link.afattime + timedelta(minutes=dur.duration)
+        now = timezone.now()
 
-        if now >= link.afattime:
+        if link_expires <= now:
             # link expired
             link_ongoing = False
+
+            if (
+                get_time_delta(link_expires, now, "minutes")
+                < AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME
+            ):
+                link_can_be_reopened = True
     except ClickAFatDuration.DoesNotExist:
         # ESI lnk
         link_ongoing = False
@@ -690,7 +707,11 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         "message": message,
         "link": link,
         # "flatlist": flatlist,
+        "link_expires": link_expires,
         "link_ongoing": link_ongoing,
+        "link_can_be_reopened": link_can_be_reopened,
+        "reopen_grace_time": AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME,
+        "reopen_duration": AFAT_DEFAULT_FATLINK_REOPEN_DURATION,
     }
 
     return render(request, "afat/fatlinks_details_fatlink.html", context)
@@ -850,3 +871,73 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
         )
 
     return redirect("afat:fatlinks_add_fatlink")
+
+
+@login_required()
+@permissions_required(("afat.manage_afat", "afat.add_fatlink"))
+def reopen_fatlink(request: WSGIRequest, fatlink_hash: str):
+    """
+
+    :param request:
+    :type request:
+    :param fatlink_hash:
+    :type fatlink_hash:
+    """
+
+    # if request.method == "POST":
+    #     fatlink_reopen_form = ExtendFatLinkDuration(request.POST)
+    #
+    #     if fatlink_reopen_form.is_valid():
+    #         duration = ClickAFatDuration.objects.get(fleet__hash=fatlink_hash)
+    #         reopen_for = fatlink_reopen_form.cleaned_data["duration"]
+    #
+    #         # get minutes already passed since fatlink creation
+    #         created_at = duration.fleet.afattime
+    #         now = datetime.now()
+    #
+    #         time_difference_in_minutes = get_time_delta(created_at, now, "minutes")
+    #         new_duration = (
+    #             time_difference_in_minutes
+    #             + fatlink_reopen_form.cleaned_data["duration"]
+    #         )
+    #
+    #         duration.duration = new_duration
+    #         duration.save()
+
+    try:
+        fatlink_duration = ClickAFatDuration.objects.get(fleet__hash=fatlink_hash)
+
+        created_at = fatlink_duration.fleet.afattime
+        now = datetime.now()
+
+        time_difference_in_minutes = get_time_delta(created_at, now, "minutes")
+        new_duration = time_difference_in_minutes + AFAT_DEFAULT_FATLINK_REOPEN_DURATION
+
+        fatlink_duration.duration = new_duration
+        fatlink_duration.save()
+
+        log_message = (
+            f'FAT link with hash "{fatlink_hash}" '
+            f"re-opened by {request.user} for a "
+            f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
+        )
+
+        # writing DB log
+        write_log(
+            request=request,
+            # log_event=AFatLogEvent.REOPEN_FATLINK,
+            log_event=AFatLogEvent.REOPEN_FATLINK,
+            log_text=log_message,
+        )
+
+        logger.info(log_message)
+
+        request.session[
+            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+        ] = 5
+    except ClickAFatDuration.DoesNotExist:
+        request.session[
+            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+        ] = 6
+
+    return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)

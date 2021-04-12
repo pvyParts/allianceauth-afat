@@ -34,6 +34,7 @@ class AFatLogEvent(models.TextChoices):
     CREATE_FATLINK = "CR_FAT_LINK", _("FAT Link Created")
     CHANGE_FATLINK = "CH_FAT_LINK", _("FAT Link Changed")
     DELETE_FATLINK = "RM_FAT_LINK", _("FAT Link Removed")
+    REOPEN_FATLINK = "RO_FAT_LINK", _("FAT Link Re-Opened")
     # CREATE_FAT = "CR_FAT", _("FAT Registered")
     DELETE_FAT = "RM_FAT", _("FAT Removed")
     MANUAL_FAT = "CR_FAT_MAN", _("Manual FAT Added")

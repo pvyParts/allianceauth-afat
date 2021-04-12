@@ -129,4 +129,10 @@ $(document).ready(function () {
      */
     let deleteFatModal = $(afatSettings.modal.deleteModal.element);
     manageModal(deleteFatModal);
+
+    /**
+     * Modal :: Delete FAT from FAT link
+     */
+    let reopenFatLinkModal = $(afatSettings.modal.reopenFatLinkModal.element);
+    manageModal(reopenFatLinkModal);
 });
