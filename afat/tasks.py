@@ -144,7 +144,7 @@ def process_fats(data_list, data_source, fatlink_hash):
     :return:
     """
 
-    logger.info("Processing FAT %s", fatlink_hash)
+    logger.info(f'Processing FAT "{fatlink_hash}"')
 
     if data_source == "esi":
         for char in data_list:
@@ -213,7 +213,7 @@ def process_character(char, fatlink_hash):
 
         logger.info(
             "New Pilot: Adding {character_name} in {system_name} flying a {ship_name} "
-            "to FAT link {fatlink_hash}".format(
+            'to FAT link "{fatlink_hash}"'.format(
                 character_name=character,
                 system_name=solar_system_name,
                 ship_name=ship_name,
@@ -229,7 +229,7 @@ def process_character(char, fatlink_hash):
         ).save()
     else:
         logger.info(
-            "{character} is already registered with FAT link {fatlink_hash}".format(
+            '{character} is already registered with FAT link "{fatlink_hash}"'.format(
                 character=character, fatlink_hash=fatlink_hash
             )
         )
@@ -243,7 +243,7 @@ def close_esi_fleet(fatlink: AFatLink, reason: str) -> None:
     """
 
     logger.info(
-        "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
+        'Closing ESI FAT link with hash "{fatlink_hash}". Reason: {reason}'.format(
             fatlink_hash=fatlink.hash, reason=reason
         )
     )
@@ -308,7 +308,9 @@ def update_esi_fatlinks() -> None:
             if cache.get(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash) is None:
                 cache.set(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash, "0", 75)
 
-            logger.info("Processing information for ESI FAT with hash %s", fatlink.hash)
+            logger.info(
+                f'Processing information for ESI FAT with hash "{fatlink.hash}"'
+            )
 
             if fatlink.creator.profile.main_character is not None:
                 # Check if there is a fleet

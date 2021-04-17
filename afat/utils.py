@@ -88,9 +88,10 @@ def clean_setting(
     return cleaned_value
 
 
-def write_log(request: WSGIRequest, log_event: str, log_text: str):
+def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text: str):
     """
     write the log
+    :param fatlink:
     :param request:
     :param log_event:
     :param log_text:
@@ -102,6 +103,7 @@ def write_log(request: WSGIRequest, log_event: str, log_text: str):
     afat_log.user = request.user
     afat_log.log_event = log_event
     afat_log.log_text = log_text
+    afat_log.fatlink_hash = fatlink_hash
     afat_log.save()
 
 

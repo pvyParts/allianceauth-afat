@@ -119,7 +119,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
             notifications_count += 1
 
         self.message_user(
-            request, "{} fleet types marked as active".format(notifications_count)
+            request, f"{notifications_count} fleet types marked as active"
         )
 
     mark_as_active.short_description = "Activate selected fleet type(s)"
@@ -140,7 +140,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
             notifications_count += 1
 
         self.message_user(
-            request, "{} fleet types marked as inactive".format(notifications_count)
+            request, f"{notifications_count} fleet types marked as inactive"
         )
 
     mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
@@ -163,9 +163,7 @@ class ManualAFatAdmin(admin.ModelAdmin):
     )
 
     def _afatlink(self, obj):
-        return "Fleet: {fleet_name} (FAT link hash: {fatlink_hash})".format(
-            fleet_name=obj.afatlink.fleet, fatlink_hash=obj.afatlink.hash
-        )
+        return f"Fleet: {obj.afatlink.fleet} (FAT link hash: {obj.afatlink.hash})"
 
     _afatlink.short_description = "FAT Link"
     _afatlink.admin_order_field = "afatlink"
@@ -183,8 +181,8 @@ class AFatLogAdmin(admin.ModelAdmin):
     config for admin log
     """
 
-    list_display = ("log_time", "log_event", "log_text", "user")
+    list_display = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
     ordering = ("-log_time",)
-    readonly_fields = ("log_time", "log_event", "log_text", "user")
+    readonly_fields = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
 
     list_filter = ("log_event",)

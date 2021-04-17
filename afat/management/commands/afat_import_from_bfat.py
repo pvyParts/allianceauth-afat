@@ -67,11 +67,8 @@ class Command(BaseCommand):
             bfat_fatlinks = BfatFatLink.objects.all()
             for bfat_fatlink in bfat_fatlinks:
                 self.stdout.write(
-                    "Importing FAT link for fleet '{fleet}' with hash "
-                    "'{fatlink_hash}'.".format(
-                        fleet=bfat_fatlink.fleet,
-                        fatlink_hash=bfat_fatlink.hash,
-                    )
+                    f'Importing FAT link for fleet "{bfat_fatlink.fleet}" '
+                    f'with hash "{bfat_fatlink.hash}".'
                 )
 
                 afatlink = AFatLink()
@@ -91,21 +88,15 @@ class Command(BaseCommand):
                     )
 
                     log_text = (
-                        "FAT link {fatlink_hash} with name {name} and a "
-                        "duration of {duration} minutes was created by {user}"
-                    ).format(
-                        fatlink_hash=bfat_fatlink.hash,
-                        name=bfat_fatlink.fleet,
-                        duration=fleet_duration.duration,
-                        user=bfat_fatlink.creator,
+                        f'FAT link "{bfat_fatlink.hash}" with name '
+                        f'"{bfat_fatlink.fleet}" and a duration of '
+                        f"{fleet_duration.duration} minutes was created "
+                        f"by {bfat_fatlink.creator}"
                     )
                 except BfatClickFatDuration.DoesNotExist:
                     log_text = (
-                        "FAT link {fatlink_hash} with name {name} was created by {user}"
-                    ).format(
-                        fatlink_hash=bfat_fatlink.hash,
-                        name=bfat_fatlink.fleet,
-                        user=bfat_fatlink.creator,
+                        f'FAT link "{bfat_fatlink.hash}" with name '
+                        f'"{bfat_fatlink.fleet}" was created by {bfat_fatlink.creator}'
                     )
 
                 afatlog = AFatLog()
@@ -118,11 +109,7 @@ class Command(BaseCommand):
             # import FATs
             bfat_fats = BfatFat.objects.all()
             for bfat_fat in bfat_fats:
-                self.stdout.write(
-                    "Importing FATs for FAT link ID '{fatlink_id}'.".format(
-                        fatlink_id=bfat_fat.id
-                    )
-                )
+                self.stdout.write(f"Importing FATs for FAT link ID {bfat_fat.id}.")
 
                 afat = AFat()
 
@@ -138,9 +125,7 @@ class Command(BaseCommand):
             bfat_clickfatdurations = BfatClickFatDuration.objects.all()
             for bfat_clickfatduration in bfat_clickfatdurations:
                 self.stdout.write(
-                    "Importing FAT duration with ID '{duration_id}'.".format(
-                        duration_id=bfat_clickfatduration.id
-                    )
+                    f"Importing FAT duration with ID {bfat_clickfatduration.id}."
                 )
 
                 afat_clickfatduration = ClickAFatDuration()
@@ -154,19 +139,12 @@ class Command(BaseCommand):
             # import manual fat
             bfat_manualfats = BfatManualFat.objects.all()
             for bfat_manualfat in bfat_manualfats:
-                self.stdout.write(
-                    "Importing manual FAT with ID '{manualfat_id}'.".format(
-                        manualfat_id=bfat_manualfat.id
-                    )
-                )
+                self.stdout.write(f"Importing manual FAT with ID {bfat_manualfat.id}.")
 
                 fatlink = BfatFatLink.objects.get(manualfat=bfat_manualfat)
                 log_text = (
-                    "Pilot {pilot_name} was manually added to "
-                    'FAT link with hash "{fatlink_hash}"'
-                ).format(
-                    pilot_name=bfat_manualfat.character.character_name,
-                    fatlink_hash=fatlink.hash,
+                    f"Pilot {bfat_manualfat.character.character_name} was manually "
+                    f'added to FAT link with hash "{fatlink.hash}"'
                 )
 
                 afatlog = AFatLog()

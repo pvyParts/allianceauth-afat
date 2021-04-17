@@ -295,6 +295,7 @@ class AFatLog(models.Model):
         default=AFatLogEvent.CREATE_FATLINK,
     )
     log_text = models.TextField()
+    fatlink_hash = models.CharField(max_length=254)
 
     class Meta:  # pylint: disable=too-few-public-methods
         """

@@ -2,6 +2,7 @@
 statistics related views
 """
 
+import calendar
 from collections import OrderedDict
 from datetime import datetime
 
@@ -207,7 +208,14 @@ def character(
         "fats": fats,
     }
 
-    logger.info("Character statistics called by {user}".format(user=request.user))
+    logger.info(
+        "Character statistics for {character} ({month} {year}) called by {user}".format(
+            character=character,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
+        )
+    )
 
     return render(request, "afat/statistics_character.html", context)
 
@@ -369,8 +377,13 @@ def corporation(
     }
 
     logger.info(
-        "Corporation statistics for {corp_name} called by {user}".format(
-            corp_name=corp_name, user=request.user
+        (
+            "Corporation statistics for {corp_name} ({month} {year}) called by {user}"
+        ).format(
+            corp_name=corp_name,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
         )
     )
 
@@ -580,8 +593,13 @@ def alliance(
     }
 
     logger.info(
-        "Alliance statistics for {alliance_name} called by {user}".format(
-            alliance_name=alliance_name, user=request.user
+        (
+            "Alliance statistics for {alliance_name} ({month} {year}) called by {user}"
+        ).format(
+            alliance_name=alliance_name,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
         )
     )
 
