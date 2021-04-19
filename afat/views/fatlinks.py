@@ -164,21 +164,26 @@ def create_clickable_fatlink(request: WSGIRequest):
             ] = 202
 
             # writing DB log
+            fleet_type = ""
+            if fatlink.link_type:
+                fleet_type = f" (Fleet Type: {fatlink.link_type.name})"
+
             write_log(
                 request=request,
                 log_event=AFatLogEvent.CREATE_FATLINK,
                 log_text=(
-                    f'FAT link with name "{form.cleaned_data["name"]}" and a '
-                    f'duration of {form.cleaned_data["duration"]} minutes was created'
+                    f'FAT link with name "{form.cleaned_data["name"]}"{fleet_type} and '
+                    f'a duration of {form.cleaned_data["duration"]} minutes was created'
                 ),
                 fatlink_hash=fatlink.hash,
             )
 
             logger.info(
                 (
-                    f'FAT link "{fatlink_hash}" with name "{form.cleaned_data["name"]}" '
-                    f'and a duration of {form.cleaned_data["duration"]} minutes was '
-                    f"created by {request.user}"
+                    f'FAT link "{fatlink_hash}" with name '
+                    f'"{form.cleaned_data["name"]}"{fleet_type} and a duration '
+                    f'of {form.cleaned_data["duration"]} minutes was created '
+                    f"by {request.user}"
                 )
             )
 
@@ -338,12 +343,16 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     fatlink.save()
 
     # writing DB log
+    fleet_type = ""
+    if fatlink.link_type:
+        fleet_type = f" (Fleet Type: {fatlink.link_type.name})"
+
     write_log(
         request=request,
         log_event=AFatLogEvent.CREATE_FATLINK,
         log_text=(
-            f'ESI FAT link with name "{request.session["fatlink_form__name"]}" '
-            f"was created by {request.user}"
+            f'ESI FAT link with name "{request.session["fatlink_form__name"]}"'
+            f"{fleet_type} was created by {request.user}"
         ),
         fatlink_hash=fatlink.hash,
     )
@@ -351,7 +360,8 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     logger.info(
         (
             f'ESI FAT link "{fatlink_hash}" with name '
-            f'"{request.session["fatlink_form__name"]}" was created by {request.user}'
+            f'"{request.session["fatlink_form__name"]}"{fleet_type} '
+            f"was created by {request.user}"
         )
     )
 
