@@ -41,10 +41,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Wording in modal windows
 - Modal windows merged into one file which is loaded conditionally
 - Log messages improved
-
-### Removed
-
-- Manual FAT log, this has been replaced by a general log
+- Manual FAT log deactivated in favor of the new general log
 
 
 ## [1.10.0] - 2021-03-30
