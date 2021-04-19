@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `related_name` to foreign keys in models
 - Proper log model
 - Proper log messages to fatlink detail view and edit actions
-- Modal window when closing ESI fleets manually
+- Confirmation modal window when closing ESI fleets manually
 - Ability to re-open FAT links for a certain time after they have expired
   (`manage_afat` permissions are needed to re-open FAT links)
 - Logs view (`log_view` permissions are needed to view the logs)
