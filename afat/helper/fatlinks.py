@@ -2,7 +2,7 @@
 helper functions for fatlinks view
 """
 
-from typing import Any, Dict, List, Union
+from typing import Dict, List, Union
 
 from allianceauth.authentication.admin import User
 
@@ -11,7 +11,7 @@ from afat.models import AFatLink
 
 def get_esi_fleet_information_by_user(
     user: User,
-) -> Dict[str, Union[bool, List[Dict[str, Any]]]]:
+) -> Dict[str, Union[bool, List[Dict[int, AFatLink]]]]:
     """
     get ESI fleet information by a given FC (user)
     :param user:
@@ -27,7 +27,7 @@ def get_esi_fleet_information_by_user(
         has_open_esi_fleets = True
 
         for open_esi_fleet in open_esi_fleets:
-            open_esi_fleets_list.append({"fleet_commander": open_esi_fleet})
+            open_esi_fleets_list.append(open_esi_fleet)
 
     return {
         "has_open_esi_fleets": has_open_esi_fleets,

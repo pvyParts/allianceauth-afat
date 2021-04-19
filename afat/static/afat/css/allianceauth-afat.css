@@ -14,6 +14,43 @@
     }
 }
 
+/* esi fleet list (add fatlink view)
+------------------------------------------------------------------------------------- */
+@media all {
+    .allianceauth-afat .esi-fleet-list {
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding: 0;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item {
+        align-content: space-between;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        list-style: none;
+        padding: 0.5rem 1rem;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-image-with-text {
+        display: flex;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-image-with-text .eve-image {
+        margin: auto;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-character-portrait {
+        margin-right: 0.5rem;
+    }
+}
+
 /* tables
 ------------------------------------------------------------------------------------- */
 @media all {
