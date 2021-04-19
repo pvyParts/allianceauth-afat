@@ -13,9 +13,14 @@
             <p>
                 {% blocktranslate %}
                     This option will automatically register and track the entire fleet
-                    without member clicks. Use this if you <b>are</b> Fleet Boss,
-                    otherwise please use the clickable FAT link option.
+                    without fleet members having to click a link.<br><b>Use this if you
+                    are Fleet Boss</b>, otherwise please use the clickable FAT link
+                    option.
                 {% endblocktranslate %}
+            </p>
+
+            <p>
+                This link will be automatically tracked until the fleet is either closed ingame (meaning you leave the fleet) or you stop the tracking here.
             </p>
 
             {% include 'afat/partials/fatlinks/open_esi_fleets.html' %}
