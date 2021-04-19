@@ -41,7 +41,8 @@ $(document).ready(function () {
             },
 
             // hidden column
-            {data: 'via_esi'}
+            {data: 'via_esi'},
+            {data: 'hash'}
         ],
 
         columnDefs: [
@@ -54,7 +55,7 @@ $(document).ready(function () {
             },
             {
                 visible: false,
-                targets: [6]
+                targets: [6, 7]
             }
         ],
 

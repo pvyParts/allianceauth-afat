@@ -19,11 +19,23 @@ my Auth system. Nothing else ...
 
 ## Features and highlights
 
-- FATLink Creation and Population from ESI
-- Automatic tracing of participation on FAT links created via ESI
-- Fleet Type Classification (can be added in the Admin Menu)
-- Graphical Statistics Views
+- Automatic tracking of participation on FAT links created via ESI
+- Multiple ESI fleets (with your alts)
+- Manually end ESI tracking per fleet
+- Fleet type classification (can be added in the admin backend)
+- Ship type overview per FAT link
+- Graphical statistics views
 - Custom module name
+- Re-open FAT link if the FAT link has expired and is withing the defined grace time
+  (only for clickable FAT links)
+- Manually add pilots to FAT links, in case they missed to click the link
+- Log for the following actions:
+  - Create FAT link
+  - Change FAT link
+  - Remove FAT link
+  - Re-open FAT link
+  - Manually add pilot to FAT link
+  - Remove pilot from FAT link
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
@@ -197,6 +209,7 @@ To customize the module, the following settings are available.
 | add_fatlink | Can create FAT Links | Your regular FC or who ever should be able to add FAT links should have this permission |
 | stats_corporation_own | Can see own corporation statistics |  |
 | stats_corporation_other | Can see statistics of other corporations |  |
+| logs_view | Can view the modules logs |  |
 
 
 ## Changelog

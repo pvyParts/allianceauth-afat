@@ -4,7 +4,7 @@ url configuration
 
 from django.conf.urls import url
 
-from afat.views import dashboard, fatlinks, statistics
+from afat.views import dashboard, fatlinks, logs, statistics
 
 app_name: str = "afat"
 
@@ -119,6 +119,8 @@ urlpatterns = [
         fatlinks.delete_fat,
         name="fatlinks_delete_fat",
     ),
+    # log actions
+    url(r"^logs/$", logs.overview, name="logs_overview"),
     # ajax calls :: dashboard
     url(
         r"^ajax/dashboard/fatlinks/recent/$",
@@ -141,4 +143,6 @@ urlpatterns = [
         fatlinks.ajax_get_fats_by_fatlink,
         name="fatlinks_ajax_get_fats_by_fatlink",
     ),
+    # ajax calls :: logs
+    url(r"^ajax/logs/$", logs.ajax_get_logs, name="logs_ajax_get_logs"),
 ]

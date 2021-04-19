@@ -30,6 +30,12 @@
                         <a href="{% url 'afat:fatlinks_add_fatlink' %}">{% translate "Add FAT Link" %}</a>
                     </li>
                 {% endif %}
+
+                {% if perms.afat.log_view %}
+                    <li class="{% navactive request 'afat:logs_overview' %}">
+                        <a href="{% url 'afat:logs_overview' %}">{% translate "View Log" %}</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -69,6 +69,8 @@ class AaAfat(models.Model):
             ("stats_corporation_own", "Can see own corporation statistics"),
             # Can see the stats of all corps
             ("stats_corporation_other", "Can see statistics of other corporations"),
+            # Can view the modules log
+            ("log_view", "Can view the modules log"),
         )
         verbose_name = "Alliance Auth AFAT"
 

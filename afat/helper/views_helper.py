@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
-from afat.models import AFat, AFatLink
+from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 
 
 def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
@@ -54,16 +54,14 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
     # creator name
     creator_name = fatlink.creator.username
-    user_has_no_profile = False
 
     try:
         creator_profile = fatlink.creator.profile
-    except Exception:
-        user_has_no_profile = True
 
-    if user_has_no_profile is False:
         if creator_profile.main_character is not None:
             creator_name = creator_profile.main_character.character_name
+    except Exception:
+        pass
 
     # fleet time
     fleet_time = fatlink.afattime
@@ -182,6 +180,40 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
         "fleet_type": fleet_type,
         "via_esi": via_esi,
         "actions": actions,
+    }
+
+    return summary
+
+
+def convert_logs_to_dict(log: AFatLog) -> dict:
+    """
+    convert AFatLog to dict
+    :param log:
+    :type log:
+    :return:
+    :rtype:
+    """
+
+    log_time = log.log_time
+    log_time_timestamp = log_time.timestamp()
+
+    # user name
+    user_name = log.user.username
+
+    try:
+        user_profile = log.user.profile
+
+        if user_profile.main_character is not None:
+            user_name = user_profile.main_character.character_name
+    except Exception:
+        pass
+
+    summary = {
+        "log_time": {"time": log_time, "timestamp": log_time_timestamp},
+        "log_event": AFatLogEvent(log.log_event).label,
+        "user": user_name,
+        "fatlink": log.fatlink_hash,
+        "description": log.log_text,
     }
 
     return summary
