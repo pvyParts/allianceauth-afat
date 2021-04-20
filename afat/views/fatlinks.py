@@ -26,7 +26,7 @@ from afat.app_settings import (
 )
 from afat.forms import (  # ExtendFatLinkDuration,
     AFatClickFatForm,
-    AFatLinkForm,
+    AFatEsiFatForm,
     AFatManualFatForm,
     FatLinkEditForm,
 )
@@ -109,13 +109,18 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    link_types = AFatLinkType.objects.filter(is_enabled=True).order_by("name")
+    link_types_configured = False
+    link_types_count = AFatLinkType.objects.all().count()
+    if link_types_count > 0:
+        link_types_configured = True
 
     context = {
-        "link_types": link_types,
+        "link_types_configured": link_types_configured,
         "msg": msg,
         "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
         "esi_fleet": get_esi_fleet_information_by_user(request.user),
+        "esi_fatlink_form": AFatEsiFatForm(),
+        "manual_fatlink_form": AFatClickFatForm(),
     }
 
     logger.info(f"Add FAT link view called by {request.user}")
@@ -141,13 +146,8 @@ def create_clickable_fatlink(request: WSGIRequest):
             fatlink = AFatLink()
             fatlink.fleet = form.cleaned_data["name"]
 
-            if (
-                form.cleaned_data["type"] is not None
-                and form.cleaned_data["type"] != -1
-            ):
-                fatlink.link_type = AFatLinkType.objects.get(
-                    id=form.cleaned_data["type"]
-                )
+            if form.cleaned_data["type"] is not None:
+                fatlink.link_type = form.cleaned_data["type"]
 
             fatlink.creator = request.user
             fatlink.hash = fatlink_hash
@@ -331,13 +331,8 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     )
 
     # add fleet type if there is any
-    if (
-        request.session["fatlink_form__type"] is not None
-        and request.session["fatlink_form__type"] != -1
-    ):
-        fatlink.link_type = AFatLinkType.objects.get(
-            id=request.session["fatlink_form__type"]
-        )
+    if request.session["fatlink_form__type"] is not None:
+        fatlink.link_type_id = request.session["fatlink_form__type"]
 
     # save it
     fatlink.save()
@@ -389,13 +384,18 @@ def create_esi_fatlink(request: WSGIRequest):
     :return:
     """
 
-    fatlink_form = AFatLinkForm(request.POST)
+    fatlink_form = AFatEsiFatForm(request.POST)
 
     if fatlink_form.is_valid():
         fatlink_hash = get_random_string(length=30)
 
+        fatlink_type = None
+        if fatlink_form.cleaned_data["type_esi"]:
+            fatlink_type_from_form = fatlink_form.cleaned_data["type_esi"]
+            fatlink_type = fatlink_type_from_form.pk
+
         request.session["fatlink_form__name"] = fatlink_form.cleaned_data["name_esi"]
-        request.session["fatlink_form__type"] = fatlink_form.cleaned_data["type_esi"]
+        request.session["fatlink_form__type"] = fatlink_type
 
         return redirect(
             "afat:fatlinks_create_esi_fatlink_callback", fatlink_hash=fatlink_hash
@@ -714,11 +714,10 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             ):
                 link_can_be_reopened = True
     except ClickAFatDuration.DoesNotExist:
-        # ESI lnk
+        # ESI link
         link_ongoing = False
 
     context = {
-        "form": AFatLinkForm,
         "msg_code": msg_code,
         "message": message,
         "link": link,

@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Modal windows merged into one file which is loaded conditionally
 - Log messages improved
 - Manual FAT log deactivated in favor of the new general log
+- Forms for FAT link creation now properly using django forms
 
 
 ## [1.10.0] - 2021-03-30

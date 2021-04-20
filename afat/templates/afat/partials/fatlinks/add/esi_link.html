@@ -1,3 +1,4 @@
+{% load bootstrap %}
 {% load i18n %}
 {% load evelinks %}
 
@@ -28,33 +29,13 @@
             <form class="form" role="form" action="{% url 'afat:fatlinks_create_esi_fatlink' %}" method="POST">
                 {% csrf_token %}
 
-                <div class="form-group">
-                    <label style="width: 100%; font-weight: normal;">
-                        <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
-                            {% translate "Fleet Name" %}
-                        </span>
+                {{ esi_fatlink_form.name_esi|bootstrap }}
 
-                        <input type="text" class="form-control" name="name_esi" placeholder='{% translate "Enter fleet name" %}' required>
-                    </label>
-                </div>
-
-                {% if link_types %}
-                    <div class="form-group">
-                        <label style="width: 100%; font-weight: normal;">
-                            <span style="display: inline-block; margin-bottom: 5px; font-weight: 700;">
-                                {% translate "Fleet Type (optional)" %}
-                            </span>
-
-                            <select class="form-control" name="type_esi">
-                                <option value="-1">{% translate "Please select a fleet type" %}</option>
-
-                                {% for type in link_types %}
-                                    <option value="{{type.id}}">{{type.name}}</option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                    </div>
+                {% if link_types_configured %}
+                    {{ esi_fatlink_form.type_esi|bootstrap }}
                 {% endif %}
+
+                {% include 'afat/partials/form/required_field_hint.html' %}
 
                 <div class="form-group text-right">
                     <button class="btn btn-primary" type="submit" name="submit_click">
