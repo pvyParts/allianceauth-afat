@@ -38,7 +38,7 @@
                         data-toggle="modal"
                         data-target="#reopenFatLinkModal"
                         data-url="{% url 'afat:fatlinks_reopen_fatlink' link.hash %}"
-                        data-body-text="{% blocktranslate with reopen_duration=reopen_duration %}<p>Are you sure you want to re-open this FAT link for another {{ reopen_duration }} minutes?<br><em>(Be aware, this action will be logged)</em></p>{% endblocktranslate %}"
+                        data-body-text="{% blocktranslate with reopen_duration=reopen_duration %}<p>Are you sure you want to re-open this FAT link for another {{ reopen_duration }} minutes?<br>FAT links can be re-opened only once!<br><em>(Be aware, this action will be logged)</em></p>{% endblocktranslate %}"
                         data-confirm-text="{% translate 'Re-Open' %}"
                     >
                         {% translate 'Re-Open FAT link' %}

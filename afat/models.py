@@ -161,6 +161,11 @@ class AFatLink(models.Model):
 
     esi_fleet_id = models.BigIntegerField(blank=True, null=True)
 
+    reopened = models.BooleanField(
+        default=False,
+        help_text="Has this FAT link being re-opened?",
+    )
+
     class Meta:  # pylint: disable=too-few-public-methods
         """
         AFatLink :: Meta

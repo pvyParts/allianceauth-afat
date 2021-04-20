@@ -21,8 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Proper log messages to fatlink detail view and edit actions to differenciate if
   someone is only viewing or actually editing some details
 - Confirmation modal window when closing ESI fleets manually
-- Ability to re-open FAT links for a certain time after they have expired
-  (`manage_afat` permissions are needed to re-open FAT links)
+- Ability to re-open FAT links for a certain time after they have expired FAT links
+  can be re-opened only once though (`manage_afat` permissions are needed to re-open
+  FAT links)
 - Logs view (`log_view` permissions are needed to view the logs)
 
 ### Changed

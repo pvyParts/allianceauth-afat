@@ -709,7 +709,8 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             link_ongoing = False
 
             if (
-                get_time_delta(link_expires, now, "minutes")
+                link.reopened is False
+                and get_time_delta(link_expires, now, "minutes")
                 < AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME
             ):
                 link_can_be_reopened = True
@@ -932,38 +933,48 @@ def reopen_fatlink(request: WSGIRequest, fatlink_hash: str):
     try:
         fatlink_duration = ClickAFatDuration.objects.get(fleet__hash=fatlink_hash)
 
-        created_at = fatlink_duration.fleet.afattime
-        now = datetime.now()
+        if fatlink_duration.fleet.reopened is False:
+            created_at = fatlink_duration.fleet.afattime
+            now = datetime.now()
 
-        time_difference_in_minutes = get_time_delta(created_at, now, "minutes")
-        new_duration = time_difference_in_minutes + AFAT_DEFAULT_FATLINK_REOPEN_DURATION
-
-        fatlink_duration.duration = new_duration
-        fatlink_duration.save()
-
-        # writing DB log
-        write_log(
-            request=request,
-            # log_event=AFatLogEvent.REOPEN_FATLINK,
-            log_event=AFatLogEvent.REOPEN_FATLINK,
-            log_text=(
-                f"FAT link re-opened for a "
-                f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
-            ),
-            fatlink_hash=fatlink_duration.fleet.hash,
-        )
-
-        logger.info(
-            (
-                f'FAT link with hash "{fatlink_hash}" '
-                f"re-opened by {request.user} for a "
-                f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
+            time_difference_in_minutes = get_time_delta(created_at, now, "minutes")
+            new_duration = (
+                time_difference_in_minutes + AFAT_DEFAULT_FATLINK_REOPEN_DURATION
             )
-        )
 
-        request.session[
-            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-        ] = 5
+            fatlink_duration.duration = new_duration
+            fatlink_duration.save()
+
+            fatlink_duration.fleet.reopened = True
+            fatlink_duration.fleet.save()
+
+            # writing DB log
+            write_log(
+                request=request,
+                # log_event=AFatLogEvent.REOPEN_FATLINK,
+                log_event=AFatLogEvent.REOPEN_FATLINK,
+                log_text=(
+                    f"FAT link re-opened for a "
+                    f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
+                ),
+                fatlink_hash=fatlink_duration.fleet.hash,
+            )
+
+            logger.info(
+                (
+                    f'FAT link with hash "{fatlink_hash}" '
+                    f"re-opened by {request.user} for a "
+                    f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
+                )
+            )
+
+            request.session[
+                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+            ] = 5
+        else:
+            request.session[
+                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
+            ] = 7
     except ClickAFatDuration.DoesNotExist:
         request.session[
             "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
