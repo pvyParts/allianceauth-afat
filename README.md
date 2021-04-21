@@ -12,11 +12,6 @@
 An Improved FAT/PAP System for
 [Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
 
-AFAT is a privately maintained whitelabel of ImicusFAT. The only reason AFAT exists
-is because I don't like having an alliance internal meme as a name for a module in
-my Auth system. Nothing else ...
-
-
 ## Features and highlights
 
 - Automatic tracking of participation on FAT links created via ESI
@@ -29,7 +24,7 @@ my Auth system. Nothing else ...
 - Re-open FAT link if the FAT link has expired and is withing the defined grace time
   (only for clickable FAT links)
 - Manually add pilots to FAT links, in case they missed to click the link
-- Log for the following actions:
+- Log for the following actions (Logs are kept for a certain time, 60 days per default):
   - Create FAT link
   - Change FAT link
   - Remove FAT link
@@ -61,13 +56,14 @@ information see below.
 
 ### Important
 This app is a plugin for Alliance Auth. If you don't have Alliance Auth running already,
-please install it first before proceeding.
-(see the official [AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html) for details)
+please install it first before proceeding. (see the official
+[AA installation guide](https://allianceauth.readthedocs.io/en/latest/installation/allianceauth.html)
+for details)
 
-**For users migrating from one of the other FAT systems,
-please read the specific instructions FIRST.**
+**For users migrating from one of the other FAT systems, please read the specific
+instructions FIRST.**
 
-### Step 1 - Install app
+### Step 1 - Install the app
 
 Make sure you are in the virtual environment (venv) of your Alliance Auth installation.
 Then install the latest version:
@@ -78,10 +74,10 @@ pip install allianceauth-afat
 
 ### Step 2 - Update your AA settings
 
-Configure your AA settings (`local.py`) as follows:
+Configure your AA settings in your `local.py` as follows:
 
 - Add `'afat',` to `INSTALLED_APPS`
-- Add the scheduled task so ESI links will be updated automagically
+- Add the scheduled tasks
 
 ```python
 # AFAT - https://github.com/ppfeufer/allianceauth-afat
@@ -122,18 +118,16 @@ python manage.py migrate
 
 Finally restart your supervisor services for AA
 
+It is possible that some versions need some more changes. Always read the
+[release notes](https://github.com/ppfeufer/allianceauth-afat/releases) to find out
+more.
+
 
 ## Data Migration
 
 Right after the **initial** installation and running migrations,
 you can import the data from Alliance Auth's native FAT system,
 from bFAT or from ImicusFAT if you have used one of these until now.
-
-**!!IMPORTANT!!**
-
-Only do this once and ONLY BEFORE you are using AFAT.
-A later migration is **not** possible.
-
 
 ### Import from native FAT
 
@@ -153,8 +147,15 @@ python myauth/manage.py afat_import_from_bfat
 
 ### Import from ImicusFAT
 
-First, you need to remove all "deleted" FAT links and FATs. To do so, login to your
-mysql database and run the following commands:
+First, you need to remove all "deleted" FAT links and FATs.
+
+This step needs to be done, because we cannot import entries marked as "deleted" due
+to the way Django is handling this, and some other entries might rely on them, so we
+need to meke sure the "deleted" data doesn't cause any trouble. You don't need to
+worry, you are not losing any data that is/was actively used besides what is already
+marked as "deleted" and ImicusFAT is no longer working with it anyways and never did.
+
+To do so, login to your mysql database and run the following commands:
 
 ```mysql
 # de-activate foreign key checks
@@ -180,11 +181,6 @@ delete from imicusfat_ifatlink where id in(id_list);
 # re-activate foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
 ```
-
-This step needs to be done, because we cannot import entries markes as "deleted",
-but some other entries might rely on them, so we need to remove those. You don't
-need to worry, you are not losing any data besides what is already "deleted" and
-ImicusFAT is no longer working with them anyways.
 
 Once done, start the actual import script like this:
 
@@ -233,7 +229,8 @@ Please make sure to read the [contribution guidelines](https://github.com/ppfeuf
 
 
 ## Credits
-• AFAT • Privately maintained by @ppfeufer is a whitelabel of
+
+AFAT is maintained by @ppfeufer is based on
 [ImicusFAT](https://gitlab.com/evictus.iou/allianceauth-imicusfat) maintained
-by @exiom with @Aproia and @ppfeufer • Based on
-[allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch •
+by @exiom with @Aproia and @ppfeufer (no longer) which is based on
+[allianceauth-bfat](https://gitlab.com/colcrunch/allianceauth-bfat) by @colcrunch

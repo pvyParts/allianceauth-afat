@@ -50,6 +50,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Old code for flat lists. Not used anymore and will not be used ever again
 
+### ⚠️ Update Instructions ⚠️
+
+---
+
+#### If you are updating from one of the 2.0.0-alpha versions
+
+If you installed one of the alpha versions, make sure to reset your migrations first!
+Migrations have been reset during the alpha versions a couple of times.
+
+To do so, run:
+```shell
+python manage.py migrate afat 0017
+```
+
+Once done, proceed with the update as lined out below.
+
+---
+
+This release introduces a new periodic task, make sure to add it to your `local.py`,
+besides that, it is the usual steps to update ...
+
+Download and install the new version
+```shell
+pip install -U allianceauth-afat
+```
+
+Add the new task to your `local.py`
+```python
+CELERYBEAT_SCHEDULE["afat_logrotate"] = {
+    "task": "afat.tasks.logrotate",
+    "schedule": crontab(minute="0", hour="1"),
+}
+```
+
+Run static collection and migrations
+```shell
+python manage.py collectstatic
+python manage.py migrate
+```
+
+Restart your supervisor.
+
+Finally migrate the Manual FAT log to the new logging table
+```shell
+python manage.py afat_migrate_manual_fat_log
+```
+
 
 ## [1.10.0] - 2021-03-30
 
