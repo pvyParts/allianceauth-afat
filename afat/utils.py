@@ -9,12 +9,27 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import lazy
 from django.utils.html import format_html
 
-from allianceauth.eveonline.models import EveAllianceInfo
+from allianceauth.eveonline.models import (
+    EveAllianceInfo,
+    EveCharacter,
+    EveCorporationInfo,
+)
+
+from afat.providers import esi
 
 # Format for output of datetime for this app
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 
 format_html_lazy = lazy(format_html, str)
+
+
+class NoDataError(Exception):
+    """
+    NoDataError
+    """
+
+    def __init__(self, msg):
+        Exception.__init__(self, msg)
 
 
 class LoggerAddTag(logging.LoggerAdapter):
@@ -105,6 +120,59 @@ def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text:
     afat_log.log_text = log_text
     afat_log.fatlink_hash = fatlink_hash
     afat_log.save()
+
+
+def get_or_create_char(name: str = None, character_id: int = None):
+    """
+    This function takes a name or id of a character and checks
+    to see if the character already exists.
+    If the character does not already exist, it will create the
+    character object, and if needed the corp/alliance objects as well.
+    :param name: str (optional)
+    :param character_id: int (optional)
+    :returns character: EveCharacter
+    """
+
+    if name:
+        # If a name is passed we have to check it on ESI
+        result = esi.client.Search.get_search(
+            categories=["character"], search=name, strict=True
+        ).result()
+
+        if "character" not in result:
+            return None
+
+        character_id = result["character"][0]
+        eve_character = EveCharacter.objects.filter(character_id=character_id)
+    elif character_id:
+        # If an ID is passed we can just check the db for it.
+        eve_character = EveCharacter.objects.filter(character_id=character_id)
+    elif not name and not character_id:
+        raise NoDataError("No character name or character id provided.")
+
+    if len(eve_character) == 0:
+        # Create Character
+        character = EveCharacter.objects.create_character(character_id)
+        character = EveCharacter.objects.get(pk=character.pk)
+
+        # Make corp and alliance info objects for future sane
+        if character.alliance_id is not None:
+            test = EveAllianceInfo.objects.filter(alliance_id=character.alliance_id)
+
+            if len(test) == 0:
+                EveAllianceInfo.objects.create_alliance(character.alliance_id)
+        else:
+            test = EveCorporationInfo.objects.filter(
+                corporation_id=character.corporation_id
+            )
+
+            if len(test) == 0:
+                EveCorporationInfo.objects.create_corporation(character.corporation_id)
+
+    else:
+        character = eve_character[0]
+
+    return character
 
 
 def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:

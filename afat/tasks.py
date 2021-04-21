@@ -12,11 +12,6 @@ from celery import shared_task
 
 from django.core.cache import cache
 
-from allianceauth.eveonline.models import (
-    EveAllianceInfo,
-    EveCharacter,
-    EveCorporationInfo,
-)
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.services.tasks import QueueOnce
 from esi.models import Token
@@ -24,7 +19,7 @@ from esi.models import Token
 from afat import __title__
 from afat.models import AFat, AFatLink
 from afat.providers import esi
-from afat.utils import LoggerAddTag
+from afat.utils import LoggerAddTag, get_or_create_char
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -68,70 +63,6 @@ TASK_ESI_KWARGS = {
 }
 
 
-class NoDataError(Exception):
-    """
-    NoDataError
-    """
-
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
-
-
-def get_or_create_char(name: str = None, character_id: int = None):
-    """
-    This function takes a name or id of a character and checks
-    to see if the character already exists.
-    If the character does not already exist, it will create the
-    character object, and if needed the corp/alliance objects as well.
-    :param name: str (optional)
-    :param character_id: int (optional)
-    :returns character: EveCharacter
-    """
-
-    if name:
-        # If a name is passed we have to check it on ESI
-        result = esi.client.Search.get_search(
-            categories=["character"], search=name, strict=True
-        ).result()
-
-        if "character" not in result:
-            return None
-
-        character_id = result["character"][0]
-        eve_character = EveCharacter.objects.filter(character_id=character_id)
-    elif character_id:
-        # If an ID is passed we can just check the db for it.
-        eve_character = EveCharacter.objects.filter(character_id=character_id)
-    elif not name and not character_id:
-        raise NoDataError("No character name or character id provided.")
-
-    if len(eve_character) == 0:
-        # Create Character
-        character = EveCharacter.objects.create_character(character_id)
-        character = EveCharacter.objects.get(pk=character.pk)
-
-        # Make corp and alliance info objects for future sane
-        if character.alliance_id is not None:
-            test = EveAllianceInfo.objects.filter(alliance_id=character.alliance_id)
-
-            if len(test) == 0:
-                EveAllianceInfo.objects.create_alliance(character.alliance_id)
-        else:
-            test = EveCorporationInfo.objects.filter(
-                corporation_id=character.corporation_id
-            )
-
-            if len(test) == 0:
-                EveCorporationInfo.objects.create_corporation(character.corporation_id)
-
-    else:
-        character = eve_character[0]
-
-    logger.info("Processing information for {character}".format(character=character))
-
-    return character
-
-
 @shared_task
 def process_fats(data_list, data_source, fatlink_hash):
     """
@@ -144,43 +75,47 @@ def process_fats(data_list, data_source, fatlink_hash):
     :return:
     """
 
-    logger.info(f'Processing FAT "{fatlink_hash}"')
-
     if data_source == "esi":
+        logger.info(
+            f'Valid fleet for FAT link hash "{fatlink_hash}" found '
+            f"registered via ESI, checking for new pilots"
+        )
+
         for char in data_list:
             process_character.delay(char, fatlink_hash)
 
 
-@shared_task
-def process_line(line, type_, fatlink_hash):
-    """
-    process_line
-    processing every single character on its own
-    :param line:
-    :param type_:
-    :param fatlink_hash:
-    :return:
-    """
-
-    link = AFatLink.objects.get(hash=fatlink_hash)
-
-    if type_ == "comp":
-        character = get_or_create_char(name=line[0].strip(" "))
-        system = line[1].strip(" (Docked)")
-        shiptype = line[2]
-
-        if character is not None:
-            AFat(
-                afatlink_id=link.pk,
-                character=character,
-                system=system,
-                shiptype=shiptype,
-            ).save()
-    else:
-        character = get_or_create_char(name=line.strip(" "))
-
-        if character is not None:
-            AFat(afatlink_id=link.pk, character=character).save()
+# flat list
+# @shared_task
+# def process_line(line, type_, fatlink_hash):
+#     """
+#     process_line
+#     processing every single character on its own
+#     :param line:
+#     :param type_:
+#     :param fatlink_hash:
+#     :return:
+#     """
+#
+#     link = AFatLink.objects.get(hash=fatlink_hash)
+#
+#     if type_ == "comp":
+#         character = get_or_create_char(name=line[0].strip(" "))
+#         system = line[1].strip(" (Docked)")
+#         shiptype = line[2]
+#
+#         if character is not None:
+#             AFat(
+#                 afatlink_id=link.pk,
+#                 character=character,
+#                 system=system,
+#                 shiptype=shiptype,
+#             ).save()
+#     else:
+#         character = get_or_create_char(name=line.strip(" "))
+#
+#         if character is not None:
+#             AFat(afatlink_id=link.pk, character=character).save()
 
 
 @shared_task
@@ -227,12 +162,6 @@ def process_character(char, fatlink_hash):
             system=solar_system_name,
             shiptype=ship_name,
         ).save()
-    else:
-        logger.info(
-            '{character} is already registered with FAT link "{fatlink_hash}"'.format(
-                character=character, fatlink_hash=fatlink_hash
-            )
-        )
 
 
 def close_esi_fleet(fatlink: AFatLink, reason: str) -> None:
@@ -268,8 +197,14 @@ def esi_fatlinks_error_handling(
         error_count += 1
 
         logger.info(
-            '"{logger_message}" Error Count: {error_count}.'.format(
-                logger_message=logger_message, error_count=error_count
+            (
+                'FAT link "{falink_hash}" Error: "{logger_message}" '
+                "({error_count} of {max_count})."
+            ).format(
+                falink_hash=fatlink.hash,
+                logger_message=logger_message,
+                error_count=error_count,
+                max_count=CACHE_MAX_ERROR_COUNT,
             )
         )
 
@@ -280,6 +215,26 @@ def esi_fatlinks_error_handling(
         )
     else:
         close_esi_fleet(fatlink=fatlink, reason=logger_message)
+
+
+def initialize_caches(fatlink: AFatLink) -> None:
+    """
+    initializing caches
+    :param fatlink:
+    :type fatlink:
+    """
+
+    if cache.get(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash, "0", 75)
 
 
 @shared_task(**{**TASK_ESI_KWARGS}, **{"base": QueueOnce})
@@ -296,21 +251,9 @@ def update_esi_fatlinks() -> None:
         )
 
         for fatlink in esi_fatlinks:
-            if cache.get(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash, "0", 75)
+            initialize_caches(fatlink=fatlink)
 
-            if cache.get(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash, "0", 75)
-
-            if cache.get(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash, "0", 75)
-
-            if cache.get(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash, "0", 75)
-
-            logger.info(
-                f'Processing information for ESI FAT with hash "{fatlink.hash}"'
-            )
+            logger.info(f'Processing ESI FAT link with hash "{fatlink.hash}"')
 
             if fatlink.creator.profile.main_character is not None:
                 # Check if there is a fleet

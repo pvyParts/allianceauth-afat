@@ -8,12 +8,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
-from allianceauth.services.hooks import get_extension_logger
-
-from afat import __title__
-from afat.utils import LoggerAddTag
-
-logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
 # Create your models here.
