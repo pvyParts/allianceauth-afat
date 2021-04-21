@@ -707,22 +707,6 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
         )
 
-    # Flatlist / Raw Data Tab (deactivated as of 2020-12-26)
-    # fats = AFat.objects.filter(afatlink=link)
-    # flatlist = None
-    # if len(fats) > 0:
-    #     flatlist = []
-    #
-    #     for fat in fats:
-    #         fatinfo = [
-    #             fat.character.character_name,
-    #             str(fat.system),
-    #             str(fat.shiptype)
-    #         ]
-    #         flatlist.append("\t".join(fatinfo))
-    #
-    #     flatlist = "\r\n".join(flatlist)
-
     # let's see if the link is still valid or has expired already and can be re-opened
     link_ongoing = True
     link_can_be_reopened = False

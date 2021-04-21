@@ -89,39 +89,6 @@ def process_fats(data_list, data_source, fatlink_hash):
             process_character.delay(char, fatlink_hash)
 
 
-# flat list
-# @shared_task
-# def process_line(line, type_, fatlink_hash):
-#     """
-#     process_line
-#     processing every single character on its own
-#     :param line:
-#     :param type_:
-#     :param fatlink_hash:
-#     :return:
-#     """
-#
-#     link = AFatLink.objects.get(hash=fatlink_hash)
-#
-#     if type_ == "comp":
-#         character = get_or_create_character(name=line[0].strip(" "))
-#         system = line[1].strip(" (Docked)")
-#         shiptype = line[2]
-#
-#         if character is not None:
-#             AFat(
-#                 afatlink_id=link.pk,
-#                 character=character,
-#                 system=system,
-#                 shiptype=shiptype,
-#             ).save()
-#     else:
-#         character = get_or_create_character(name=line.strip(" "))
-#
-#         if character is not None:
-#             AFat(afatlink_id=link.pk, character=character).save()
-
-
 @shared_task
 def process_character(char, fatlink_hash):
     """

@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Manual FAT log deactivated in favor of the new general log
 - Forms for FAT link creation now properly using django forms
 
+### Removed
+
+- Old code for flat lists. Not used anymore and will not be used ever again
+
 
 ## [1.10.0] - 2021-03-30
 
