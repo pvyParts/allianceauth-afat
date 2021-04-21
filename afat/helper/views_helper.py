@@ -19,8 +19,9 @@ from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     """
     converts a AFatLink object into a dictionary
+    :param request:
+    :type request:
     :param fatlink:
-    :param user:
     :return:
     """
 
@@ -53,13 +54,13 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         fatlink_type = fatlink.link_type.name
 
     # creator name
-    creator_name = fatlink.creator.username
+    creator_main_character = fatlink.creator.username
 
     try:
         creator_profile = fatlink.creator.profile
 
         if creator_profile.main_character is not None:
-            creator_name = creator_profile.main_character.character_name
+            creator_main_character = creator_profile.main_character.character_name
     except Exception:
         pass
 
@@ -101,7 +102,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     summary = {
         "pk": fatlink.pk,
         "fleet_name": fatlink_fleet + esi_fleet_marker,
-        "creator_name": creator_name,
+        "creator_name": creator_main_character,
         "fleet_type": fatlink_type,
         "fleet_time": {"time": fleet_time, "timestamp": fleet_time_timestamp},
         "fats_number": fats_number,
@@ -119,8 +120,8 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     """
     converts a afat object into a dictionary
-    :param fatlink:
-    :param user:
+    :param request:
+    :param fat:
     :return:
     """
 
@@ -198,34 +199,23 @@ def convert_logs_to_dict(log: AFatLog) -> dict:
     log_time_timestamp = log_time.timestamp()
 
     # user name
-    user_name = log.user.username
+    user_main_character = log.user.username
 
     try:
         user_profile = log.user.profile
 
         if user_profile.main_character is not None:
-            user_name = user_profile.main_character.character_name
+            user_main_character = user_profile.main_character.character_name
     except Exception:
         pass
 
     summary = {
         "log_time": {"time": log_time, "timestamp": log_time_timestamp},
         "log_event": AFatLogEvent(log.log_event).label,
-        "user": user_name,
+        "user": user_main_character,
         "fatlink": log.fatlink_hash,
         "description": log.log_text,
     }
-
-    return summary
-
-
-def convert_evecharacter_to_dict(evecharacter: EveCharacter) -> dict:
-    """
-    converts an EveCharacter object into a dictionary
-    :param fatlink:
-    """
-
-    summary = {"character_id": "", "character_name": ""}
 
     return summary
 
