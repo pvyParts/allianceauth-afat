@@ -89,6 +89,11 @@ CELERYBEAT_SCHEDULE["afat_update_esi_fatlinks"] = {
     "task": "afat.tasks.update_esi_fatlinks",
     "schedule": crontab(minute="*/1"),
 }
+
+CELERYBEAT_SCHEDULE["afat_logrotate"] = {
+    "task": "afat.tasks.logrotate",
+    "schedule": crontab(minute="0", hour="1"),
+}
 ```
 
 ### Step 3 - Finalize the installation
@@ -198,6 +203,7 @@ To customize the module, the following settings are available.
 | AFAT_DEFAULT_FATLINK_EXPIRY_TIME | Default expiry time for clickable FAT links in Minutes | 60                      |
 | AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME | Time in minutes a FAT link can be re-opened after it has expired | 60                      |
 | AFAT_DEFAULT_FATLINK_REOPEN_DURATION | Time in minutes a FAT link is re-opened | 60                      |
+| AFAT_DEFAULT_LOG_DURATION | Time in days before log entries are being removed from the DB | 60                      |
 
 
 ## Permissions

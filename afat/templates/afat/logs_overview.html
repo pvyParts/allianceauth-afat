@@ -9,7 +9,13 @@
     <br>
     {% include "afat/partials/menu.html" %}
 
-    <h2>{% translate "All FAT Links" %}</h2>
+    <h2>{% translate "Logs" %}</h2>
+
+    <p class="text-muted">
+        {% blocktranslate %}
+            Logs are only kept for {{ log_duration }} days. Logs older than that are removed automatically.
+        {% endblocktranslate %}
+    </p>
 {% endblock %}
 
 {% block afat_body %}

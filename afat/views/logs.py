@@ -10,6 +10,7 @@ from django.shortcuts import render
 from allianceauth.services.hooks import get_extension_logger
 
 from afat import __title__
+from afat.app_settings import AFAT_DEFAULT_LOG_DURATION
 from afat.helper.views_helper import convert_logs_to_dict
 from afat.models import AFatLog
 from afat.utils import LoggerAddTag
@@ -29,7 +30,9 @@ def overview(request: WSGIRequest) -> HttpResponse:
     """
     logger.info(f"Log view called by {request.user}")
 
-    return render(request, "afat/logs_overview.html")
+    context = {"log_duration": AFAT_DEFAULT_LOG_DURATION}
+
+    return render(request, "afat/logs_overview.html", context=context)
 
 
 @login_required()

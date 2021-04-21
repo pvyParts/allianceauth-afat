@@ -2,6 +2,8 @@
 tasks
 """
 
+from datetime import timedelta
+
 from bravado.exception import (
     HTTPBadGateway,
     HTTPGatewayTimeout,
@@ -11,13 +13,15 @@ from bravado.exception import (
 from celery import shared_task
 
 from django.core.cache import cache
+from django.utils import timezone
 
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.services.tasks import QueueOnce
 from esi.models import Token
 
 from afat import __title__
-from afat.models import AFat, AFatLink
+from afat.app_settings import AFAT_DEFAULT_LOG_DURATION
+from afat.models import AFat, AFatLink, AFatLog
 from afat.providers import esi
 from afat.utils import LoggerAddTag, get_or_create_character
 
@@ -307,3 +311,64 @@ def update_esi_fatlinks() -> None:
 
     except AFatLink.DoesNotExist:
         pass
+
+
+@shared_task
+def logrotate():
+    """
+    remove logs older than AFAT_DEFAULT_LOG_DURATION
+    :return:
+    :rtype:
+    """
+
+    logger.info(f"Cleaning up logs older than {AFAT_DEFAULT_LOG_DURATION} days")
+
+    AFatLog.objects.filter(
+        log_time__lte=timezone.now() - timedelta(days=AFAT_DEFAULT_LOG_DURATION)
+    ).delete()
+
+
+@shared_task
+def housekeeping() -> None:
+    """
+    housekeeping task
+
+    This task is triggered every minute and decides what needs to be run ...
+    :return:
+    :rtype:
+    """
+
+    logger.debug("Running housekeeping")
+
+    time_now = timezone.now()
+
+    seconds_per_minute = 60
+    # seconds_per_hour = 3600
+    seconds_per_day = 86400
+
+    cache_key_every_minute = "afat_task_every_minute_last_run"
+    # cache_key_every_hour = "afat_task_every_hour_last_run"
+    cache_key_every_day = "afat_task_every_day_last_run"
+
+    logger.debug(f"Every minute tasks last run: {cache.get(cache_key_every_minute)}")
+    logger.debug(f"Daily tasks last run: {cache.get(cache_key_every_day)}")
+
+    # run every minute
+    if cache.get(cache_key_every_minute) is None or (
+        time_now - cache.get(cache_key_every_minute)
+    ).total_seconds() >= (seconds_per_minute - 1):
+        logger.debug("Firing tasks that need to run every minute")
+
+        update_esi_fatlinks()
+
+        cache.set(cache_key_every_minute, time_now)
+
+    # run every day
+    if cache.get(cache_key_every_day) is None or (
+        time_now - cache.get(cache_key_every_day)
+    ).total_seconds() >= (seconds_per_day - 1):
+        logger.debug("Firing tasks that need to run daily")
+
+        logrotate()
+
+        cache.set(cache_key_every_day, time_now)
