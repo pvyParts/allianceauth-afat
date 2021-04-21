@@ -32,11 +32,15 @@ def overview(request: WSGIRequest) -> HttpResponse:
     return render(request, "afat/logs_overview.html")
 
 
+@login_required()
+@permission_required("afat.log_view")
 def ajax_get_logs(request: WSGIRequest) -> JsonResponse:
     """
     ajax call :: get all log entries
     :param request:
     :type request:
+    :return:
+    :rtype:
     """
 
     logs = AFatLog.objects.all()

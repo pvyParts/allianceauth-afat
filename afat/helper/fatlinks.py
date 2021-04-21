@@ -15,6 +15,9 @@ def get_esi_fleet_information_by_user(
     """
     get ESI fleet information by a given FC (user)
     :param user:
+    :type user:
+    :return:
+    :rtype:
     """
 
     has_open_esi_fleets = False

@@ -10,9 +10,13 @@ from allianceauth.fleetactivitytracking.models import Fat, Fatlink
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -20,8 +24,9 @@ def get_input(text):
 
 def aa_fat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if native fat is installed
+    :return:
+    :rtype:
     """
 
     return "allianceauth.fleetactivitytracking" in settings.INSTALLED_APPS
@@ -35,6 +40,12 @@ class Command(BaseCommand):
     help = "Imports FAT data from AA FAT module"
 
     def _import_from_aa_fat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # check if AA FAT is active
         if aa_fat_installed():
             self.stdout.write(
@@ -128,7 +139,11 @@ class Command(BaseCommand):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         self.stdout.write(

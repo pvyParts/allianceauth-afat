@@ -2,9 +2,6 @@
 our app setting
 """
 
-import re
-
-from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,19 +26,3 @@ AFAT_APP_NAME = clean_setting(
 )
 
 AFAT_BASE_URL = slugify(AFAT_APP_NAME, allow_unicode=True)
-
-
-def get_site_url():  # regex sso url
-    """
-    get the site url
-    :return: string
-    """
-
-    regex = r"^(.+)\/s.+"
-    matches = re.finditer(regex, settings.ESI_SSO_CALLBACK_URL, re.MULTILINE)
-    url = "http://"
-
-    for match in matches:
-        url = match.groups()[0]  # first match
-
-    return url

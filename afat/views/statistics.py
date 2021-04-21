@@ -30,10 +30,12 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     statistics main view
-    :type year: string
     :param request:
+    :type request:
     :param year:
+    :type year:
     :return:
+    :rtype:
     """
 
     if year is None:
@@ -129,18 +131,25 @@ def character(
     """
     character statistics view
     :param request:
+    :type request:
     :param charid:
-    :param month:
+    :type charid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
-    character = EveCharacter.objects.get(character_id=charid)
+    eve_character = EveCharacter.objects.get(character_id=charid)
     valid = [
         char.character for char in CharacterOwnership.objects.filter(user=request.user)
     ]
 
-    if character not in valid and not request.user.has_perm("afat.stats_char_other"):
+    if eve_character not in valid and not request.user.has_perm(
+        "afat.stats_char_other"
+    ):
         request.session["msg"] = (
             "warning",
             "You do not have permission to view statistics for this character.",
@@ -194,7 +203,7 @@ def character(
     ]
 
     context = {
-        "character": character,
+        "character": eve_character,
         "month": month,
         "month_current": datetime.now().month,
         "month_prev": int(month) - 1,
@@ -210,7 +219,7 @@ def character(
 
     logger.info(
         "Character statistics for {character} ({month} {year}) called by {user}".format(
-            character=character,
+            character=eve_character,
             month=calendar.month_name[int(month)],
             year=year,
             user=request.user,
@@ -228,10 +237,15 @@ def corporation(
     """
     corp statistics view
     :param request:
+    :type request:
     :param corpid:
-    :param month:
+    :type corpid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
     if not year:
@@ -398,10 +412,15 @@ def alliance(
     """
     alliance statistics view
     :param request:
+    :type request:
     :param allianceid:
-    :param month:
+    :type allianceid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
     if not year:

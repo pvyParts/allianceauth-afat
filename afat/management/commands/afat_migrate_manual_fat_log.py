@@ -7,9 +7,13 @@ from django.core.management.base import BaseCommand
 from afat.models import AFatLog, AFatLogEvent, ManualAFat
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -23,6 +27,12 @@ class Command(BaseCommand):
     help = "Migrating the old Manual FAT log into the new log table"
 
     def _migrate_manual_fat_log(self) -> None:
+        """
+        start the migration
+        :return:
+        :rtype:
+        """
+
         manual_fat_logs = ManualAFat.objects.all()
 
         if manual_fat_logs.count() > 0:
@@ -47,7 +57,11 @@ class Command(BaseCommand):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         self.stdout.write(

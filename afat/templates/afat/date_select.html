@@ -42,7 +42,7 @@
                 <tbody>
                     {% for month in months %}
                         <tr>
-                            <td>{{ month.0|month }}</td>
+                            <td>{{ month.0|month_name }}</td>
                             <td>{{ month.1 }}</td>
                             {% if type == 0 %}
                                 <td>{{ month.2 }}</td>

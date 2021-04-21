@@ -10,11 +10,11 @@ from django.utils.translation import gettext as _
 from allianceauth.eveonline.models import EveCharacter
 
 
-# Create your models here.
-def get_sentinel_user():
+def get_sentinel_user() -> User:
     """
     get user or create one
     :return:
+    :rtype:
     """
 
     return User.objects.get_or_create(username="deleted")[0]
@@ -97,7 +97,6 @@ class AFatLinkType(models.Model):
         verbose_name_plural = "FAT Link Fleet Types"
 
     def __str__(self):
-        # return "{} - {}".format(self.id, self.name)
         return self.name
 
 
@@ -178,6 +177,7 @@ class AFatLink(models.Model):
         """
         returns the number of registered FATs
         :return:
+        :rtype:
         """
 
         return AFat.objects.filter(afatlink=self).count()

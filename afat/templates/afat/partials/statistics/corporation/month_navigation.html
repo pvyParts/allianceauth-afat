@@ -8,7 +8,7 @@
         <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_corporation' corp.corporation_id year month_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
     {% endif %}
 
-    <span class="afat-label-statistics">{{ month|month }} {{ year }}</span>
+    <span class="afat-label-statistics">{{ month|month_name }} {{ year }}</span>
 
     {% if month_next > month_current and year_next > year_current %}
     {% elif month == '12' %}

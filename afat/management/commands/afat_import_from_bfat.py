@@ -13,9 +13,13 @@ from django.core.management.base import BaseCommand
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent, ClickAFatDuration
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -23,8 +27,9 @@ def get_input(text):
 
 def bfat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if bfat is installed
+    :return:
+    :rtype:
     """
 
     return "bfat" in settings.INSTALLED_APPS
@@ -38,6 +43,12 @@ class Command(BaseCommand):
     help = "Imports FAT data from ImicusFAT module"
 
     def _import_from_imicusfat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # check if AA FAT is active
         if bfat_installed():
             self.stdout.write(
@@ -173,7 +184,11 @@ class Command(BaseCommand):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         self.stdout.write(

@@ -14,6 +14,7 @@ from django.utils.translation import gettext as _
 from allianceauth.eveonline.models import EveCharacter
 
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
+from afat.utils import get_main_character_from_user
 
 
 def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
@@ -22,7 +23,9 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     :param request:
     :type request:
     :param fatlink:
+    :type fatlink:
     :return:
+    :rtype:
     """
 
     # fleet name
@@ -35,9 +38,10 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
     via_esi = "No"
     esi_fleet_marker = ""
 
+    # check for ESI link
     if fatlink.is_esilink:
         via_esi = "Yes"
-        esi_fleet_marker_classes = "label label-success afat-label afat-label-via-esi"
+        esi_fleet_marker_classes = "label label-default afat-label afat-label-via-esi"
 
         if fatlink.is_registered_on_esi:
             esi_fleet_marker_classes += " afat-label-active-esi-fleet"
@@ -54,15 +58,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
         fatlink_type = fatlink.link_type.name
 
     # creator name
-    creator_main_character = fatlink.creator.username
-
-    try:
-        creator_profile = fatlink.creator.profile
-
-        if creator_profile.main_character is not None:
-            creator_main_character = creator_profile.main_character.character_name
-    except Exception:
-        pass
+    creator_main_character = get_main_character_from_user(user=fatlink.creator)
 
     # fleet time
     fleet_time = fatlink.afattime
@@ -95,7 +91,7 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
             f'data-target="#deleteFatLinkModal" data-url="{button_delete_url}" '
             f'data-confirm-text="{button_delete_text}"'
             f'data-body-text="{modal_body_text}">'
-            f'<span class="glyphicon glyphicon-trash">'
+            '<span class="glyphicon glyphicon-trash">'
             "</span></a>"
         )
 
@@ -121,8 +117,11 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     """
     converts a afat object into a dictionary
     :param request:
+    :type request:
     :param fat:
+    :type fat:
     :return:
+    :rtype:
     """
 
     # fleet type
@@ -136,7 +135,7 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
 
     if fat.afatlink.is_esilink:
         via_esi = "Yes"
-        esi_fleet_marker_classes = "label label-success afat-label afat-label-via-esi"
+        esi_fleet_marker_classes = "label label-default afat-label afat-label-via-esi"
 
         if fat.afatlink.is_registered_on_esi:
             esi_fleet_marker_classes += " afat-label-active-esi-fleet"
@@ -199,15 +198,7 @@ def convert_logs_to_dict(log: AFatLog) -> dict:
     log_time_timestamp = log_time.timestamp()
 
     # user name
-    user_main_character = log.user.username
-
-    try:
-        user_profile = log.user.profile
-
-        if user_profile.main_character is not None:
-            user_main_character = user_profile.main_character.character_name
-    except Exception:
-        pass
+    user_main_character = get_main_character_from_user(user=log.user)
 
     summary = {
         "log_time": {"time": log_time, "timestamp": log_time_timestamp},
@@ -224,6 +215,7 @@ def get_random_rgba_color():
     """
     get a random RGB(a) color
     :return:
+    :rtype:
     """
 
     return "rgba({red}, {green}, {blue}, 1)".format(
@@ -236,6 +228,10 @@ def get_random_rgba_color():
 def users_with_permission(permission: Permission) -> models.QuerySet:
     """
     returns queryset of users that have the given permission in Auth
+    :param permission:
+    :type permission:
+    :return:
+    :rtype:
     """
 
     users_qs = (
@@ -257,6 +253,10 @@ def characters_with_permission(permission: Permission) -> models.QuerySet:
     """
     returns queryset of characters that have the given permission
     in Auth through due to their associated user
+    :param permission:
+    :type permission:
+    :return:
+    :rtype:
     """
 
     # first we need the users that have the permission

@@ -28,7 +28,9 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
         """
         only if the user has access to this app
         :param request:
+        :type request:
         :return:
+        :rtype:
         """
 
         if request.user.has_perm("afat.basic_access"):
@@ -42,6 +44,7 @@ def register_menu():
     """
     register our menu
     :return:
+    :rtype:
     """
 
     return AaAfatMenuItem()
@@ -52,6 +55,7 @@ def register_url():
     """
     register our menu link
     :return:
+    :rtype:
     """
 
     return UrlHook(urls, "afat", r"^{base_url}/".format(base_url=AFAT_BASE_URL))

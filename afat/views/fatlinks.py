@@ -35,7 +35,7 @@ from afat.helper.time import get_time_delta
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
-from afat.tasks import get_or_create_char, process_fats
+from afat.tasks import get_or_create_character, process_fats
 from afat.utils import LoggerAddTag, write_log
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
@@ -46,9 +46,12 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     fatlinks view
-    :param year:
     :param request:
+    :type request:
+    :param year:
+    :type year:
     :return:
+    :rtype:
     """
 
     if year is None:
@@ -77,9 +80,12 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonResponse:
     """
     ajax call :: get all FAT links for a given year
-    :param year:
     :param request:
+    :type request:
+    :param year:
+    :type year:
     :return:
+    :rtype:
     """
 
     if year is None:
@@ -101,7 +107,9 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
     """
     add fatlink view
     :param request:
+    :type request:
     :return:
+    :rtype:
     """
 
     msg = None
@@ -135,7 +143,9 @@ def create_clickable_fatlink(request: WSGIRequest):
     """
     create clickable fat link
     :param request:
+    :type request:
     :return:
+    :rtype:
     """
 
     if request.method == "POST":
@@ -213,11 +223,14 @@ def create_clickable_fatlink(request: WSGIRequest):
 def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     """
     helper: create ESI link (callback, used when coming back from character selection)
-    finishing the ESI fatlink creation
     :param request:
+    :type request:
     :param token:
+    :type token:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     # check if there is a fleet
@@ -384,7 +397,9 @@ def create_esi_fatlink(request: WSGIRequest):
     """
     create ESI fat link
     :param request:
+    :type request:
     :return:
+    :rtype:
     """
 
     fatlink_form = AFatEsiFatForm(request.POST)
@@ -425,9 +440,13 @@ def add_fat(request: WSGIRequest, token, fatlink_hash: str = None):
     """
     click fatlink helper
     :param request:
+    :type request:
     :param token:
+    :type token:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     if fatlink_hash is None:
@@ -562,8 +581,11 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     """
     fatlink view
     :param request:
+    :type request:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     if fatlink_hash is None:
@@ -612,7 +634,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
             shiptype = manual_fat_form.cleaned_data["shiptype"]
-            character = get_or_create_char(name=character_name)
+            character = get_or_create_character(name=character_name)
 
             if character is not None:
                 AFat(
@@ -692,7 +714,11 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     #     flatlist = []
     #
     #     for fat in fats:
-    #         fatinfo = [fat.character.character_name, str(fat.system), str(fat.shiptype)]
+    #         fatinfo = [
+    #             fat.character.character_name,
+    #             str(fat.system),
+    #             str(fat.shiptype)
+    #         ]
     #         flatlist.append("\t".join(fatinfo))
     #
     #     flatlist = "\r\n".join(flatlist)
@@ -742,7 +768,11 @@ def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
     """
     ajax call :: get all FATs for a given FAT link hash
     :param request:
+    :type request:
     :param fatlink_hash:
+    :type fatlink_hash:
+    :return:
+    :rtype:
     """
 
     fats = AFat.objects.filter(afatlink__hash=fatlink_hash)
@@ -753,13 +783,16 @@ def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
 
 
 @login_required()
-@permissions_required(("afat.manage_afat"))
+@permission_required("afat.manage_afat")
 def delete_fatlink(request: WSGIRequest, fatlink_hash: str = None):
     """
     delete fatlink helper
     :param request:
+    :type request:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     if fatlink_hash is None:
@@ -811,9 +844,13 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat):
     """
     delete fat helper
     :param request:
+    :type request:
     :param fatlink_hash:
+    :type fatlink_hash:
     :param fat:
+    :type fat:
     :return:
+    :rtype:
     """
 
     try:
@@ -878,7 +915,11 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
     """
     ajax call to close an ESI fat link
     :param request:
+    :type request:
     :param fatlink_hash:
+    :type fatlink_hash:
+    :return:
+    :rtype:
     """
 
     try:
@@ -906,11 +947,13 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def reopen_fatlink(request: WSGIRequest, fatlink_hash: str):
     """
-
+    re-open fat link
     :param request:
     :type request:
     :param fatlink_hash:
     :type fatlink_hash:
+    :return:
+    :rtype:
     """
 
     # if request.method == "POST":

@@ -17,9 +17,13 @@ from afat.models import (
 )
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -27,8 +31,9 @@ def get_input(text):
 
 def imicusfat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if imicusfat is installed
+    :return:
+    :rtype:
     """
 
     return "imicusfat" in settings.INSTALLED_APPS
@@ -61,7 +66,9 @@ class Command(BaseCommand):
         """
         checking for the latest available version of a package on Pypi
         :param package_name:
+        :type package_name:
         :return:
+        :rtype:
         """
 
         current_python_version = version_parse(
@@ -126,6 +133,12 @@ class Command(BaseCommand):
         return None
 
     def _import_from_imicusfat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # first we check if the target tables are really empty ...
         current_afat_count = AFat.objects.all().count()
         current_afat_links_count = AFatLink.objects.all().count()
@@ -295,15 +308,15 @@ class Command(BaseCommand):
             )
         )
 
-    def _start_import(self) -> None:
-        self.stdout.write("Starting import. Please stand by.")
-        self._import_from_imicusfat()
-
     def handle(self, *args, **options):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         if imicusfat_installed():
@@ -400,7 +413,8 @@ class Command(BaseCommand):
                 user_input = get_input("Are you sure you want to proceed? (yes/no)?")
 
                 if user_input == "yes":
-                    self._start_import()
+                    self.stdout.write("Starting import. Please stand by.")
+                    self._import_from_imicusfat()
                 else:
                     self.stdout.write(self.style.WARNING("Aborted."))
         else:

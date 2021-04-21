@@ -19,7 +19,7 @@ from esi.models import Token
 from afat import __title__
 from afat.models import AFat, AFatLink
 from afat.providers import esi
-from afat.utils import LoggerAddTag, get_or_create_char
+from afat.utils import LoggerAddTag, get_or_create_character
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -69,10 +69,14 @@ def process_fats(data_list, data_source, fatlink_hash):
     Due to the large possible size of fatlists,
     this process will be scheduled in order to process esi data
     and possible other sources in the future.
-    :param data_list: the list of character info to be processed.
-    :param data_source: the source type (only "esi" for now)
-    :param fatlink_hash: the hash from the fat link.
+    :param data_list:
+    :type data_list:
+    :param data_source:
+    :type data_source:
+    :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     if data_source == "esi":
@@ -100,7 +104,7 @@ def process_fats(data_list, data_source, fatlink_hash):
 #     link = AFatLink.objects.get(hash=fatlink_hash)
 #
 #     if type_ == "comp":
-#         character = get_or_create_char(name=line[0].strip(" "))
+#         character = get_or_create_character(name=line[0].strip(" "))
 #         system = line[1].strip(" (Docked)")
 #         shiptype = line[2]
 #
@@ -112,7 +116,7 @@ def process_fats(data_list, data_source, fatlink_hash):
 #                 shiptype=shiptype,
 #             ).save()
 #     else:
-#         character = get_or_create_char(name=line.strip(" "))
+#         character = get_or_create_character(name=line.strip(" "))
 #
 #         if character is not None:
 #             AFat(afatlink_id=link.pk, character=character).save()
@@ -123,13 +127,16 @@ def process_character(char, fatlink_hash):
     """
     process_character
     :param char:
+    :type char:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     link = AFatLink.objects.get(hash=fatlink_hash)
     char_id = char["character_id"]
-    character = get_or_create_char(character_id=char_id)
+    character = get_or_create_character(character_id=char_id)
 
     # only process if the character is not already registered for this FAT
     if AFat.objects.filter(character=character, afatlink_id=link.pk).exists() is False:
@@ -168,7 +175,11 @@ def close_esi_fleet(fatlink: AFatLink, reason: str) -> None:
     """
     Closing ESI fleet
     :param fatlink:
+    :type fatlink:
     :param reason:
+    :type reason:
+    :return:
+    :rtype:
     """
 
     logger.info(
@@ -187,8 +198,13 @@ def esi_fatlinks_error_handling(
     """
     ESI error handling
     :param cache_key:
+    :type cache_key:
     :param fatlink:
+    :type fatlink:
     :param logger_message:
+    :type logger_message:
+    :return:
+    :rtype:
     """
 
     if int(cache.get(cache_key + fatlink.hash)) < CACHE_MAX_ERROR_COUNT:
@@ -222,6 +238,8 @@ def initialize_caches(fatlink: AFatLink) -> None:
     initializing caches
     :param fatlink:
     :type fatlink:
+    :return:
+    :rtype:
     """
 
     if cache.get(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash) is None:
@@ -241,6 +259,8 @@ def initialize_caches(fatlink: AFatLink) -> None:
 def update_esi_fatlinks() -> None:
     """
     checking ESI fat links for changes
+    :return:
+    :rtype:
     """
 
     required_scopes = ["esi-fleets.read_fleet.v1"]

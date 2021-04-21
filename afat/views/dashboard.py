@@ -23,9 +23,11 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 @permission_required("afat.basic_access")
 def overview(request: WSGIRequest) -> HttpResponse:
     """
-    dashboard
+    dashboard view
     :param request:
+    :type request:
     :return:
+    :rtype:
     """
 
     msg = None
@@ -57,7 +59,11 @@ def ajax_recent_get_fats_by_character(
     """
     ajax call :: get all FATs for a given character
     :param request:
+    :type request:
     :param charid:
+    :type charid:
+    :return:
+    :rtype:
     """
 
     character = EveCharacter.objects.get(character_id=charid)
@@ -81,6 +87,9 @@ def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     """
     ajax call :: get recent fat links for the dashboard datatable
     :param request:
+    :type request:
+    :return:
+    :rtype:
     """
 
     fatlinks = AFatLink.objects.order_by("-afattime")[:10]

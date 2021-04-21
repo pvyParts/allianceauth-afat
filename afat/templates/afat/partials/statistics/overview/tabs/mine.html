@@ -38,7 +38,7 @@
                                     <tbody>
                                         {% for month, fatcount in char.1.items %}
                                             <tr>
-                                                <td>{{ month|month }}</td>
+                                                <td>{{ month|month_name }}</td>
                                                 <td>{{ fatcount }}</td>
                                                 <td class="text-right">
                                                     <a href="{% url 'afat:statistics_character' char.2 year month %}" class="btn btn-primary btn-sm">

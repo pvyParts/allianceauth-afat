@@ -3,12 +3,14 @@ utilities
 """
 
 import logging
+import re
 
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import lazy
 from django.utils.html import format_html
 
+from allianceauth.authentication.admin import User
 from allianceauth.eveonline.models import (
     EveAllianceInfo,
     EveCharacter,
@@ -45,8 +47,11 @@ class LoggerAddTag(logging.LoggerAdapter):
         """
         process log items
         :param msg:
+        :type msg:
         :param kwargs:
+        :type kwargs:
         :return:
+        :rtype:
         """
 
         return "[%s] %s" % (self.prefix, msg), kwargs
@@ -73,6 +78,18 @@ def clean_setting(
     Will assume `min_value` of 0 for int (can be overriden)
 
     Returns cleaned value for setting
+    :param name:
+    :type name:
+    :param default_value:
+    :type default_value:
+    :param min_value:
+    :type min_value:
+    :param max_value:
+    :type max_value:
+    :param required_type:
+    :type required_type:
+    :return:
+    :rtype:
     """
 
     if default_value is None and not required_type:
@@ -106,10 +123,16 @@ def clean_setting(
 def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text: str):
     """
     write the log
-    :param fatlink:
     :param request:
+    :type request:
     :param log_event:
+    :type log_event:
+    :param fatlink_hash:
+    :type fatlink_hash:
     :param log_text:
+    :type log_text:
+    :return:
+    :rtype:
     """
 
     from afat.models import AFatLog
@@ -122,15 +145,18 @@ def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text:
     afat_log.save()
 
 
-def get_or_create_char(name: str = None, character_id: int = None):
+def get_or_create_character(name: str = None, character_id: int = None):
     """
     This function takes a name or id of a character and checks
     to see if the character already exists.
     If the character does not already exist, it will create the
     character object, and if needed the corp/alliance objects as well.
-    :param name: str (optional)
-    :param character_id: int (optional)
-    :returns character: EveCharacter
+    :param name:
+    :type name:
+    :param character_id:
+    :type character_id:
+    :return:
+    :rtype:
     """
 
     if name:
@@ -179,7 +205,9 @@ def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
     """
     get or create alliance info
     :param alliance_id:
+    :type alliance_id:
     :return:
+    :rtype:
     """
 
     try:
@@ -190,3 +218,40 @@ def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
         )
 
     return eve_alliance_info
+
+
+def get_main_character_from_user(user: User) -> str:
+    """
+    get the main character from a user
+    :param user:
+    :type user:
+    :return:
+    :rtype:
+    """
+
+    user_main_character = user.username
+
+    try:
+        user_profile = user.profile
+        user_main_character = user_profile.main_character.character_name
+    except AttributeError:
+        pass
+
+    return user_main_character
+
+
+def get_site_url() -> str:
+    """
+    get the site url
+    :return:
+    :rtype:
+    """
+
+    regex = r"^(.+)\/s.+"
+    matches = re.finditer(regex, settings.ESI_SSO_CALLBACK_URL, re.MULTILINE)
+    url = "http://"
+
+    for match in matches:
+        url = match.groups()[0]  # first match
+
+    return url
