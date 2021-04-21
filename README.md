@@ -12,6 +12,24 @@
 An Improved FAT/PAP System for
 [Alliance Auth](https://gitlab.com/allianceauth/allianceauth).
 
+
+## Contents
+
+- [Features and highlights](#features-and-highlights)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Updating](#updating)
+- [Data Migration](#data-migration)
+  - [From Alliance Auth native FAT](#import-from-native-fat)
+  - [From bFAT](#import-from-bfat)
+  - [From ImicusFAT](#import-from-imicusfat)
+- [Settings](#settings)
+- [Permissions](#permissions)
+- [Changelog](#changelog)
+- [Credits](#credits)
+- [Contributing](#contributing)
+
+
 ## Features and highlights
 
 - Automatic tracking of participation on FAT links created via ESI
@@ -36,20 +54,19 @@ AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
 information see below.
 
+## Screenshots
 
-## Contents
+### Dashboard
+![AFAT Dashboard](https://raw.githubusercontent.com/ppfeufer/allianceauth-afat/master/afat/docs/images/afat-dashboard.png)
 
-- [Installation](#installation)
-- [Updating](#updating)
-- [Data Migration](#data-migration)
-    - [From Alliance Auth native FAT](#import-from-native-fat)
-    - [From bFAT](#import-from-bfat)
-    - [From ImicusFAT](#import-from-imicusfat)
-- [Settings](#settings)
-- [Permissions](#permissions)
-- [Changelog](#changelog)
-- [Credits](#credits)
-- [Contributing](#contributing)
+### FAT link list
+![AFAT FAT Link LIst](https://raw.githubusercontent.com/ppfeufer/allianceauth-afat/master/afat/docs/images/fatlink-list.png)
+
+### FAT link details
+![AFAT FAT Link Details](https://raw.githubusercontent.com/ppfeufer/allianceauth-afat/master/afat/docs/images/ship-type-overview.png)
+
+### Add FAT link view for FCs
+![AFAT Add FAT Link](https://raw.githubusercontent.com/ppfeufer/allianceauth-afat/master/afat/docs/images/add-fatlink.png)
 
 
 ## Installation
