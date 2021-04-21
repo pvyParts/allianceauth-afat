@@ -104,9 +104,11 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
                 char_has_fats = True
 
         if char_has_fats is True:
-            char_l = [char.character.character_name]
-            char_l.append(char_stats)
-            char_l.append(char.character.character_id)
+            char_l = [
+                char.character.character_name,
+                char_stats,
+                char.character.character_id,
+            ]
             months.append(char_l)
 
     context = {
