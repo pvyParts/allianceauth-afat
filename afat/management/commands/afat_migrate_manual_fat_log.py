@@ -37,17 +37,18 @@ class Command(BaseCommand):
 
         if manual_fat_logs.count() > 0:
             for manual_log in manual_fat_logs:
-                afat_log = AFatLog()
+                if manual_log.created_at is not None:
+                    afat_log = AFatLog()
 
-                afat_log.user_id = manual_log.creator_id
-                afat_log.log_time = manual_log.created_at
-                afat_log.log_event = AFatLogEvent.MANUAL_FAT
-                afat_log.log_text = (
-                    f"Pilot {manual_log.character} manually added. "
-                    f"(Migrated from old Manual FAT log)"
-                )
-                afat_log.fatlink_hash = manual_log.afatlink.hash
-                afat_log.save()
+                    afat_log.user_id = manual_log.creator_id
+                    afat_log.log_time = manual_log.created_at
+                    afat_log.log_event = AFatLogEvent.MANUAL_FAT
+                    afat_log.log_text = (
+                        f"Pilot {manual_log.character} manually added. "
+                        f"(Migrated from old Manual FAT log)"
+                    )
+                    afat_log.fatlink_hash = manual_log.afatlink.hash
+                    afat_log.save()
 
                 manual_log.delete()
 
