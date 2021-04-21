@@ -111,6 +111,7 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
 
     link_types_configured = False
     link_types_count = AFatLinkType.objects.all().count()
+
     if link_types_count > 0:
         link_types_configured = True
 
@@ -219,7 +220,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     :return:
     """
 
-    # Check if there is a fleet
+    # check if there is a fleet
     try:
         required_scopes = ["esi-fleets.read_fleet.v1"]
         esi_token = Token.get_token(token.character_id, required_scopes)
@@ -228,7 +229,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
             character_id=token.character_id, token=esi_token.valid_access_token()
         ).result()
     except Exception:
-        # Not in a fleet
+        # not in a fleet
         request.session["msg"] = [
             "warning",
             "To use the ESI function, you neeed to be in fleet and you need to be "
@@ -239,7 +240,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
         # return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
 
-    # Check if this character already has a fleet
+    # check if this character already has a fleet
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
     registered_fleets_for_creator = AFatLink.objects.filter(
         is_esilink=True,
@@ -263,6 +264,8 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
                     {"registered_fleet": registered_fleet}
                 )
 
+    # if the FC already has a fleet and it is the same as already registered,
+    # just throw a warning
     if fleet_already_registered is True:
         request.session["msg"] = [
             "warning",
@@ -277,7 +280,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
         # return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
 
-    # remove all former registered fleets if there are any
+    # if it's a new fleet, remove all former registered fleets if there are any
     if (
         character_has_registered_fleets is True
         and fleet_already_registered is False
@@ -300,7 +303,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
             registered_fleet_to_close["registered_fleet"].is_registered_on_esi = False
             registered_fleet_to_close["registered_fleet"].save()
 
-    # Check if we deal with the fleet boss here
+    # check if we deal with the fleet boss here
     try:
         esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
             fleet_id=fleet_from_esi["fleet_id"],
@@ -364,7 +367,7 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
     del request.session["fatlink_form__name"]
     del request.session["fatlink_form__type"]
 
-    # process fleet members
+    # process fleet members in the background
     process_fats.delay(
         data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
     )
