@@ -10,12 +10,16 @@ from bfat.models import ManualFat as BfatManualFat
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from afat.models import AFat, AFatLink, ClickAFatDuration, ManualAFat
+from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent, ClickAFatDuration
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -23,8 +27,9 @@ def get_input(text):
 
 def bfat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if bfat is installed
+    :return:
+    :rtype:
     """
 
     return "bfat" in settings.INSTALLED_APPS
@@ -38,6 +43,12 @@ class Command(BaseCommand):
     help = "Imports FAT data from ImicusFAT module"
 
     def _import_from_imicusfat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # check if AA FAT is active
         if bfat_installed():
             self.stdout.write(
@@ -48,13 +59,11 @@ class Command(BaseCommand):
             current_afat_count = AFat.objects.all().count()
             current_afat_links_count = AFatLink.objects.all().count()
             current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
-            current_afat_manualfat_count = ManualAFat.objects.all().count()
 
             if (
                 current_afat_count > 0
                 or current_afat_links_count > 0
                 or current_afat_clickduration_count > 0
-                or current_afat_manualfat_count > 0
             ):
                 self.stdout.write(
                     self.style.WARNING(
@@ -69,10 +78,8 @@ class Command(BaseCommand):
             bfat_fatlinks = BfatFatLink.objects.all()
             for bfat_fatlink in bfat_fatlinks:
                 self.stdout.write(
-                    "Importing FAT link for fleet '{fleet}' with hash '{fatlink_hash}'.".format(
-                        fleet=bfat_fatlink.fleet,
-                        fatlink_hash=bfat_fatlink.hash,
-                    )
+                    f'Importing FAT link for fleet "{bfat_fatlink.fleet}" '
+                    f'with hash "{bfat_fatlink.hash}".'
                 )
 
                 afatlink = AFatLink()
@@ -85,14 +92,35 @@ class Command(BaseCommand):
 
                 afatlink.save()
 
+                # write to log table
+                try:
+                    fleet_duration = BfatClickFatDuration.objects.get(
+                        fleet_id=bfat_fatlink.id
+                    )
+
+                    log_text = (
+                        f'FAT link "{bfat_fatlink.hash}" with name '
+                        f'"{bfat_fatlink.fleet}" and a duration of '
+                        f"{fleet_duration.duration} minutes was created "
+                        f"by {bfat_fatlink.creator}"
+                    )
+                except BfatClickFatDuration.DoesNotExist:
+                    log_text = (
+                        f'FAT link "{bfat_fatlink.hash}" with name '
+                        f'"{bfat_fatlink.fleet}" was created by {bfat_fatlink.creator}'
+                    )
+
+                afatlog = AFatLog()
+                afatlog.log_time = bfat_fatlink.fattime
+                afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+                afatlog.log_text = log_text
+                afatlog.user_id = bfat_fatlink.creator_id
+                afatlog.save()
+
             # import FATs
             bfat_fats = BfatFat.objects.all()
             for bfat_fat in bfat_fats:
-                self.stdout.write(
-                    "Importing FATs for FAT link ID '{fatlink_id}'.".format(
-                        fatlink_id=bfat_fat.id
-                    )
-                )
+                self.stdout.write(f"Importing FATs for FAT link ID {bfat_fat.id}.")
 
                 afat = AFat()
 
@@ -108,9 +136,7 @@ class Command(BaseCommand):
             bfat_clickfatdurations = BfatClickFatDuration.objects.all()
             for bfat_clickfatduration in bfat_clickfatdurations:
                 self.stdout.write(
-                    "Importing FAT duration with ID '{duration_id}'.".format(
-                        duration_id=bfat_clickfatduration.id
-                    )
+                    f"Importing FAT duration with ID {bfat_clickfatduration.id}."
                 )
 
                 afat_clickfatduration = ClickAFatDuration()
@@ -124,20 +150,20 @@ class Command(BaseCommand):
             # import manual fat
             bfat_manualfats = BfatManualFat.objects.all()
             for bfat_manualfat in bfat_manualfats:
-                self.stdout.write(
-                    "Importing manual FAT with ID '{manualfat_id}'.".format(
-                        manualfat_id=bfat_manualfat.id
-                    )
+                self.stdout.write(f"Importing manual FAT with ID {bfat_manualfat.id}.")
+
+                fatlink = BfatFatLink.objects.get(manualfat=bfat_manualfat)
+                log_text = (
+                    f"Pilot {bfat_manualfat.character.character_name} was manually "
+                    f'added to FAT link with hash "{fatlink.hash}"'
                 )
 
-                afat_manualfat = ManualAFat()
-
-                afat_manualfat.id = bfat_manualfat.id
-                afat_manualfat.character_id = bfat_manualfat.character_id
-                afat_manualfat.creator_id = bfat_manualfat.creator_id
-                afat_manualfat.afatlink_id = bfat_manualfat.fatlink_id
-
-                afat_manualfat.save()
+                afatlog = AFatLog()
+                afatlog.log_time = bfat_manualfat.created_at
+                afatlog.log_event = AFatLogEvent.MANUAL_FAT
+                afatlog.log_text = log_text
+                afatlog.user_id = bfat_manualfat.creator_id
+                afatlog.save()
 
             self.stdout.write(
                 self.style.SUCCESS(
@@ -149,7 +175,8 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING(
                     "bFAT module is not active. "
-                    "Please make sure you have it in your INSTALLED_APPS in your local.py!"
+                    "Please make sure you have it in your "
+                    "INSTALLED_APPS in your local.py!"
                 )
             )
 
@@ -157,13 +184,18 @@ class Command(BaseCommand):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         self.stdout.write(
             "Importing all FAT/FAT link data from bFAT module. "
             "This can only be done once during the very first installation. "
-            "As soon as you have data collected with your AFAT module, this import will fail!"
+            "As soon as you have data collected with your AFAT module, "
+            "this import will fail!"
         )
 
         user_input = get_input("Are you sure you want to proceed? (yes/no)?")

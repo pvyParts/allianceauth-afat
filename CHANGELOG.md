@@ -6,6 +6,98 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.0.0] - Unreleased
+
+### Fixed
+
+- Error 500 due to missing ``EveAllianceInfo`` object in statistics view
+- Clear content of modal windows when they are closed
+- Unique IDs for modals
+
+### Added
+
+- `related_name` to foreign keys in models
+- Proper log model
+- Proper log messages to fatlink detail view and edit actions to differenciate if
+  someone is only viewing or actually editing some details
+- Confirmation modal window when closing ESI fleets manually
+- Ability to re-open clickable FAT links for a certain time after they have expired.
+  FAT links can be re-opened only once though (`manage_afat` permissions are needed
+  to re-open FAT links)
+- Logs view (`log_view` permissions are needed to view the logs)
+
+### Changed
+
+- Inline JS for DataTables moved to their own files
+- Templates restructured
+  - Proper directory structure
+  - Proper names
+- Links restructured
+  - Some changes in link names (mostly for ajax calls)
+  - Link segment order unified
+- Function names following a proper naming convention
+- Use swagger spec provided by CCP instead of maintaining our own file
+- Migration from ImicusFAT now writes into the new AFAT log table
+- Migration from bFAT now writes into the new AFAT log table
+- Migration from native FAT module now writes into the new AFAT log table
+- Wording in modal windows
+- Modal windows merged into one file which is loaded conditionally
+- Log messages improved
+- Manual FAT log deactivated in favor of the new general log
+- Forms for FAT link creation now properly using django forms
+
+### Removed
+
+- Old code for flat lists. Not used anymore and will not be used ever again
+
+### ⚠️ Update Instructions ⚠️
+
+---
+
+#### If you are updating from one of the 2.0.0-alpha versions
+
+If you installed one of the alpha versions, make sure to reset your migrations first!
+Migrations have been reset during the alpha versions a couple of times.
+
+To do so, run:
+```shell
+python manage.py migrate afat 0017
+```
+
+Once done, proceed with the update as lined out below.
+
+---
+
+This release introduces a new periodic task, make sure to add it to your `local.py`,
+besides that, it is the usual steps to update ...
+
+Download and install the new version
+```shell
+pip install -U allianceauth-afat
+```
+
+Add the new task to your `local.py`
+```python
+CELERYBEAT_SCHEDULE["afat_logrotate"] = {
+    "task": "afat.tasks.logrotate",
+    "schedule": crontab(minute="0", hour="1"),
+}
+```
+
+Run static collection and migrations
+```shell
+python manage.py collectstatic
+python manage.py migrate
+```
+
+Restart your supervisor.
+
+Finally migrate the Manual FAT log to the new logging table
+```shell
+python manage.py afat_migrate_manual_fat_log
+```
+
+
 ## [1.10.0] - 2021-03-30
 
 ### ⚠️ IMPORTANT ⚠️
@@ -36,8 +128,9 @@ delete from afat_afatlink where id in(id_list);
 # re-activate foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
 ```
+
 This step is important before updating, because the "deleted" marker will be lost
-during migration! If you don't run this step, you'll have all yout FATlinks and FATs
+during migration! If you don't run this step, you'll have all your FATlinks and FATs
 that were previously "deleted" as active again.
 
 ### Removed
@@ -57,6 +150,7 @@ that were previously "deleted" as active again.
 ### Added
 
 - Ship type overview to FAT link detail page (#72)
+
   ![Example](afat/docs/images/ship-type-overview.png)
 
 
@@ -66,6 +160,7 @@ that were previously "deleted" as active again.
 
 - Ability to "close" ESI fat links manually. (Only the FC creating the link has this
   ability when creating new ESI fat links when he still has registered fleets.)
+
   ![Example](afat/docs/images/manually-close-esi-links.png)
 
 
@@ -179,7 +274,7 @@ that were previously "deleted" as active again.
     python manage.py migrate
     ```
 
-  **Keep in mind, you have to set the new permission to the state/grous that
+  **Keep in mind, you have to set the new permission to the states/groups that
   previously had permissions.**
 
 

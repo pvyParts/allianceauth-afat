@@ -1,0 +1,41 @@
+{% load bootstrap %}
+{% load i18n %}
+
+<div class="col-md-6 ml-md-2">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% translate "Create a clickable FAT Link" %}
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <p>
+                {% translate "This option will create a clickable link to share with your fleet members." %}
+            </p>
+
+            <!-- Form Goes Here -->
+            <form class="form" role="form" action="{% url 'afat:fatlinks_create_clickable_fatlink' %}" method="POST">
+                {% csrf_token %}
+
+                {{ manual_fatlink_form.name|bootstrap }}
+
+                {% if link_types_configured %}
+                    {{ manual_fatlink_form.type|bootstrap }}
+                {% endif %}
+
+                {{ manual_fatlink_form.duration|bootstrap }}
+
+                {% include 'afat/partials/form/required_field_hint.html' %}
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit" name="submit_click">
+                        <span class="fa fa-plus fa-fw"></span>
+
+                        {% translate "Create Link" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

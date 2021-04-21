@@ -2,6 +2,7 @@
 statistics related views
 """
 
+import calendar
 from collections import OrderedDict
 from datetime import datetime
 
@@ -13,30 +14,28 @@ from django.shortcuts import redirect, render
 
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
-from allianceauth.eveonline.models import (
-    EveAllianceInfo,
-    EveCharacter,
-    EveCorporationInfo,
-)
+from allianceauth.eveonline.models import EveCharacter, EveCorporationInfo
 from allianceauth.services.hooks import get_extension_logger
 
 from afat import __title__
 from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
 from afat.models import AFat
-from afat.utils import LoggerAddTag
+from afat.utils import LoggerAddTag, get_or_create_alliance_info
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
+def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
     statistics main view
-    :type year: string
     :param request:
+    :type request:
     :param year:
+    :type year:
     :return:
+    :rtype:
     """
 
     if year is None:
@@ -53,22 +52,23 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
         sanity_check = dict()
 
         # first create the alliance keys in our dict
-        for character in characters_with_access:
-            if character.alliance_name is not None:
-                data[character.alliance_name] = [character.alliance_id]
+        for character_with_access in characters_with_access:
+            if character_with_access.alliance_name is not None:
+                data[character_with_access.alliance_name] = [
+                    character_with_access.alliance_id
+                ]
 
         # now append the alliance keys
-        for character in characters_with_access:
-            corp_id = character.corporation_id
+        for character_with_access in characters_with_access:
+            corp_id = character_with_access.corporation_id
+            corp_name = character_with_access.corporation_name
 
             if corp_id not in sanity_check.keys():
-                if character.alliance_name is None:
-                    data["No Alliance"].append(
-                        (character.corporation_id, character.corporation_name)
-                    )
+                if character_with_access.alliance_name is None:
+                    data["No Alliance"].append((corp_id, corp_name))
                 else:
-                    data[character.alliance_name].append(
-                        (character.corporation_id, character.corporation_name)
+                    data[character_with_access.alliance_name].append(
+                        (corp_id, corp_name)
                     )
 
             sanity_check[corp_id] = corp_id
@@ -104,9 +104,11 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
                 char_has_fats = True
 
         if char_has_fats is True:
-            char_l = [char.character.character_name]
-            char_l.append(char_stats)
-            char_l.append(char.character.character_id)
+            char_l = [
+                char.character.character_name,
+                char_stats,
+                char.character.character_id,
+            ]
             months.append(char_l)
 
     context = {
@@ -120,29 +122,36 @@ def stats(request: WSGIRequest, year: int = None) -> HttpResponse:
 
     logger.info("Statistics overview called by {user}".format(user=request.user))
 
-    return render(request, "afat/stats_main.html", context)
+    return render(request, "afat/statistics_overview.html", context)
 
 
 @login_required()
 @permission_required("afat.basic_access")
-def stats_char(
+def character(
     request: WSGIRequest, charid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
     character statistics view
     :param request:
+    :type request:
     :param charid:
-    :param month:
+    :type charid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
-    character = EveCharacter.objects.get(character_id=charid)
+    eve_character = EveCharacter.objects.get(character_id=charid)
     valid = [
         char.character for char in CharacterOwnership.objects.filter(user=request.user)
     ]
 
-    if character not in valid and not request.user.has_perm("afat.stats_char_other"):
+    if eve_character not in valid and not request.user.has_perm(
+        "afat.stats_char_other"
+    ):
         request.session["msg"] = (
             "warning",
             "You do not have permission to view statistics for this character.",
@@ -196,7 +205,7 @@ def stats_char(
     ]
 
     context = {
-        "character": character,
+        "character": eve_character,
         "month": month,
         "month_current": datetime.now().month,
         "month_prev": int(month) - 1,
@@ -210,23 +219,35 @@ def stats_char(
         "fats": fats,
     }
 
-    logger.info("Character statistics called by {user}".format(user=request.user))
+    logger.info(
+        "Character statistics for {character} ({month} {year}) called by {user}".format(
+            character=eve_character,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
+        )
+    )
 
-    return render(request, "afat/char_stat.html", context)
+    return render(request, "afat/statistics_character.html", context)
 
 
 @login_required()
 @permissions_required(("afat.stats_corporation_other", "afat.stats_corporation_own"))
-def stats_corp(
+def corporation(
     request: WSGIRequest, corpid: int = 0000, year: int = None, month: int = None
 ) -> HttpResponse:
     """
     corp statistics view
     :param request:
+    :type request:
     :param corpid:
-    :param month:
+    :type corpid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
     if not year:
@@ -372,26 +393,36 @@ def stats_corp(
     }
 
     logger.info(
-        "Corporation statistics for {corp_name} called by {user}".format(
-            corp_name=corp_name, user=request.user
+        (
+            "Corporation statistics for {corp_name} ({month} {year}) called by {user}"
+        ).format(
+            corp_name=corp_name,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
         )
     )
 
-    return render(request, "afat/corp_stat.html", context)
+    return render(request, "afat/statistics_corporation.html", context)
 
 
 @login_required()
 @permission_required("afat.stats_corporation_other")
-def stats_alliance(
+def alliance(
     request: WSGIRequest, allianceid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
     alliance statistics view
     :param request:
+    :type request:
     :param allianceid:
-    :param month:
+    :type allianceid:
     :param year:
+    :type year:
+    :param month:
+    :type month:
     :return:
+    :rtype:
     """
 
     if not year:
@@ -401,7 +432,7 @@ def stats_alliance(
         allianceid = None
 
     if allianceid is not None:
-        ally = EveAllianceInfo.objects.get(alliance_id=allianceid)
+        ally = get_or_create_alliance_info(alliance_id=allianceid)
         alliance_name = ally.alliance_name
     else:
         ally = None
@@ -583,9 +614,14 @@ def stats_alliance(
     }
 
     logger.info(
-        "Alliance statistics for {alliance_name} called by {user}".format(
-            alliance_name=alliance_name, user=request.user
+        (
+            "Alliance statistics for {alliance_name} ({month} {year}) called by {user}"
+        ).format(
+            alliance_name=alliance_name,
+            month=calendar.month_name[int(month)],
+            year=year,
+            user=request.user,
         )
     )
 
-    return render(request, "afat/ally_stat.html", context)
+    return render(request, "afat/statistics_alliance.html", context)

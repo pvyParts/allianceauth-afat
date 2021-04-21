@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div class="col-md-12">
+    <div class="row">
+        <form class="form" role="form" action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder='{% translate "Fleet Name" %}' name="fleet" {% if link.fleet %}value="{{ link.fleet }}" {% endif %}>
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit" name="set_name">{% translate "Set Name" %}</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <p>&nbsp;</p>
+    </div>
+</div>

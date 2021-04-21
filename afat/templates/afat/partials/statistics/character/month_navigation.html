@@ -1,0 +1,21 @@
+{% load filters %}
+{% load i18n %}
+
+<h4>
+    {% if month == '1' %}
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year_prev 12 %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
+    {% else %}
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year month_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
+    {% endif %}
+
+    <span class="afat-label-statistics">{{ month|month_name }} {{ year }}</span>
+
+    {% if month_next > month_current and year_next > year_current %}
+    {% elif month == '12' %}
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year_next 1 %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year_current month_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+    {% else %}
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year month_next %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_character' character.character_id year_current month_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+    {% endif %}
+</h4>

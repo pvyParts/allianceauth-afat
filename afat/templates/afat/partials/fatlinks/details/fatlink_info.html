@@ -1,0 +1,75 @@
+{% load i18n %}
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">
+            {% translate "Creator:" %} {{ link.creator.profile.main_character.character_name }}
+        </div>
+
+        <div class="col-md-6 text-right">
+            <p>
+                {% translate "Link Created (Eve Time):" %} {{ link.afattime|date:"d. F Y H:i" }}
+
+                {% if link_expires %}
+                    <br>
+
+                    {% if link_ongoing %}
+                        {% translate "Link Expires (Eve Time):" %}
+                    {% else %}
+                        {% translate "Link Expired (Eve Time):" %}
+                    {% endif %}
+
+                    {{ link_expires|date:"d. F Y H:i" }}
+                {% endif %}
+
+                {% if link.is_esilink %}
+                    <br>
+                    {% translate 'Participation has been tracked via ESI' %}
+                {% endif %}
+            </p>
+
+            {% if link_can_be_reopened and perms.afat.manage_afat %}
+                <p>
+                    {% blocktranslate with reopen_grace_time=reopen_grace_time %}This link has already expired but is within the grace<br>time of {{ reopen_grace_time }} minutes where it can be re-opened.{% endblocktranslate %}
+                </p>
+
+                <p>
+                    <button class="btn btn-default btn-sm"
+                        data-toggle="modal"
+                        data-target="#reopenFatLinkModal"
+                        data-url="{% url 'afat:fatlinks_reopen_fatlink' link.hash %}"
+                        data-body-text="{% blocktranslate with reopen_duration=reopen_duration %}<p>Are you sure you want to re-open this FAT link for another {{ reopen_duration }} minutes?<br>FAT links can be re-opened only once!<br><em>(Be aware, this action will be logged)</em></p>{% endblocktranslate %}"
+                        data-confirm-text="{% translate 'Re-Open' %}"
+                    >
+                        {% translate 'Re-Open FAT link' %}
+                    </button>
+                </p>
+            {% endif %}
+        </div>
+
+        {% if link_ongoing %}
+            <div class="col-md-12">
+                <p>Link:
+                    <i>
+                        {{ request.scheme }}://{{ request.get_host }}{% url 'afat:fatlinks_add_fat' link.hash %}
+                        <a class="label label-success copy-link" href="{% url 'afat:fatlinks_add_fat' link.hash %}"></a>
+                    </i>
+
+                    <button class="copy-btn btn btn-success btn-sm"
+                        data-toggle="tooltip"
+                        data-html="true"
+                        data-clipboard-text="{{ request.scheme }}://{{ request.get_host }}{% url 'afat:fatlinks_add_fat' link.hash %}"
+                        style="margin-left: 1rem;"
+                    >
+                        {% translate "Copy me!" %}
+                    </button>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if link_can_be_reopened and perms.afat.manage_afat %}
+        {% translate "Re-Open Fat Link" as translated_title %}
+        {% include 'afat/modals/general.html' with modal_name='reopenFatLink' modal_title=translated_title confirm_button_class='btn-success' %}
+    {% endif %}
+</div>

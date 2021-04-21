@@ -2,6 +2,8 @@
 tasks
 """
 
+from datetime import timedelta
+
 from bravado.exception import (
     HTTPBadGateway,
     HTTPGatewayTimeout,
@@ -11,20 +13,17 @@ from bravado.exception import (
 from celery import shared_task
 
 from django.core.cache import cache
+from django.utils import timezone
 
-from allianceauth.eveonline.models import (
-    EveAllianceInfo,
-    EveCharacter,
-    EveCorporationInfo,
-)
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.services.tasks import QueueOnce
 from esi.models import Token
 
 from afat import __title__
-from afat.models import AFat, AFatLink
+from afat.app_settings import AFAT_DEFAULT_LOG_DURATION
+from afat.models import AFat, AFatLink, AFatLog
 from afat.providers import esi
-from afat.utils import LoggerAddTag
+from afat.utils import LoggerAddTag, get_or_create_character
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -68,119 +67,30 @@ TASK_ESI_KWARGS = {
 }
 
 
-class NoDataError(Exception):
-    """
-    NoDataError
-    """
-
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
-
-
-def get_or_create_char(name: str = None, character_id: int = None):
-    """
-    This function takes a name or id of a character and checks
-    to see if the character already exists.
-    If the character does not already exist, it will create the
-    character object, and if needed the corp/alliance objects as well.
-    :param name: str (optional)
-    :param character_id: int (optional)
-    :returns character: EveCharacter
-    """
-
-    if name:
-        # If a name is passed we have to check it on ESI
-        result = esi.client.Search.get_search(
-            categories=["character"], search=name, strict=True
-        ).result()
-
-        if "character" not in result:
-            return None
-
-        character_id = result["character"][0]
-        eve_character = EveCharacter.objects.filter(character_id=character_id)
-    elif character_id:
-        # If an ID is passed we can just check the db for it.
-        eve_character = EveCharacter.objects.filter(character_id=character_id)
-    elif not name and not character_id:
-        raise NoDataError("No character name or character id provided.")
-
-    if len(eve_character) == 0:
-        # Create Character
-        character = EveCharacter.objects.create_character(character_id)
-        character = EveCharacter.objects.get(pk=character.pk)
-
-        # Make corp and alliance info objects for future sane
-        if character.alliance_id is not None:
-            test = EveAllianceInfo.objects.filter(alliance_id=character.alliance_id)
-
-            if len(test) == 0:
-                EveAllianceInfo.objects.create_alliance(character.alliance_id)
-        else:
-            test = EveCorporationInfo.objects.filter(
-                corporation_id=character.corporation_id
-            )
-
-            if len(test) == 0:
-                EveCorporationInfo.objects.create_corporation(character.corporation_id)
-
-    else:
-        character = eve_character[0]
-
-    logger.info("Processing information for {character}".format(character=character))
-
-    return character
-
-
 @shared_task
 def process_fats(data_list, data_source, fatlink_hash):
     """
     Due to the large possible size of fatlists,
     this process will be scheduled in order to process esi data
     and possible other sources in the future.
-    :param data_list: the list of character info to be processed.
-    :param data_source: the source type (only "esi" for now)
-    :param fatlink_hash: the hash from the fat link.
+    :param data_list:
+    :type data_list:
+    :param data_source:
+    :type data_source:
+    :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
-
-    logger.info("Processing FAT %s", fatlink_hash)
 
     if data_source == "esi":
+        logger.info(
+            f'Valid fleet for FAT link hash "{fatlink_hash}" found '
+            f"registered via ESI, checking for new pilots"
+        )
+
         for char in data_list:
             process_character.delay(char, fatlink_hash)
-
-
-@shared_task
-def process_line(line, type_, fatlink_hash):
-    """
-    process_line
-    processing every single character on its own
-    :param line:
-    :param type_:
-    :param fatlink_hash:
-    :return:
-    """
-
-    link = AFatLink.objects.get(hash=fatlink_hash)
-
-    if type_ == "comp":
-        character = get_or_create_char(name=line[0].strip(" "))
-        system = line[1].strip(" (Docked)")
-        shiptype = line[2]
-
-        if character is not None:
-            AFat(
-                afatlink_id=link.pk,
-                character=character,
-                system=system,
-                shiptype=shiptype,
-            ).save()
-    else:
-        character = get_or_create_char(name=line.strip(" "))
-
-        if character is not None:
-            AFat(afatlink_id=link.pk, character=character).save()
 
 
 @shared_task
@@ -188,13 +98,16 @@ def process_character(char, fatlink_hash):
     """
     process_character
     :param char:
+    :type char:
     :param fatlink_hash:
+    :type fatlink_hash:
     :return:
+    :rtype:
     """
 
     link = AFatLink.objects.get(hash=fatlink_hash)
     char_id = char["character_id"]
-    character = get_or_create_char(character_id=char_id)
+    character = get_or_create_character(character_id=char_id)
 
     # only process if the character is not already registered for this FAT
     if AFat.objects.filter(character=character, afatlink_id=link.pk).exists() is False:
@@ -213,7 +126,7 @@ def process_character(char, fatlink_hash):
 
         logger.info(
             "New Pilot: Adding {character_name} in {system_name} flying a {ship_name} "
-            "to FAT link {fatlink_hash}".format(
+            'to FAT link "{fatlink_hash}"'.format(
                 character_name=character,
                 system_name=solar_system_name,
                 ship_name=ship_name,
@@ -227,23 +140,21 @@ def process_character(char, fatlink_hash):
             system=solar_system_name,
             shiptype=ship_name,
         ).save()
-    else:
-        logger.info(
-            "{character} is already registered with FAT link {fatlink_hash}".format(
-                character=character, fatlink_hash=fatlink_hash
-            )
-        )
 
 
 def close_esi_fleet(fatlink: AFatLink, reason: str) -> None:
     """
     Closing ESI fleet
     :param fatlink:
+    :type fatlink:
     :param reason:
+    :type reason:
+    :return:
+    :rtype:
     """
 
     logger.info(
-        "Closing ESI FAT link with hash {fatlink_hash}. Reason: {reason}".format(
+        'Closing ESI FAT link with hash "{fatlink_hash}". Reason: {reason}'.format(
             fatlink_hash=fatlink.hash, reason=reason
         )
     )
@@ -258,8 +169,13 @@ def esi_fatlinks_error_handling(
     """
     ESI error handling
     :param cache_key:
+    :type cache_key:
     :param fatlink:
+    :type fatlink:
     :param logger_message:
+    :type logger_message:
+    :return:
+    :rtype:
     """
 
     if int(cache.get(cache_key + fatlink.hash)) < CACHE_MAX_ERROR_COUNT:
@@ -268,8 +184,14 @@ def esi_fatlinks_error_handling(
         error_count += 1
 
         logger.info(
-            '"{logger_message}" Error Count: {error_count}.'.format(
-                logger_message=logger_message, error_count=error_count
+            (
+                'FAT link "{falink_hash}" Error: "{logger_message}" '
+                "({error_count} of {max_count})."
+            ).format(
+                falink_hash=fatlink.hash,
+                logger_message=logger_message,
+                error_count=error_count,
+                max_count=CACHE_MAX_ERROR_COUNT,
             )
         )
 
@@ -282,10 +204,34 @@ def esi_fatlinks_error_handling(
         close_esi_fleet(fatlink=fatlink, reason=logger_message)
 
 
+def initialize_caches(fatlink: AFatLink) -> None:
+    """
+    initializing caches
+    :param fatlink:
+    :type fatlink:
+    :return:
+    :rtype:
+    """
+
+    if cache.get(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash, "0", 75)
+
+    if cache.get(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash) is None:
+        cache.set(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash, "0", 75)
+
+
 @shared_task(**{**TASK_ESI_KWARGS}, **{"base": QueueOnce})
 def update_esi_fatlinks() -> None:
     """
     checking ESI fat links for changes
+    :return:
+    :rtype:
     """
 
     required_scopes = ["esi-fleets.read_fleet.v1"]
@@ -296,19 +242,9 @@ def update_esi_fatlinks() -> None:
         )
 
         for fatlink in esi_fatlinks:
-            if cache.get(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_FLEET_CHANGED_ERROR + fatlink.hash, "0", 75)
+            initialize_caches(fatlink=fatlink)
 
-            if cache.get(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NO_FLEETBOSS_ERROR + fatlink.hash, "0", 75)
-
-            if cache.get(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NO_FLEET_ERROR + fatlink.hash, "0", 75)
-
-            if cache.get(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash) is None:
-                cache.set(CACHE_KEY_NOT_IN_FLEET_ERROR + fatlink.hash, "0", 75)
-
-            logger.info("Processing information for ESI FAT with hash %s", fatlink.hash)
+            logger.info(f'Processing ESI FAT link with hash "{fatlink.hash}"')
 
             if fatlink.creator.profile.main_character is not None:
                 # Check if there is a fleet
@@ -375,3 +311,18 @@ def update_esi_fatlinks() -> None:
 
     except AFatLink.DoesNotExist:
         pass
+
+
+@shared_task
+def logrotate():
+    """
+    remove logs older than AFAT_DEFAULT_LOG_DURATION
+    :return:
+    :rtype:
+    """
+
+    logger.info(f"Cleaning up logs older than {AFAT_DEFAULT_LOG_DURATION} days")
+
+    AFatLog.objects.filter(
+        log_time__lte=timezone.now() - timedelta(days=AFAT_DEFAULT_LOG_DURATION)
+    ).delete()

@@ -1,0 +1,52 @@
+{% extends 'afat/base.html' %}
+
+{% load static %}
+{% load i18n %}
+{% load evelinks %}
+{% load filters %}
+
+{% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
+
+{% block afat_header %}
+    <br>
+    {% include "afat/partials/menu.html" %}
+
+    <h2>{% translate "Statistics" %}</h2>
+{% endblock %}
+
+{% block afat_body %}
+    {% include "afat/partials/statistics/overview/year_navigation.html" %}
+
+    {% if msg %}
+        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                <span aria-hidden="true">&times</span>
+            </button>
+
+            <h4>
+                {% if msg.0 == 'danger' %}
+                    {% translate "Oh No!" %}
+                {% elif msg.0 == 'success' %}
+                    {% translate "Success!" %}
+                {% endif %}
+            </h4>
+
+            <p>{{ msg.1 }}</p>
+        </div>
+    {% endif %}
+
+    {% include "afat/partials/statistics/overview/tabs_navigation.html" %}
+
+    <div class="tab-content">
+        {% include "afat/partials/statistics/overview/tabs/mine.html" %}
+
+        {% if perms.afat.stats_corporation_own or perms.afat.stats_corporation_other %}
+            {% include "afat/partials/statistics/overview/tabs/corps.html" %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
+{% endblock %}

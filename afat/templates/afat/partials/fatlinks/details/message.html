@@ -1,0 +1,128 @@
+{% load i18n %}
+
+{% if msg_code == 200 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success!" %}</h4>
+
+        <p>&#9642; {% translate "FAT Link Created!" %}</p>
+        <p>&#9642; {% translate "FATs have been queued, they may take a few mins to show up." %}</p>
+        <p>&#9642; {% translate "Pilots who join later will be automatically added until you close or leave the fleet in-game." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 0 %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Oh No!" %}</h4>
+
+        <p>{% translate "Something went wrong!" %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 202 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success!" %}</h4>
+
+        <p>&#9642; {% translate "Clickable FAT Link Created!" %}</p>
+        <p>&#9642; {% translate "Make sure to give your fleet members the link to click so that they get credit for this fleet." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 1 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success!" %}</h4>
+
+        <p>{% translate "Fleet name successfully changed." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 3 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success!" %}</h4>
+
+        <p>{% translate "Manual FAT processed." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 4 %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Oh No!" %}</h4>
+
+        <p>{% translate "Manual FAT processing failed! The character name you entered was not found." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 5 %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Success" %}</h4>
+
+        <p>{% translate "The FAT link has been successfully re-opened." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 6 %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Error" %}</h4>
+
+        <p>{% translate "The hash you provided does not match with any FAT link." %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 7 %}
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+
+        <h4>{% translate "Warning" %}</h4>
+
+        <p>{% translate "This FAT link has already been re-opened. FAT links can be re-opened only once!" %}</p>
+    </div>
+{% endif %}
+
+{% if msg_code == 999 %}
+    <div class="alert alert-{{ message.0 }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times</span>
+        </button>
+        <h4>
+            {% if msg.0 == 'danger' %}
+                {% translate "Oh No!" %}
+            {% elif msg.0 == 'success' %}
+                {% translate "Success!" %}
+            {% endif %}
+        </h4>
+        <p>{{ message.1 }}</p>
+    </div>
+{% endif %}

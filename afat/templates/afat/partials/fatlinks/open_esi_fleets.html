@@ -1,0 +1,52 @@
+{% load evelinks %}
+{% load i18n %}
+
+{% if esi_fleet.has_open_esi_fleets %}
+    <div class="alert alert-info">
+        <p>
+            {% translate 'You currently have (an) active ESI fleet(s) under the following character(s):' %}<sup>*</sup>
+        </p>
+
+        <ul class="esi-fleet-list">
+            {% for open_esi_fleet in esi_fleet.open_esi_fleets_list %}
+                <li class="esi-fleet-list-item">
+                    <div class="eve-image-with-text">
+                        <div class="eve-image" style="">
+                            <img class="eve-character-portrait img-circle" src="{{ open_esi_fleet.character|character_portrait_url:32 }}" alt="{{ open_esi_fleet.character.character_name }}">
+                        </div>
+                        <div class="eve-image-text">
+                            {{ open_esi_fleet.character.character_name }}<br>
+                            <small>(Fleet Name: {{ open_esi_fleet.fleet }} // ESI fleet ID: {{ open_esi_fleet.esi_fleet_id }})</small>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="btn btn-primary btn-xs"
+                             style="margin-left: 0.25rem;"
+                             title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}"
+                             data-toggle="modal"
+                             data-target="#deleteEsiFleetModal"
+                             data-url="{% url 'afat:fatlinks_close_esi_fatlink' open_esi_fleet.hash %}"
+                             data-body-text="{% blocktranslate with esi_fleet_id=open_esi_fleet.esi_fleet_id character_name=open_esi_fleet.character.character_name %}<p>Are you sure you want to close ESI fleet with ID {{ esi_fleet_id }} from {{ character_name }}</p>{% endblocktranslate %}"
+                             data-confirm-text="{% translate 'Stop Tracking' %}"
+                        >
+                            <i class="fas fa-times"></i>
+                            <!-- {% translate 'Stop Tracking' %} -->
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <p>
+            {% translate 'These fleets are already automatically tracked. However, you can still open more fleets with other alts, if that&apos;s what you like to do.' %}
+        </p>
+
+        <p>
+            (<small><sup>(*)</sup> {% translate 'Note: Information about your registered fleets might be delayed by up to 5 minutes.' %})</small>
+        </p>
+    </div>
+
+    {% translate "Close ESI Fleet Tracking" as translated_title %}
+    {% include 'afat/modals/general.html' with modal_name='deleteEsiFleet' modal_title=translated_title confirm_button_class='btn-danger' %}
+{% endif %}

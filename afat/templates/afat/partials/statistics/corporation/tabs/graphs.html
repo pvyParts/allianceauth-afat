@@ -1,0 +1,101 @@
+{% load i18n %}
+
+<div id="graphs" class="tab-pane fade in active panel panel-default">
+    <div class="panel-body">
+        <ul class="nav nav-pills">
+            <li class="active"><a data-toggle="tab" href="#fatsbyship">{% translate "FATs By Ship Type" %}</a></li>
+            <li><a data-toggle="tab" href="#fatsbytime">{% translate "FATs By Time" %}</a></li>
+            <li><a data-toggle="tab" href="#fatsbyweek">{% translate "FATs By Weekday" %}</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade in active panel-default" id="fatsbyship">
+                <div class="panel-body">
+                    <h3>{% translate "FATs By Ship Type" %}</h3>
+
+                    <canvas id="ship-bar-stacked" width="800" height="500"></canvas>
+
+                    <script type="application/javascript">
+                        var corpShipTypeBarChart = new Chart(document.getElementById('ship-bar-stacked'), {
+                            type: "bar",
+                            data: {
+                                datasets: [{% for set in data_stacked.1 %}
+                                    {
+                                        label: '{{ set.0|escapejs }}',
+                                        backgroundColor: '{{ set.1|safe }}',
+                                        data: {{ set.2 }}
+                                    },
+                                {% endfor %}],
+                                labels: {{ data_stacked.0|safe }}
+                            },
+                            options: {
+                                responsive: false,
+                                scales: {
+                                    xAxes: [{
+                                        stacked: true,
+                                        ticks: {
+                                            autoSkip: false
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        stacked: true
+                                    }]
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <div id="fatsbytime" class="tab-pane fade in panel-default">
+                <div class="panel-body">
+                    <h3>{% translate "FATs By Time" %}</h3>
+
+                    <canvas id="time-line" width="800" height="500"></canvas>
+
+                    <script type="application/javascript">
+                        var timeLineChart = new Chart(document.getElementById("time-line"), {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    label: '# of FATs',
+                                    backgroundColor: {{ data_time.2|safe }},
+                                    data: {{ data_time.1 }}
+                                }],
+                                labels: {{ data_time.0|safe }}
+                            },
+                            options: {
+                                responsive: false
+                            }
+                        })
+                    </script>
+                </div>
+            </div>
+
+            <div class="tab-pane fade in panel-default" id="fatsbyweek">
+                <div class="panel-body">
+                    <h3>{% translate "FATs By Weekday" %}</h3>
+
+                    <canvas id="weekday-line" width="800" height="500"></canvas>
+
+                    <script type="application/javascript">
+                        var weekdayLineChart = new Chart(document.getElementById('weekday-line'), {
+                            type: 'line',
+                            data:{
+                                datasets: [{
+                                    label: '# of FATs',
+                                    backgroundColor: {{ data_weekday.2|safe }},
+                                    data: {{ data_weekday.1 }}
+                                }],
+                                labels: {{ data_weekday.0|safe }}
+                            },
+                            options: {
+                                responsive: false
+                            }
+                        })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

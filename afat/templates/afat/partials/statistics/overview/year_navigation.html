@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<h4>
+    <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' year_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
+
+    <span class="afat-label-statistics">{{ year }}</span>
+
+    {% if year_next <= year_current %}
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' year_next %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' year_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+    {% endif %}
+</h4>

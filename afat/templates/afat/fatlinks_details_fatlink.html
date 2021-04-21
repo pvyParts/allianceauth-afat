@@ -1,0 +1,66 @@
+{% extends 'afat/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}{% translate 'Fleet Activity' %}{% endblock %}
+
+{% block afat_header %}
+    <br>
+    {% include "afat/partials/menu.html" %}
+    {% include "afat/partials/fatlinks/details/message.html" %}
+
+    <h2>{% translate "FAT Link Details" %}</h2>
+{% endblock %}
+
+{% block afat_body %}
+    {% if perms.afat.manage_afat %}
+        {% include "afat/partials/fatlinks/details/fatlink_name_form.html" %}
+    {% endif %}
+
+    {% include "afat/partials/fatlinks/details/fatlink_info.html" %}
+
+    <p>&nbsp;</p>
+
+    {% include "afat/partials/fatlinks/details/tabs_navigation.html" %}
+
+    <div class="tab-content">
+        {% include "afat/partials/fatlinks/details/tabs/fats.html" %}
+        {% include "afat/partials/fatlinks/details/tabs/manualfat.html" %}
+    </div>
+
+    {% translate "Delete FAT" as translated_title %}
+    {% include "afat/modals/general.html" with modal_name='deleteFat' modal_title=translated_title confirm_button_class='btn-danger' %}
+{% endblock %}
+
+{% block extra_css %}
+    {% include 'bundles/datatables-css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
+{% endblock %}
+
+{% block extra_javascript %}
+    <script type="application/javascript" src="{% static 'afat/javascript/allianceauth-afat.min.js' %}"></script>
+
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/clipboard-js.html' %}
+
+    <script type="application/javascript">
+        let afatSettings = {
+            url: '{% url "afat:fatlinks_ajax_get_fats_by_fatlink" 0 %}'.replace(
+                    '0',
+                    '{{ link.hash }}'
+                ),
+            modal: {
+                deleteModal: {
+                    element: '#deleteFatModal',
+                },
+                reopenFatLinkModal: {
+                    element: '#reopenFatLinkModal',
+                }
+            }
+        }
+    </script>
+    <script type="application/javascript" src="{% static 'afat/javascript/afat-fatlink-details.min.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'afat/base.html' %}
+
+{% load evelinks %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}{{ alliance }} {% translate "Statistics" %}{% endblock %}
+
+{% block afat_header %}
+    <br>
+    {% include 'afat/partials/menu.html' %}
+
+    <h2>{{ alliance }} {% translate "Statistics" %}</h2>
+{% endblock %}
+
+{% block afat_body %}
+    <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
+
+    {% include 'afat/partials/statistics/alliance/month_navigation.html' %}
+    {% include 'afat/partials/statistics/alliance/tabs_navigation.html' %}
+
+    <div class="tab-content">
+        {% include 'afat/partials/statistics/alliance/tabs/graphs.html' %}
+        {% include 'afat/partials/statistics/alliance/tabs/corporations.html' %}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {% include 'bundles/datatables-css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
+{% endblock %}
+
+{% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/moment-js.html' %}
+
+    <script type="application/javascript">
+        /**
+         * datetime formatting
+         *
+         * @param format
+         * @param locale
+         */
+        $.fn.dataTable.moment = function(format, locale) {
+            var types = $.fn.dataTable.ext.type;
+
+            // Add type detection
+            types.detect.unshift(function(d) {
+                return moment(d, format, locale, true).isValid() ? 'moment-' + format : null;
+            });
+
+            // Add sorting method - use an integer for the sorting
+            types.order['moment-' + format + '-pre'] = function(d) {
+                return moment(d, format, locale, true).unix();
+            };
+        };
+
+        $(document).ready(function() {
+            $.fn.dataTable.moment('YYYY-MMM-DD, HH:mm');
+
+            $('#member-corps').DataTable();
+        });
+    </script>
+{% endblock %}

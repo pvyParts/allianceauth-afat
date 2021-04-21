@@ -1,0 +1,65 @@
+{% extends 'afat/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}{% translate 'Fleet Activity Tracking Logs' %}{% endblock %}
+
+{% block afat_header %}
+    <br>
+    {% include "afat/partials/menu.html" %}
+
+    <h2>{% translate "Logs" %}</h2>
+
+    <p class="text-muted">
+        {% blocktranslate %}
+            Logs are only kept for {{ log_duration }} days. Logs older than that are removed automatically.
+        {% endblocktranslate %}
+    </p>
+{% endblock %}
+
+{% block afat_body %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table table-striped table-hover" id="afat-logs" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>{% translate "Time" %}</th>
+                        <th>{% translate "Event" %}</th>
+                        <th>{% translate "User" %}</th>
+                        <th>{% translate "FAT link" %}</th>
+                        <th>{% translate "Description" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {% include 'bundles/datatables-css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/aa-bootstrap-fix.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'afat/css/allianceauth-afat.min.css' %}">
+{% endblock %}
+
+{% block extra_javascript %}
+    {% include 'bundles/datatables-js.html' %}
+    {% include 'bundles/moment-js.html' with locale=True %}
+
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/dataTables.rowGroup.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/libs/datatables/plugins/datetime.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/filterDropDown/filterDropDown.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'afat/javascript/allianceauth-afat.min.js' %}"></script>
+
+    <script type="application/javascript">
+        let afatSettings = {
+            url: {
+                logs: '{% url 'afat:logs_ajax_get_logs' %}'
+            },
+        }
+    </script>
+    <script type="application/javascript" src="{% static 'afat/javascript/afat-logs.min.js' %}"></script>
+{% endblock %}

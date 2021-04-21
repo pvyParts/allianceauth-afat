@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<div id="fats" class="tab-pane fade in active panel panel-default">
+    <div class="panel-body clearfix">
+        <div class="col-md-8">
+            <h4>{% translate "FATs for this FAT Link <small>(updated every 15 seconds)</small>" %}</h4>
+
+            <table class="table table-striped table-hover" id="fleet-edit-fat-list" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>{% translate "Character" %}</th>
+                        <th>{% translate "Location" %}</th>
+                        <th>{% translate "Ship Type" %}</th>
+                        <th><!-- {% translate "Actions" %} --></th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <h4>{% translate "Ship Type Overview" %}</h4>
+
+            <table class="table table-striped table-hover" id="fleet-edit-ship-types" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>{% translate "Ship Type" %}</th>
+                        <th class="text-right">{% translate "Numbers" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>

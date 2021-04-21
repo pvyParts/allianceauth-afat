@@ -7,12 +7,16 @@ from django.core.management.base import BaseCommand
 
 from allianceauth.fleetactivitytracking.models import Fat, Fatlink
 
-from afat.models import AFat, AFatLink
+from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -20,8 +24,9 @@ def get_input(text):
 
 def aa_fat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if native fat is installed
+    :return:
+    :rtype:
     """
 
     return "allianceauth.fleetactivitytracking" in settings.INSTALLED_APPS
@@ -35,6 +40,12 @@ class Command(BaseCommand):
     help = "Imports FAT data from AA FAT module"
 
     def _import_from_aa_fat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # check if AA FAT is active
         if aa_fat_installed():
             self.stdout.write(
@@ -58,7 +69,8 @@ class Command(BaseCommand):
             aa_fatlinks = Fatlink.objects.all()
             for aa_fatlink in aa_fatlinks:
                 self.stdout.write(
-                    "Importing FAT link for fleet '{fleet}' with hash '{fatlink_hash}'.".format(
+                    "Importing FAT link for fleet '{fleet}' with hash "
+                    "'{fatlink_hash}'.".format(
                         fleet=aa_fatlink.fleet, fatlink_hash=aa_fatlink.hash
                     )
                 )
@@ -72,6 +84,22 @@ class Command(BaseCommand):
                 afatlink.creator_id = aa_fatlink.creator_id
 
                 afatlink.save()
+
+                # write to log table
+                log_text = (
+                    "FAT link {fatlink_hash} with name {name} was created by {user}"
+                ).format(
+                    fatlink_hash=aa_fatlink.hash,
+                    name=aa_fatlink.fleet,
+                    user=aa_fatlink.creator,
+                )
+
+                afatlog = AFatLog()
+                afatlog.log_time = aa_fatlink.fatdatetime
+                afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+                afatlog.log_text = log_text
+                afatlog.user_id = aa_fatlink.creator_id
+                afatlog.save()
 
             aa_fats = Fat.objects.all()
             for aa_fat in aa_fats:
@@ -94,14 +122,16 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(
                     "Import complete! "
-                    "You can now deactivate the Alliance Auth FAT module in your local.py"
+                    "You can now deactivate the Alliance Auth FAT "
+                    "module in your local.py"
                 )
             )
         else:
             self.stdout.write(
                 self.style.WARNING(
                     "Alliance Auth FAT module is not active. "
-                    "Please make sure you have it in your INSTALLES_APPS in your local.py!"
+                    "Please make sure you have it in your "
+                    "INSTALLED_APPS in your local.py!"
                 )
             )
 
@@ -109,13 +139,18 @@ class Command(BaseCommand):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         self.stdout.write(
             "Importing all FAT/FAT link data from Alliance Auth's built in FAT module. "
             "This can only be done once during the very first installation. "
-            "As soon as you have data collected with your AFAT module, this import will fail!"
+            "As soon as you have data collected with your AFAT module, "
+            "this import will fail!"
         )
 
         user_input = get_input("Are you sure you want to proceed? (yes/no)?")

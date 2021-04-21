@@ -4,14 +4,16 @@ admin pages configuration
 
 from django.contrib import admin
 
-from afat.models import AFat, AFatLink, AFatLinkType, ManualAFat
+from afat.models import AFat, AFatLink, AFatLinkType, AFatLog, ManualAFat
 
 
 def custom_filter(title):
     """
     defining custom filter titles
     :param title:
+    :type title:
     :return:
+    :rtype:
     """
 
     class Wrapper(admin.FieldListFilter):
@@ -22,17 +24,32 @@ def custom_filter(title):
         def expected_parameters(self):
             """
             expected parameters
+            :return:
+            :rtype:
             """
+
             pass
 
         def choices(self, changelist):
             """
             choices
             :param changelist:
+            :type changelist:
+            :return:
+            :rtype:
             """
+
             pass
 
         def __new__(cls, *args, **kwargs):
+            """
+            __new__
+            :param args:
+            :type args:
+            :param kwargs:
+            :type kwargs:
+            """
+
             instance = admin.FieldListFilter.create(*args, **kwargs)
             instance.title = title
 
@@ -84,12 +101,28 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
     ordering = ("name",)
 
     def _name(self, obj):
+        """
+        rewrite name
+        :param obj:
+        :type obj:
+        :return:
+        :rtype:
+        """
+
         return obj.name
 
     _name.short_description = "Fleet Type"
     _name.admin_order_field = "name"
 
     def _is_enabled(self, obj):
+        """
+        rewrite is_enabled
+        :param obj:
+        :type obj:
+        :return:
+        :rtype:
+        """
+
         return obj.is_enabled
 
     _is_enabled.boolean = True
@@ -105,7 +138,11 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         """
         Mark fleet type as active
         :param request:
+        :type request:
         :param queryset:
+        :type queryset:
+        :return:
+        :rtype:
         """
 
         notifications_count = 0
@@ -117,7 +154,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
             notifications_count += 1
 
         self.message_user(
-            request, "{} fleet types marked as active".format(notifications_count)
+            request, f"{notifications_count} fleet types marked as active"
         )
 
     mark_as_active.short_description = "Activate selected fleet type(s)"
@@ -126,7 +163,11 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         """
         Mark fleet type as inactive
         :param request:
+        :type request:
         :param queryset:
+        :type queryset:
+        :return:
+        :rtype:
         """
 
         notifications_count = 0
@@ -138,7 +179,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
             notifications_count += 1
 
         self.message_user(
-            request, "{} fleet types marked as inactive".format(notifications_count)
+            request, f"{notifications_count} fleet types marked as inactive"
         )
 
     mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
@@ -161,15 +202,42 @@ class ManualAFatAdmin(admin.ModelAdmin):
     )
 
     def _afatlink(self, obj):
-        return "Fleet: {fleet_name} (FAT link hash: {fatlink_hash})".format(
-            fleet_name=obj.afatlink.fleet, fatlink_hash=obj.afatlink.hash
-        )
+        """
+        rewrite afatlink
+        :param obj:
+        :type obj:
+        :return:
+        :rtype:
+        """
+
+        return f"Fleet: {obj.afatlink.fleet} (FAT link hash: {obj.afatlink.hash})"
 
     _afatlink.short_description = "FAT Link"
     _afatlink.admin_order_field = "afatlink"
 
     def _character(self, obj):
+        """
+        reqrite character
+        :param obj:
+        :type obj:
+        :return:
+        :rtype:
+        """
+
         return obj.character
 
     _character.short_description = "Pilot added"
     _character.admin_order_field = "character"
+
+
+@admin.register(AFatLog)
+class AFatLogAdmin(admin.ModelAdmin):
+    """
+    config for admin log
+    """
+
+    list_display = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
+    ordering = ("-log_time",)
+    readonly_fields = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
+
+    list_filter = ("log_event",)

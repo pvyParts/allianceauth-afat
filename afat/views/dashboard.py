@@ -4,7 +4,6 @@ dashboard related views
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -22,11 +21,13 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 @login_required()
 @permission_required("afat.basic_access")
-def dashboard(request: WSGIRequest) -> HttpResponse:
+def overview(request: WSGIRequest) -> HttpResponse:
     """
-    dashboard
+    dashboard view
     :param request:
+    :type request:
     :return:
+    :rtype:
     """
 
     msg = None
@@ -52,12 +53,17 @@ def dashboard(request: WSGIRequest) -> HttpResponse:
 
 @login_required
 @permission_required("afat.basic_access")
-def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
+def ajax_recent_get_fats_by_character(
+    request: WSGIRequest, charid: int
+) -> JsonResponse:
     """
-    ajax call
-    get fats for dashboard view
+    ajax call :: get all FATs for a given character
     :param request:
+    :type request:
     :param charid:
+    :type charid:
+    :return:
+    :rtype:
     """
 
     character = EveCharacter.objects.get(character_id=charid)
@@ -77,16 +83,16 @@ def dashboard_fats_data(request: WSGIRequest, charid: int) -> JsonResponse:
 
 @login_required
 @permission_required("afat.basic_access")
-def dashboard_links_data(request: WSGIRequest) -> JsonResponse:
+def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     """
-    ajax call
-    get recent fat links for the dashboard datatable
+    ajax call :: get recent fat links for the dashboard datatable
     :param request:
+    :type request:
+    :return:
+    :rtype:
     """
 
-    fatlinks = AFatLink.objects.order_by("-afattime").annotate(
-        number_of_fats=Count("afat")
-    )[:10]
+    fatlinks = AFatLink.objects.order_by("-afattime")[:10]
 
     fatlink_rows = [
         convert_fatlinks_to_dict(request=request, fatlink=fatlink)

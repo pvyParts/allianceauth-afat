@@ -4,13 +4,50 @@
     }
 
     .fatlink-list-legend {
+        border-top: 1px solid rgb(236, 240, 241);
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid rgb(236, 240, 241);
     }
 
     .template-dark-mode .fatlink-list-legend {
         border-top: 1px solid rgb(70, 69, 69);
+    }
+}
+
+/* esi fleet list (add fatlink view)
+------------------------------------------------------------------------------------- */
+@media all {
+    .allianceauth-afat .esi-fleet-list {
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding: 0;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item {
+        align-content: space-between;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        list-style: none;
+        padding: 0.5rem 1rem;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-image-with-text {
+        display: flex;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-image-with-text .eve-image {
+        margin: auto;
+    }
+
+    .allianceauth-afat .esi-fleet-list-item .eve-character-portrait {
+        margin-right: 0.5rem;
     }
 }
 
@@ -30,9 +67,9 @@
 ------------------------------------------------------------------------------------- */
 @media all {
     .afat-label-via-esi {
+        background-color: rgb(192, 192, 192);
+        color: rgb(54, 54, 54);
         margin-left: 1rem;
-        background-color: rgb(192,192,192);
-        color: rgb(54,54,54);
     }
 
     .afat-label-active-esi-fleet {
@@ -40,10 +77,10 @@
     }
 
     .afat-label-statistics {
-        position: relative;
-        top: 0.2rem;
         margin-left: 1rem;
         margin-right: 1rem;
+        position: relative;
+        top: 0.2rem;
     }
 }
 
@@ -55,8 +92,8 @@
     }
 
     .dataTables_wrapper > .form-inline select {
-        margin-right: 1rem;
         margin-bottom: 1rem;
+        margin-right: 1rem;
     }
 
     .dataTables_wrapper > .form-inline select:last-child {

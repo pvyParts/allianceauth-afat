@@ -13,10 +13,7 @@
                     <th>{% translate "Fleet Type" %}</th>
                     <th>{% translate "Creator" %}</th>
                     <th>{% translate "EVE Time" %}</th>
-
-                    {% if perms.afat.manage_afat or perms.afat.add_fatlink %}
-                        <th><!-- {% translate "Actions" %} --></th>
-                    {% endif %}
+                    <th><!-- {% translate "Actions" %} --></th>
                 </tr>
             </thead>
 
@@ -24,8 +21,8 @@
 
             <tfoot>
                 <tr>
-                    <td colspan="{% if perms.afat.manage_afat or perms.afat.add_fatlink %}5{% else %}4{% endif %}">
-                        {% include "afat/partials/fatlink_list_legend.html" %}
+                    <td colspan="5">
+                        {% include "afat/partials/fatlinks/fatlink_list_legend.html" %}
                     </td>
                 </tr>
             </tfoot>

@@ -4,129 +4,145 @@ url configuration
 
 from django.conf.urls import url
 
-from afat.views import dashboard, fatlinks, statistics
+from afat.views import dashboard, fatlinks, logs, statistics
 
 app_name: str = "afat"
 
 urlpatterns = [
     # dashboard
-    url(r"^$", dashboard.dashboard, name="dashboard"),
+    url(r"^$", dashboard.overview, name="dashboard"),
     # stats main page
-    url(r"^statistics/$", statistics.stats, name="stats"),
-    url(r"^statistics/(?P<year>[0-9]+)/$", statistics.stats, name="stats"),
+    url(r"^statistics/$", statistics.overview, name="statistics_overview"),
+    url(
+        r"^statistics/(?P<year>[0-9]+)/$",
+        statistics.overview,
+        name="statistics_overview",
+    ),
     # stats corp
-    url(r"^statistics/corporation/$", statistics.stats_corp, name="stats_corp"),
+    url(
+        r"^statistics/corporation/$",
+        statistics.corporation,
+        name="statistics_corporation",
+    ),
     url(
         r"^statistics/corporation/(?P<corpid>[0-9]+)/$",
-        statistics.stats_corp,
-        name="stats_corp",
+        statistics.corporation,
+        name="statistics_corporation",
     ),
     url(
         r"^statistics/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/$",
-        statistics.stats_corp,
-        name="stats_corp",
+        statistics.corporation,
+        name="statistics_corporation",
     ),
     url(
         r"^statistics/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
-        statistics.stats_corp,
-        name="stats_corp",
+        statistics.corporation,
+        name="statistics_corporation",
     ),
     # stats char
-    url(r"^statistics/character/$", statistics.stats_char, name="stats_char"),
+    url(r"^statistics/character/$", statistics.character, name="statistics_character"),
     url(
         r"^statistics/character/(?P<charid>[0-9]+)/$",
-        statistics.stats_char,
-        name="stats_char",
+        statistics.character,
+        name="statistics_character",
     ),
     url(
         r"^statistics/character/(?P<charid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
-        statistics.stats_char,
-        name="stats_char",
+        statistics.character,
+        name="statistics_character",
     ),
     # stats alliance
-    url(r"^statistics/alliance/$", statistics.stats_alliance, name="stats_ally"),
+    url(r"^statistics/alliance/$", statistics.alliance, name="statistics_alliance"),
     url(
         r"^statistics/alliance/(?P<allianceid>[0-9]+)/$",
-        statistics.stats_alliance,
-        name="stats_ally",
+        statistics.alliance,
+        name="statistics_alliance",
     ),
     url(
         r"^statistics/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/$",
-        statistics.stats_alliance,
-        name="stats_ally",
+        statistics.alliance,
+        name="statistics_alliance",
     ),
     url(
         r"^statistics/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
-        statistics.stats_alliance,
-        name="stats_ally",
+        statistics.alliance,
+        name="statistics_alliance",
     ),
-    # fatlinks
-    url(r"^fatlinks/$", fatlinks.links, name="links"),
-    url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.links, name="links"),
+    # fatlinks list actions
+    url(r"^fatlinks/$", fatlinks.overview, name="links"),
+    url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.overview, name="links"),
     url(
-        r"^fatlinks/create/esi/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
-        fatlinks.link_create_esi,
-        name="link_create_esi",
+        r"^fatlinks/link/create/esi-fatlink/$",
+        fatlinks.create_esi_fatlink,
+        name="fatlinks_create_esi_fatlink",
     ),
+    # fatlink actions
+    url(r"^fatlink/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
-        r"^fatlinks/create/esifat/$",
-        fatlinks.create_esi_fat,
-        name="create_esi_fat",
-    ),
-    url(
-        r"^fatlinks/create/click/$",
-        fatlinks.link_create_click,
-        name="link_create_click",
-    ),
-    url(r"^fatlinks/add/$", fatlinks.link_add, name="link_add"),
-    url(r"^fatlinks/edit/$", fatlinks.link_edit, name="link_edit"),
-    url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
-        fatlinks.link_edit,
-        name="link_edit",
+        r"^fatlink/create/esi-fatlink/callback/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
+        fatlinks.create_esi_fatlink_callback,
+        name="fatlinks_create_esi_fatlink_callback",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/click/$",
-        fatlinks.click_link,
-        name="link_click",
-    ),
-    url(r"^fatlinks/del/$", fatlinks.del_link, name="link_delete"),
-    url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/del/$",
-        fatlinks.del_link,
-        name="link_delete",
+        r"^fatlink/create/clickable-fatlink/$",
+        fatlinks.create_clickable_fatlink,
+        name="fatlinks_create_clickable_fatlink",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/(?P<fat>[0-9]+)/del/$",
-        fatlinks.del_fat,
-        name="fat_delete",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/details/$",
+        fatlinks.details_fatlink,
+        name="fatlinks_details_fatlink",
     ),
     url(
-        r"^fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/delete/$",
+        fatlinks.delete_fatlink,
+        name="fatlinks_delete_fatlink",
+    ),
+    url(
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/stop-esi-tracking/$",
         fatlinks.close_esi_fatlink,
-        name="close_esi_fatlink",
+        name="fatlinks_close_esi_fatlink",
     ),
+    url(
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/re-open/$",
+        fatlinks.reopen_fatlink,
+        name="fatlinks_reopen_fatlink",
+    ),
+    # fat actions
+    url(
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/register/$",
+        fatlinks.add_fat,
+        name="fatlinks_add_fat",
+    ),
+    url(
+        r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/fat/(?P<fat>[0-9]+)/delete/$",
+        fatlinks.delete_fat,
+        name="fatlinks_delete_fat",
+    ),
+    # log actions
+    url(r"^logs/$", logs.overview, name="logs_overview"),
     # ajax calls :: dashboard
     url(
-        r"^ajax/dashboard/get_fats/(?P<charid>[0-9]+)/$",
-        dashboard.dashboard_fats_data,
-        name="dashboard_fats_data",
+        r"^ajax/dashboard/fatlinks/recent/$",
+        dashboard.ajax_get_recent_fatlinks,
+        name="dashboard_ajax_get_recent_fatlinks",
     ),
     url(
-        r"^ajax/dashboard/get_fatlinks/$",
-        dashboard.dashboard_links_data,
-        name="dashboard_links_data",
+        r"^ajax/dashboard/fats/recent/character/(?P<charid>[0-9]+)/$",
+        dashboard.ajax_recent_get_fats_by_character,
+        name="dashboard_ajax_get_recent_fats_by_character",
     ),
     # ajax calls :: fatlinks
-    url(r"^ajax/fatlinks/get_fatlinks/$", fatlinks.links_data, name="links_data"),
     url(
-        r"^ajax/fatlinks/get_fatlinks/(?P<year>[0-9]+)/$",
-        fatlinks.links_data,
-        name="links_data",
+        r"^ajax/fatlinks/fatlinks/year/(?P<year>[0-9]+)/$",
+        fatlinks.ajax_get_fatlinks_by_year,
+        name="fatlinks_ajax_get_fatlinks_by_year",
     ),
     url(
-        r"^ajax/fatlinks/(?P<fatlink_hash>[a-zA-Z0-9]+)/edit/$",
-        fatlinks.link_edit_fat_data,
-        name="link_edit_fat_data",
+        r"^ajax/fatlinks/fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/fats/$",
+        fatlinks.ajax_get_fats_by_fatlink,
+        name="fatlinks_ajax_get_fats_by_fatlink",
     ),
+    # ajax calls :: logs
+    url(r"^ajax/logs/$", logs.ajax_get_logs, name="logs_ajax_get_logs"),
 ]

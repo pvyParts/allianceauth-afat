@@ -1,0 +1,50 @@
+{% load bootstrap %}
+{% load i18n %}
+{% load evelinks %}
+
+<div class="col-md-6 mr-md-1">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% translate "Create link using ESI" %}
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <p>
+                {% blocktranslate %}
+                    This option will automatically register and track the entire fleet
+                    without fleet members having to click a link.<br><b>Use this if you
+                    are Fleet Boss</b>, otherwise please use the clickable FAT link
+                    option.
+                {% endblocktranslate %}
+            </p>
+
+            <p>
+                {% translate 'This will start tracking your fleet automatically and add pilots to it as they join until the fleet is either closed ingame (meaning you leave the fleet) or you stop the tracking here. '%}
+            </p>
+
+            {% include 'afat/partials/fatlinks/open_esi_fleets.html' %}
+
+            <form class="form" role="form" action="{% url 'afat:fatlinks_create_esi_fatlink' %}" method="POST">
+                {% csrf_token %}
+
+                {{ esi_fatlink_form.name_esi|bootstrap }}
+
+                {% if link_types_configured %}
+                    {{ esi_fatlink_form.type_esi|bootstrap }}
+                {% endif %}
+
+                {% include 'afat/partials/form/required_field_hint.html' %}
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit" name="submit_click">
+                        <span class="fa fa-plus fa-fw"></span>
+
+                        {% translate "Add ESI Link" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

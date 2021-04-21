@@ -7,12 +7,23 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from afat import __version__ as afat_version_installed
-from afat.models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, ManualAFat
+from afat.models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLog,
+    AFatLogEvent,
+    ClickAFatDuration,
+)
 
 
-def get_input(text):
+def get_input(text) -> str:
     """
     wrapped input to enable import
+    :param text:
+    :type text:
+    :return:
+    :rtype:
     """
 
     return input(text)
@@ -20,8 +31,9 @@ def get_input(text):
 
 def imicusfat_installed() -> bool:
     """
-    check if aa-timezones is installed
-    :return: bool
+    check if imicusfat is installed
+    :return:
+    :rtype:
     """
 
     return "imicusfat" in settings.INSTALLED_APPS
@@ -54,7 +66,9 @@ class Command(BaseCommand):
         """
         checking for the latest available version of a package on Pypi
         :param package_name:
+        :type package_name:
         :return:
+        :rtype:
         """
 
         current_python_version = version_parse(
@@ -119,19 +133,23 @@ class Command(BaseCommand):
         return None
 
     def _import_from_imicusfat(self) -> None:
+        """
+        start the import
+        :return:
+        :rtype:
+        """
+
         # first we check if the target tables are really empty ...
         current_afat_count = AFat.objects.all().count()
         current_afat_links_count = AFatLink.objects.all().count()
         current_afat_linktype_count = AFatLinkType.objects.all().count()
         current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
-        current_afat_manualfat_count = ManualAFat.objects.all().count()
 
         if (
             current_afat_count > 0
             or current_afat_links_count > 0
             or current_afat_linktype_count > 0
             or current_afat_clickduration_count > 0
-            or current_afat_manualfat_count > 0
         ):
             self.stdout.write(
                 self.style.WARNING(
@@ -163,7 +181,8 @@ class Command(BaseCommand):
         imicusfat_fatlinks = IFatLink.objects.all()
         for imicusfat_fatlink in imicusfat_fatlinks:
             self.stdout.write(
-                "Importing FAT link for fleet '{fleet}' with hash '{fatlink_hash}'.".format(
+                "Importing FAT link for fleet '{fleet}' with "
+                "hash '{fatlink_hash}'.".format(
                     fleet=imicusfat_fatlink.fleet,
                     fatlink_hash=imicusfat_fatlink.hash,
                 )
@@ -180,6 +199,46 @@ class Command(BaseCommand):
             afatlink.is_esilink = imicusfat_fatlink.is_esilink
 
             afatlink.save()
+
+            # write to log table
+            if imicusfat_fatlink.is_esilink:
+                log_text = (
+                    "ESI FAT link {fatlink_hash} with name {name} was created by {user}"
+                ).format(
+                    fatlink_hash=imicusfat_fatlink.hash,
+                    name=imicusfat_fatlink.fleet,
+                    user=imicusfat_fatlink.creator,
+                )
+            else:
+                try:
+                    fleet_duration = ClickIFatDuration.objects.get(
+                        fleet_id=imicusfat_fatlink.id
+                    )
+
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} and a "
+                        "duration of {duration} minutes was created by {user}"
+                    ).format(
+                        fatlink_hash=imicusfat_fatlink.hash,
+                        name=imicusfat_fatlink.fleet,
+                        duration=fleet_duration.duration,
+                        user=imicusfat_fatlink.creator,
+                    )
+                except ClickIFatDuration.DoesNotExist:
+                    log_text = (
+                        "FAT link {fatlink_hash} with name {name} was created by {user}"
+                    ).format(
+                        fatlink_hash=imicusfat_fatlink.hash,
+                        name=imicusfat_fatlink.fleet,
+                        user=imicusfat_fatlink.creator,
+                    )
+
+            afatlog = AFatLog()
+            afatlog.log_time = imicusfat_fatlink.ifattime
+            afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+            afatlog.log_text = log_text
+            afatlog.user_id = imicusfat_fatlink.creator_id
+            afatlog.save()
 
         # import FATs
         imicustaf_fats = IFat.objects.all()
@@ -217,7 +276,7 @@ class Command(BaseCommand):
 
             afat_clickfatduration.save()
 
-        # import manual fat
+        # import manual fat to log table
         imicusfat_manualfats = ManualIFat.objects.all()
         for imicusfat_manualfat in imicusfat_manualfats:
             self.stdout.write(
@@ -226,15 +285,21 @@ class Command(BaseCommand):
                 )
             )
 
-            afat_manualfat = ManualAFat()
+            fatlink = IFatLink.objects.get(manualifat=imicusfat_manualfat)
+            log_text = (
+                "Pilot {pilot_name} was manually added to "
+                'FAT link with hash "{fatlink_hash}"'
+            ).format(
+                pilot_name=imicusfat_manualfat.character.character_name,
+                fatlink_hash=fatlink.hash,
+            )
 
-            afat_manualfat.id = imicusfat_manualfat.id
-            afat_manualfat.character_id = imicusfat_manualfat.character_id
-            afat_manualfat.creator_id = imicusfat_manualfat.creator_id
-            afat_manualfat.afatlink_id = imicusfat_manualfat.ifatlink_id
-            afat_manualfat.created_at = imicusfat_manualfat.created_at
-
-            afat_manualfat.save()
+            afatlog = AFatLog()
+            afatlog.log_time = imicusfat_manualfat.created_at
+            afatlog.log_event = AFatLogEvent.MANUAL_FAT
+            afatlog.log_text = log_text
+            afatlog.user_id = imicusfat_manualfat.creator_id
+            afatlog.save()
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -243,15 +308,15 @@ class Command(BaseCommand):
             )
         )
 
-    def _start_import(self) -> None:
-        self.stdout.write("Starting import. Please stand by.")
-        self._import_from_imicusfat()
-
     def handle(self, *args, **options):
         """
         ask before running ...
         :param args:
+        :type args:
         :param options:
+        :type options:
+        :return:
+        :rtype:
         """
 
         if imicusfat_installed():
@@ -285,7 +350,8 @@ class Command(BaseCommand):
 
                     self.stdout.write(
                         self.style.WARNING(
-                            "ImicusFAT version installed: {ifat_version_installed}".format(
+                            "ImicusFAT version installed: "
+                            "{ifat_version_installed}".format(
                                 ifat_version_installed=ifat_version_installed
                             )
                         )
@@ -293,7 +359,8 @@ class Command(BaseCommand):
 
                     self.stdout.write(
                         self.style.WARNING(
-                            "ImicusFAT version available: {ifat_version_available}".format(
+                            "ImicusFAT version available: "
+                            "{ifat_version_available}".format(
                                 ifat_version_available=ifat_version_available
                             )
                         )
@@ -339,20 +406,23 @@ class Command(BaseCommand):
                 self.stdout.write(
                     "Importing all FAT/FAT link data from ImicusFAT module. "
                     "This can only be done once during the very first installation. "
-                    "As soon as you have data collected with your AFAT module, this import will fail!"
+                    "As soon as you have data collected with your AFAT module, "
+                    "this import will fail!"
                 )
 
                 user_input = get_input("Are you sure you want to proceed? (yes/no)?")
 
                 if user_input == "yes":
-                    self._start_import()
+                    self.stdout.write("Starting import. Please stand by.")
+                    self._import_from_imicusfat()
                 else:
                     self.stdout.write(self.style.WARNING("Aborted."))
         else:
             self.stdout.write(
                 self.style.WARNING(
                     "ImicusFAT module is not active. "
-                    "Please make sure you have it in your INSTALLED_APPS in your local.py! "
+                    "Please make sure you have it in your "
+                    "INSTALLED_APPS in your local.py! "
                     "Aborting."
                 )
             )

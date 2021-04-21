@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<!-- AFAT Modal -->
+<div class="modal fade" id="{{ modal_name }}Modal" tabindex="-1" role="dialog" aria-labelledby="{{ modal_name }}ModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <h5 class="modal-title" id="{{ modal_name }}ModalLongTitle">
+                    {{ modal_title }}
+                </h5>
+            </div>
+
+            <div class="modal-body"></div>
+
+            <div class="modal-footer">
+                <button type="button" id="cancel-action" class="btn btn-default btn-sm" data-dismiss="modal"></button>
+
+                <a id="confirm-action" class="btn {% if confirm_button_class %}{{ confirm_button_class }}{% else %}btn-primary{% endif %} btn-sm" role="button" href=""></a>
+            </div>
+        </div>
+
+        <div id="defaultTexts" class="hidden">
+            <span id="cancelButtonDefaultText">{% translate "Cancel" %}</span>
+            <span id="confirmButtonDefaultText">{% translate "Confirm" %}</span>
+        </div>
+    </div>
+</div>
