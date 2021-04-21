@@ -110,12 +110,13 @@ class Command(BaseCommand):
                         f'"{bfat_fatlink.fleet}" was created by {bfat_fatlink.creator}'
                     )
 
-                afatlog = AFatLog()
-                afatlog.log_time = bfat_fatlink.fattime
-                afatlog.log_event = AFatLogEvent.CREATE_FATLINK
-                afatlog.log_text = log_text
-                afatlog.user_id = bfat_fatlink.creator_id
-                afatlog.save()
+                if bfat_fatlink.fattime is not None:
+                    afatlog = AFatLog()
+                    afatlog.log_time = bfat_fatlink.fattime
+                    afatlog.log_event = AFatLogEvent.CREATE_FATLINK
+                    afatlog.log_text = log_text
+                    afatlog.user_id = bfat_fatlink.creator_id
+                    afatlog.save()
 
             # import FATs
             bfat_fats = BfatFat.objects.all()

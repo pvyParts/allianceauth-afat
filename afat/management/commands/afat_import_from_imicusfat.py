@@ -294,12 +294,13 @@ class Command(BaseCommand):
                 fatlink_hash=fatlink.hash,
             )
 
-            afatlog = AFatLog()
-            afatlog.log_time = imicusfat_manualfat.created_at
-            afatlog.log_event = AFatLogEvent.MANUAL_FAT
-            afatlog.log_text = log_text
-            afatlog.user_id = imicusfat_manualfat.creator_id
-            afatlog.save()
+            if imicusfat_manualfat.created_at is not None:
+                afatlog = AFatLog()
+                afatlog.log_time = imicusfat_manualfat.created_at
+                afatlog.log_event = AFatLogEvent.MANUAL_FAT
+                afatlog.log_text = log_text
+                afatlog.user_id = imicusfat_manualfat.creator_id
+                afatlog.save()
 
         self.stdout.write(
             self.style.SUCCESS(
