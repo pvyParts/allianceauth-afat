@@ -731,11 +731,16 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         # ESI link
         link_ongoing = False
 
+    is_clickable_link = False
+    if link.is_esilink is False:
+        is_clickable_link = True
+
     context = {
         "msg_code": msg_code,
         "message": message,
         "link": link,
-        # "flatlist": flatlist,
+        "is_esi_link": link.is_esilink,
+        "is_clickable_link": is_clickable_link,
         "link_expires": link_expires,
         "link_ongoing": link_ongoing,
         "link_can_be_reopened": link_can_be_reopened,
