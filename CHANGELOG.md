@@ -6,12 +6,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.1.0] - 2021-04-22
+
+### Changed
+
+- Ability to manually add pilots to FAT link has been disabled for ESI tracked FAT
+  links. The reason for this is pretty simple. Since an ESI tracked FAT link is
+  continuously tracking the fleet via ESI, all pilot who have been in said fleet are
+  added automatically. If someone hasn't been added, said someone wasn't in the fleet.
+
+### ⚠️ Important ⚠️
+
+If you haven't updated to the v2 version yet, do so first and do not go straight to
+this version. Read the [update instructions for v2.0.0 please](#-update-instructions-for-v200-)
+please.
+
+
 ## [2.0.1] - 2021-04-22
 
 ### Fixed
 
 - `django.db.utils.IntegrityError: (1048, "Column 'log_time' cannot be null")` on
   log merge.
+
+### ⚠️ Important ⚠️
+
+If you haven't updated to the v2 version yet, do so first and do not go straight to
+this version. Read the [update instructions for v2.0.0 please](#-update-instructions-for-v200-)
+please.
 
 
 ## [2.0.0] - 2021-04-21
@@ -58,7 +80,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Old code for flat lists. Not used anymore and will not be used ever again
 
-### ⚠️ Update Instructions ⚠️
+### ⚠️ Update Instructions for v2.0.0 ⚠️
 
 ---
 
