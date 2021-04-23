@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.1.1] - Upcoming
+
+### Added
+
+- Button to close your own ESI fleet to more view. It is now available on the
+  Dashboard, in the FAT link list and in the FAT link details view as well. You can
+  only close your own ESI fleets.
+
+
 ## [2.1.0] - 2021-04-22
 
 ### Changed

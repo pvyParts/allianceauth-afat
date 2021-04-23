@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 
 from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import EveCharacter
@@ -95,7 +96,11 @@ def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     fatlinks = AFatLink.objects.order_by("-afattime")[:10]
 
     fatlink_rows = [
-        convert_fatlinks_to_dict(request=request, fatlink=fatlink)
+        convert_fatlinks_to_dict(
+            request=request,
+            fatlink=fatlink,
+            close_esi_redirect=reverse("afat:dashboard"),
+        )
         for fatlink in fatlinks
     ]
 

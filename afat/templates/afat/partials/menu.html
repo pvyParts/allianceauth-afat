@@ -21,8 +21,8 @@
                     <a href="{% url 'afat:statistics_overview' %}">{% translate "Statistics" %}</a>
                 </li>
 
-                <li class="{% navactive request 'afat:links afat:fatlinks_details_fatlink' %}">
-                    <a href="{% url 'afat:links' %}">{% translate "FAT Links" %}</a>
+                <li class="{% navactive request 'afat:fatlinks_overview afat:fatlinks_details_fatlink' %}">
+                    <a href="{% url 'afat:fatlinks_overview' %}">{% translate "FAT Links" %}</a>
                 </li>
 
                 {% if perms.afat.add_fatlink or perms.afat.manage_afat %}

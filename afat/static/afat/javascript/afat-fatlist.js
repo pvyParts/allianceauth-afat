@@ -115,8 +115,14 @@ $(document).ready(function () {
     );
 
     /**
+     * Modal :: Close ESI fleet
+     */
+    let cancelEsiFleetModal = $(afatSettings.modal.cancelEsiFleetModal.element);
+    manageModal(cancelEsiFleetModal);
+
+    /**
      * Modal :: Delete FAT link
      */
-    let deleteFatLinkModal = $(afatSettings.modal.deleteModal.element);
+    let deleteFatLinkModal = $(afatSettings.modal.deleteFatLinkModal.element);
     manageModal(deleteFatLinkModal);
 });

@@ -14,13 +14,13 @@
 
 {% block afat_body %}
     <h4>
-        <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
+        <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
 
         <span class="afat-label-statistics">{{ year }}</span>
 
         {% if year_next <= year_current %}
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_next %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:links' year_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
+            <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_next %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
+            <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
         {% endif %}
     </h4>
 
@@ -71,6 +71,9 @@
 
     {% translate "Delete FAT Link" as translated_title %}
     {% include "afat/modals/general.html" with modal_name='deleteFatLink' modal_title=translated_title confirm_button_class='btn-danger' %}
+
+    {% translate "Close ESI Fleet Tracking" as translated_title %}
+    {% include 'afat/modals/general.html' with modal_name='cancelEsiFleet' modal_title=translated_title confirm_button_class='btn-danger' %}
 {% endblock %}
 
 {% block extra_css %}
@@ -106,8 +109,11 @@
                 },
             },
             modal: {
-                deleteModal: {
+                deleteFatLinkModal: {
                     element: '#deleteFatLinkModal'
+                },
+                cancelEsiFleetModal: {
+                    element: '#cancelEsiFleetModal'
                 }
             }
         }

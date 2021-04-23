@@ -17,7 +17,9 @@ from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 from afat.utils import get_main_character_from_user
 
 
-def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
+def convert_fatlinks_to_dict(
+    request: WSGIRequest, fatlink: AFatLink, close_esi_redirect: str = None
+) -> dict:
     """
     converts a AFatLink object into a dictionary
     :param request:
@@ -69,6 +71,39 @@ def convert_fatlinks_to_dict(request: WSGIRequest, fatlink: AFatLink) -> dict:
 
     # action buttons
     actions = ""
+    if (
+        fatlink.is_esilink
+        and fatlink.is_registered_on_esi
+        and fatlink.creator == request.user
+    ):
+        button_close_esi_tracking_url = reverse(
+            "afat:fatlinks_close_esi_fatlink", args=[fatlink.hash]
+        )
+
+        close_esi_redirect_parameter = ""
+        if close_esi_redirect is not None:
+            close_esi_redirect_parameter = f"?next={close_esi_redirect}"
+
+        button_title = _(
+            "Clicking here will stop the automatic tracking through ESI for "
+            "this fleet and close the associated FAT link."
+        )
+        modal_body_text = _(
+            "<p>Are you sure you want to close ESI fleet with "
+            f"ID {fatlink.esi_fleet_id} from {fatlink.character.character_name}?</p>"
+        )
+        modal_confirm_text = _("Stop Tracking")
+
+        actions += (
+            '<a class="btn btn-afat-action btn-primary btn-sm" '
+            f'style="margin-left: 0.25rem;" title="{button_title}" data-toggle="modal" '
+            'data-target="#cancelEsiFleetModal" '
+            f'data-url="{button_close_esi_tracking_url}{close_esi_redirect_parameter}" '
+            f'data-body-text="{modal_body_text}" '
+            f'data-confirm-text="{modal_confirm_text}">'
+            '<i class="fas fa-times"></i></a>'
+        )
+
     if request.user.has_perm("afat.manage_afat") or request.user.has_perm(
         "afat.add_fatlink"
     ):

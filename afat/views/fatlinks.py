@@ -6,8 +6,9 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
@@ -94,7 +95,11 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
     fatlinks = AFatLink.objects.filter(afattime__year=year).order_by("-afattime")
 
     fatlink_rows = [
-        convert_fatlinks_to_dict(request=request, fatlink=fatlink)
+        convert_fatlinks_to_dict(
+            request=request,
+            fatlink=fatlink,
+            close_esi_redirect=reverse("afat:fatlinks_overview"),
+        )
         for fatlink in fatlinks
     ]
 
@@ -139,7 +144,9 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def create_clickable_fatlink(request: WSGIRequest):
+def create_clickable_fatlink(
+    request: WSGIRequest,
+) -> HttpResponseRedirect:
     """
     create clickable fat link
     :param request:
@@ -220,7 +227,9 @@ def create_clickable_fatlink(request: WSGIRequest):
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 @token_required(scopes=["esi-fleets.read_fleet.v1"])
-def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
+def create_esi_fatlink_callback(
+    request: WSGIRequest, token, fatlink_hash: str
+) -> HttpResponseRedirect:
     """
     helper: create ESI link (callback, used when coming back from character selection)
     :param request:
@@ -393,7 +402,9 @@ def create_esi_fatlink_callback(request: WSGIRequest, token, fatlink_hash: str):
 
 
 @login_required()
-def create_esi_fatlink(request: WSGIRequest):
+def create_esi_fatlink(
+    request: WSGIRequest,
+) -> HttpResponseRedirect:
     """
     create ESI fat link
     :param request:
@@ -436,7 +447,9 @@ def create_esi_fatlink(request: WSGIRequest):
         "esi-location.read_online.v1",
     ]
 )
-def add_fat(request: WSGIRequest, token, fatlink_hash: str = None):
+def add_fat(
+    request: WSGIRequest, token, fatlink_hash: str = None
+) -> HttpResponseRedirect:
     """
     click fatlink helper
     :param request:
@@ -753,7 +766,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
+def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash) -> JsonResponse:
     """
     ajax call :: get all FATs for a given FAT link hash
     :param request:
@@ -773,7 +786,9 @@ def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash):
 
 @login_required()
 @permission_required("afat.manage_afat")
-def delete_fatlink(request: WSGIRequest, fatlink_hash: str = None):
+def delete_fatlink(
+    request: WSGIRequest, fatlink_hash: str = None
+) -> HttpResponseRedirect:
     """
     delete fatlink helper
     :param request:
@@ -824,12 +839,12 @@ def delete_fatlink(request: WSGIRequest, fatlink_hash: str = None):
         ).format(fatlink_hash=fatlink_hash, user=request.user)
     )
 
-    return redirect("afat:links")
+    return redirect("afat:fatlinks_overview")
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
-def delete_fat(request: WSGIRequest, fatlink_hash: str, fat):
+def delete_fat(request: WSGIRequest, fatlink_hash: str, fat) -> HttpResponseRedirect:
     """
     delete fat helper
     :param request:
@@ -900,7 +915,7 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat):
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
+def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedirect:
     """
     ajax call to close an ESI fat link
     :param request:
@@ -929,12 +944,15 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> JsonResponse:
             )
         )
 
-    return redirect("afat:fatlinks_add_fatlink")
+    default_redirect = reverse("afat:dashboard")
+    next_view = request.GET.get("next", default_redirect)
+
+    return HttpResponseRedirect(next_view)
 
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def reopen_fatlink(request: WSGIRequest, fatlink_hash: str):
+def reopen_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedirect:
     """
     re-open fat link
     :param request:
