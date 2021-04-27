@@ -179,7 +179,7 @@ def create_clickable_fatlink(
 
             request.session[
                 "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
-            ] = 202
+            ] = 201
 
             # writing DB log
             fleet_type = ""
@@ -692,7 +692,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         else:
             request.session[
                 "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-            ] = 0
+            ] = 2
 
     logger.info(
         'FAT link "{fatlink_hash}" details view called by {user}'.format(
@@ -704,7 +704,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     message = None
 
     if "msg" in request.session:
-        msg_code = 999
+        msg_code = 0
         message = request.session.pop("msg")
     elif (
         "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
@@ -759,7 +759,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         is_clickable_link = True
 
     context = {
-        "msg_code": msg_code,
+        "msg_code": str(msg_code),
         "message": message,
         "link": link,
         "is_esi_link": link.is_esilink,

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Manual FAT function limited. It is only available when the FAT link has been
   created within the last 24 hours and has not been re-opened.
+- Message templates refactored to make them more maintainable
 
 
 ## [2.1.0] - 2021-04-22
