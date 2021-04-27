@@ -721,10 +721,14 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         )
 
     # let's see if the link is still valid or has expired already and can be re-opened
+    # and FATs can be manually added
+    # (only possible for 24 hours after creating the FAT link)
     link_ongoing = True
     link_can_be_reopened = False
     link_expires = None
+    manual_fat_can_be_added = False
 
+    # time dependant settings
     try:
         dur = ClickAFatDuration.objects.get(fleet=link)
         link_expires = link.afattime + timedelta(minutes=dur.duration)
@@ -740,6 +744,12 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                 < AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME
             ):
                 link_can_be_reopened = True
+
+        # manual fat still possible?
+        # only possible if the FAT link has not been re-opened
+        # and has been created within the last 24 hours
+        if link.reopened is False and get_time_delta(link.afattime, now, "hours") < 24:
+            manual_fat_can_be_added = True
     except ClickAFatDuration.DoesNotExist:
         # ESI link
         link_ongoing = False
@@ -757,6 +767,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         "link_expires": link_expires,
         "link_ongoing": link_ongoing,
         "link_can_be_reopened": link_can_be_reopened,
+        "manual_fat_can_be_added": manual_fat_can_be_added,
         "reopen_grace_time": AFAT_DEFAULT_FATLINK_REOPEN_GRACE_TIME,
         "reopen_duration": AFAT_DEFAULT_FATLINK_REOPEN_DURATION,
     }

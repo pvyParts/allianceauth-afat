@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% if perms.afat.manage_afat and is_clickable_link %}
+{% if perms.afat.manage_afat and is_clickable_link and manual_fat_can_be_added %}
     <div id="manualfat" class="tab-pane fade in panel panel-default">
         <div class="panel-body">
             <h4>{% translate "Manual FAT" %}</h4>
