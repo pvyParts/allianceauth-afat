@@ -123,7 +123,7 @@ Restart your supervisor services for AA.
 
 ## Updating
 
-To update your existing installation of ImicusFAT, first enable your
+To update your existing installation of AFAT, first enable your
 virtual environment (venv) of your Alliance Auth installation.
 
 ```bash
