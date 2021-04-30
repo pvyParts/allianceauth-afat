@@ -69,15 +69,15 @@ urlpatterns = [
         name="statistics_alliance",
     ),
     # fatlinks list actions
-    url(r"^fatlinks/$", fatlinks.overview, name="links"),
-    url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.overview, name="links"),
+    url(r"^fatlinks/$", fatlinks.overview, name="fatlinks_overview"),
+    url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.overview, name="fatlinks_overview"),
+    # fatlink actions
+    url(r"^fatlink/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
         r"^fatlinks/link/create/esi-fatlink/$",
         fatlinks.create_esi_fatlink,
         name="fatlinks_create_esi_fatlink",
     ),
-    # fatlink actions
-    url(r"^fatlink/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
         r"^fatlink/create/esi-fatlink/callback/(?P<fatlink_hash>[a-zA-Z0-9]+)/$",
         fatlinks.create_esi_fatlink_callback,

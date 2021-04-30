@@ -1,8 +1,9 @@
 {% load i18n %}
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" class="tab" href="#fats">{% translate "FATs" %}</a></li>
-    {% if perms.afat.manage_afat and is_clickable_link %}
+    {#  We only need the tabs when we have more than one ...  #}
+    {% if perms.afat.manage_afat and is_clickable_link and manual_fat_can_be_added %}
+        <li class="active"><a data-toggle="tab" class="tab" href="#fats">{% translate "FATs" %}</a></li>
         <li><a data-toggle="tab" class="tab" href="#manualfat">{% translate "Manual FAT" %}</a></li>
     {% endif %}
 </ul>

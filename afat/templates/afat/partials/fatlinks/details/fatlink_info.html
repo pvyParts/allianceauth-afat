@@ -24,7 +24,27 @@
 
                 {% if link.is_esilink %}
                     <br>
-                    {% translate 'Participation has been tracked via ESI' %}
+
+                    {% if link.is_registered_on_esi %}
+                        {% translate 'Participation is being tracked via ESI' %}
+
+                        {% if request.user == link.creator %}
+                            <button class="btn btn-primary btn-xs"
+                                style="margin-left: 0.25rem;"
+                                title="{% translate 'Clicking here will stop the automatic tracking through ESI for this fleet and close the associated FAT link.' %}"
+                                data-toggle="modal"
+                                data-target="#cancelEsiFleetModal"
+                                data-url="{% url 'afat:fatlinks_close_esi_fatlink' link.hash %}?next={% url 'afat:fatlinks_details_fatlink' link.hash %}"
+                                data-body-text="{% blocktranslate with esi_fleet_id=link.esi_fleet_id character_name=link.character.character_name %}<p>Are you sure you want to close ESI fleet with ID {{ esi_fleet_id }} from {{ character_name }}</p>{% endblocktranslate %}"
+                                data-confirm-text="{% translate 'Stop Tracking' %}"
+                            >
+                                <i class="fas fa-times"></i>
+                                <!-- {% translate 'Stop Tracking' %} -->
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        {% translate 'Participation has been tracked via ESI' %}
+                    {% endif %}
                 {% endif %}
             </p>
 
@@ -67,6 +87,11 @@
             </div>
         {% endif %}
     </div>
+
+    {% if link.is_registered_on_esi and request.user == link.creator %}
+        {% translate "Close ESI Fleet Tracking" as translated_title %}
+        {% include 'afat/modals/general.html' with modal_name='cancelEsiFleet' modal_title=translated_title confirm_button_class='btn-danger' %}
+    {% endif %}
 
     {% if link_can_be_reopened and perms.afat.manage_afat %}
         {% translate "Re-Open Fat Link" as translated_title %}

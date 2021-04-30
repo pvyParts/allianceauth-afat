@@ -125,9 +125,15 @@ $(document).ready(function () {
     });
 
     /**
+     * Modal :: Close ESI fleet
+     */
+    let cancelEsiFleetModal = $(afatSettings.modal.cancelEsiFleetModal.element);
+    manageModal(cancelEsiFleetModal);
+
+    /**
      * Modal :: Delete FAT from FAT link
      */
-    let deleteFatModal = $(afatSettings.modal.deleteModal.element);
+    let deleteFatModal = $(afatSettings.modal.deleteFatModal.element);
     manageModal(deleteFatModal);
 
     /**

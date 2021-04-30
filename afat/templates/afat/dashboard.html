@@ -43,6 +43,9 @@
 
     {% translate "Delete FAT Link" as translated_title %}
     {% include "afat/modals/general.html" with modal_name='deleteFatLink' modal_title=translated_title confirm_button_class='btn-danger' %}
+
+    {% translate "Close ESI Fleet Tracking" as translated_title %}
+    {% include 'afat/modals/general.html' with modal_name='cancelEsiFleet' modal_title=translated_title confirm_button_class='btn-danger' %}
 {% endblock %}
 
 {% block extra_css %}
@@ -78,8 +81,11 @@
                 },
             },
             modal: {
-                deleteModal: {
+                deleteFatLinkModal: {
                     element: '#deleteFatLinkModal'
+                },
+                cancelEsiFleetModal: {
+                    element: '#cancelEsiFleetModal'
                 }
             }
         }

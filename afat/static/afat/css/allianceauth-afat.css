@@ -1,6 +1,8 @@
 @media all {
     .btn-afat-action {
         margin: 0 0.25rem;
+        height: 35px;
+        width: 35px;
     }
 
     .fatlink-list-legend {

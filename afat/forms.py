@@ -45,6 +45,7 @@ class AFatEsiFatForm(forms.Form):
         required=False,
         label=_("Fleet Type (optional)"),
         queryset=AFatLinkType.objects.all(),
+        # empty_label=_("Please select a fleet type"),
     )
 
 
@@ -86,6 +87,7 @@ class AFatClickFatForm(forms.Form):
         required=False,
         label=_("Fleet Type (optional)"),
         queryset=AFatLinkType.objects.all(),
+        # empty_label=_("Please select a fleet type"),
     )
     duration = forms.IntegerField(
         required=True,
