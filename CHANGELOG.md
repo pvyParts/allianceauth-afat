@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.0] - Upcoming
 
+### Added
+
+- Index to `hash` field in AFatLink model
+
 ### Changed
 - Time period (year and month select) templates refactored
 - FAT link hashes in log are now linked to their respoective FAT link details, as

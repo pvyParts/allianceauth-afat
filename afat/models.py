@@ -116,7 +116,9 @@ class AFatLink(models.Model):
         help_text="The fatlinks fleet name",
     )
 
-    hash = models.CharField(max_length=254, help_text="The fatlinks hash")
+    hash = models.CharField(
+        max_length=254, db_index=True, help_text="The fatlinks hash"
+    )
 
     creator = models.ForeignKey(
         User,
