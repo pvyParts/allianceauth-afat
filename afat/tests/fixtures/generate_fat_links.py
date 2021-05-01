@@ -12,15 +12,14 @@ myauth_dir = Path(__file__).parent.parent.parent.parent.parent / "myauth"
 sys.path.insert(0, str(myauth_dir))
 
 import django
-from django.apps import apps
 
 # init and setup django project
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myauth.settings.local")
 django.setup()
 
-"""SCRIPT"""
+#################
+# SCRIPT
 import random
-from pathlib import Path
 
 from django.contrib.auth.models import User
 
