@@ -122,7 +122,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
     logger.info("Statistics overview called by {user}".format(user=request.user))
 
-    return render(request, "afat/statistics_overview.html", context)
+    return render(request, "afat/view/statistics/statistics_overview.html", context)
 
 
 @login_required()
@@ -228,7 +228,7 @@ def character(
         )
     )
 
-    return render(request, "afat/statistics_character.html", context)
+    return render(request, "afat/view/statistics/statistics_character.html", context)
 
 
 @login_required()
@@ -292,7 +292,11 @@ def corporation(
             "type": 0,
         }
 
-        return render(request, "afat/date_select.html", context)
+        return render(
+            request,
+            "afat/view/statistics/statistics_corporation_year_overview.html",
+            context,
+        )
 
     fats = AFat.objects.filter(
         afatlink__afattime__month=month,
@@ -403,7 +407,7 @@ def corporation(
         )
     )
 
-    return render(request, "afat/statistics_corporation.html", context)
+    return render(request, "afat/view/statistics/statistics_corporation.html", context)
 
 
 @login_required()
@@ -452,9 +456,9 @@ def alliance(
                 months.append((i, ally_fats))
 
         context = {
-            "corporation": alliance_name,
+            "alliance": alliance_name,
             "months": months,
-            "corpid": allianceid,
+            "allianceid": allianceid,
             "year": year,
             "year_current": datetime.now().year,
             "year_prev": int(year) - 1,
@@ -462,7 +466,11 @@ def alliance(
             "type": 1,
         }
 
-        return render(request, "afat/date_select.html", context)
+        return render(
+            request,
+            "afat/view/statistics/statistics_alliance_year_overview.html",
+            context,
+        )
 
     if not month or not year:
         request.session["msg"] = ("danger", "Date information incomplete.")
@@ -624,4 +632,4 @@ def alliance(
         )
     )
 
-    return render(request, "afat/statistics_alliance.html", context)
+    return render(request, "afat/view/statistics/statistics_alliance.html", context)

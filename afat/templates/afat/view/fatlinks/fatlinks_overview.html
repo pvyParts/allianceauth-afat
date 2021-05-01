@@ -13,16 +13,10 @@
 {% endblock %}
 
 {% block afat_body %}
-    <h4>
-        <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_prev %}" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
-
-        <span class="afat-label-statistics">{{ year }}</span>
-
-        {% if year_next <= year_current %}
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_next %}" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:fatlinks_overview' year_current %}" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-        {% endif %}
-    </h4>
+    {% url 'afat:fatlinks_overview' year_prev as url_previous_year %}
+    {% url 'afat:fatlinks_overview' year_next as url_next_year %}
+    {% url 'afat:fatlinks_overview' year_current as url_current_year %}
+    {% include "afat/partials/year_navigation.html" with url_previous_year=url_previous_year url_next_year=url_next_year url_current_year=url_current_year %}
 
     {% if msg %}
         <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">

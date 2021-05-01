@@ -32,7 +32,7 @@ def overview(request: WSGIRequest) -> HttpResponse:
 
     context = {"log_duration": AFAT_DEFAULT_LOG_DURATION}
 
-    return render(request, "afat/logs_overview.html", context=context)
+    return render(request, "afat/view/logs/logs_overview.html", context=context)
 
 
 @login_required()

@@ -16,7 +16,21 @@
 {% block afat_body %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
 
-    {% include 'afat/partials/statistics/alliance/month_navigation.html' %}
+    {% if month == '1' %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year_prev 12 as url_previous_month %}
+    {% else %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year month_prev as url_previous_month %}
+    {% endif %}
+
+    {% if month == '12' %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year_next 1 as url_next_month %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year_current month_current as url_current_month %}
+    {% else %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year month_next as url_next_month %}
+        {% url 'afat:statistics_alliance' ally.alliance_id year_current month_current as url_current_month %}
+    {% endif %}
+    {% include "afat/partials/month_navigation.html" with url_previous_month=url_previous_month url_next_month=url_next_month url_current_month=url_current_month %}
+
     {% include 'afat/partials/statistics/alliance/tabs_navigation.html' %}
 
     <div class="tab-content">

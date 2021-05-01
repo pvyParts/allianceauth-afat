@@ -73,7 +73,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
     logger.info(f"FAT link list called by {request.user}")
 
-    return render(request, "afat/fatlinks_overview.html", context)
+    return render(request, "afat/view/fatlinks/fatlinks_overview.html", context)
 
 
 @login_required()
@@ -139,7 +139,7 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
 
     logger.info(f"Add FAT link view called by {request.user}")
 
-    return render(request, "afat/fatlinks_add_fatlink.html", context)
+    return render(request, "afat/view/fatlinks/fatlinks_add_fatlink.html", context)
 
 
 @login_required()
@@ -772,7 +772,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         "reopen_duration": AFAT_DEFAULT_FATLINK_REOPEN_DURATION,
     }
 
-    return render(request, "afat/fatlinks_details_fatlink.html", context)
+    return render(request, "afat/view/fatlinks/fatlinks_details_fatlink.html", context)
 
 
 @login_required()

@@ -15,7 +15,10 @@
 {% endblock %}
 
 {% block afat_body %}
-    {% include "afat/partials/statistics/overview/year_navigation.html" %}
+    {% url 'afat:statistics_overview' year_prev as url_previous_year %}
+    {% url 'afat:statistics_overview' year_next as url_next_year %}
+    {% url 'afat:statistics_overview' year_current as url_current_year %}
+    {% include "afat/partials/year_navigation.html" with url_previous_year=url_previous_year url_next_year=url_next_year url_current_year=url_current_year %}
 
     {% if msg %}
         <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">

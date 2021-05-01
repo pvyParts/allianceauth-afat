@@ -1,26 +1,40 @@
-{% extends 'afat/base.html' %}
+{% extends "afat/base.html" %}
 
 {% load static %}
 {% load i18n %}
 
-{% block page_title %}{{ corporation }} {% translate "Statistics" %}{% endblock %}
+{% block page_title %}{{ character.character_name }} {% translate "FAT Statistics" %}{% endblock %}
 
 {% block afat_header %}
     <br>
     {% include 'afat/partials/menu.html' %}
 
-    <h2>{{ corporation }} {% translate "Statistics" %}</h2>
+    <h2>{{ character.character_name }} {% translate "Statistics" %}</h2>
 {% endblock %}
 
 {% block afat_body %}
     <script type="application/javascript" src="{% static 'afat/javascript/chart-js/Chart.min.js' %}"></script>
 
-    {% include 'afat/partials/statistics/corporation/month_navigation.html' %}
-    {% include 'afat/partials/statistics/corporation/tabs_navigation.html' %}
+    {% if month == '1' %}
+        {% url 'afat:statistics_character' character.character_id year_prev 12 as url_previous_month %}
+    {% else %}
+        {% url 'afat:statistics_character' character.character_id year month_prev as url_previous_month %}
+    {% endif %}
+
+    {% if month == '12' %}
+        {% url 'afat:statistics_character' character.character_id year_next 1 as url_next_month %}
+        {% url 'afat:statistics_character' character.character_id year_current month_current as url_current_month %}
+    {% else %}
+        {% url 'afat:statistics_character' character.character_id year month_next as url_next_month %}
+        {% url 'afat:statistics_character' character.character_id year_current month_current as url_current_month %}
+    {% endif %}
+    {% include "afat/partials/month_navigation.html" with url_previous_month=url_previous_month url_next_month=url_next_month url_current_month=url_current_month %}
+
+    {% include 'afat/partials/statistics/character/tabs_navigation.html' %}
 
     <div class="tab-content">
-        {% include 'afat/partials/statistics/corporation/tabs/graphs.html' %}
-        {% include 'afat/partials/statistics/corporation/tabs/member.html' %}
+        {% include 'afat/partials/statistics/character/tabs/graphs.html' %}
+        {% include 'afat/partials/statistics/character/tabs/raw_data.html' %}
     </div>
 {% endblock %}
 
@@ -59,11 +73,10 @@
         $(document).ready(function() {
             $.fn.dataTable.moment('YYYY-MMM-DD, HH:mm');
 
-            $('#corp-members').DataTable({
-                order: [
-                    [1, 'desc'],
-                    [0, 'asc']
-                ],
+            $('#raw-data').DataTable({
+                "order": [
+                    [4, "desc"]
+                ]
             });
         });
     </script>

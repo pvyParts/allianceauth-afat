@@ -49,7 +49,7 @@ def overview(request: WSGIRequest) -> HttpResponse:
 
     logger.info("Module called by {user}".format(user=request.user))
 
-    return render(request, "afat/dashboard.html", context)
+    return render(request, "afat/view/dashboard/dashboard.html", context)
 
 
 @login_required
