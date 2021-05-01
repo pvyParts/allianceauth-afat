@@ -107,7 +107,7 @@ class AFatLink(models.Model):
     """
 
     afattime = models.DateTimeField(
-        default=timezone.now, help_text="When was this fatlink created"
+        default=timezone.now, db_index=True, help_text="When was this fatlink created"
     )
 
     fleet = models.CharField(
@@ -229,7 +229,10 @@ class AFat(models.Model):
     )
 
     shiptype = models.CharField(
-        max_length=100, null=True, help_text="The ship the character was flying"
+        max_length=100,
+        null=True,
+        db_index=True,
+        help_text="The ship the character was flying",
     )
 
     class Meta:  # pylint: disable=too-few-public-methods
@@ -283,7 +286,7 @@ class AFatLog(models.Model):
     AFatLog
     """
 
-    log_time = models.DateTimeField(default=timezone.now)
+    log_time = models.DateTimeField(default=timezone.now, db_index=True)
     user = models.ForeignKey(
         User,
         related_name="+",
