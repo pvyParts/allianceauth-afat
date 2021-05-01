@@ -212,14 +212,14 @@ class AFat(models.Model):
 
     character = models.ForeignKey(
         EveCharacter,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="Character who registered this fat",
     )
 
     afatlink = models.ForeignKey(
         AFatLink,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="The fatlink the character registered at",
     )

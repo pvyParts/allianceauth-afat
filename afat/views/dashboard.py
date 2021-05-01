@@ -8,7 +8,6 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
 from app_utils.logging import LoggerAddTag
@@ -36,16 +35,9 @@ def overview(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    characters_by_user = CharacterOwnership.objects.select_related("character").filter(
-        user=request.user
+    characters = EveCharacter.objects.select_related("character_ownership").filter(
+        character_ownership__user=request.user, afats__isnull=False
     )
-    characters = list()
-
-    for users_character in characters_by_user:
-        character_fat = AFat.objects.filter(character=users_character.character)
-
-        if character_fat.count() > 0:
-            characters.append(users_character.character)
 
     context = {"characters": characters, "msg": msg}
 
@@ -95,7 +87,9 @@ def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     :rtype:
     """
 
-    fatlinks = AFatLink.objects.order_by("-afattime")[:10]
+    fatlinks = AFatLink.objects.select_related(
+        "creator", "character", "link_type"
+    ).order_by("-afattime")[:10]
 
     fatlink_rows = [
         convert_fatlinks_to_dict(

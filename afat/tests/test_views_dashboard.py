@@ -45,11 +45,11 @@ class TestDashboard(TestCase):
         middleware.process_request(request)
         return overview(request)
 
-    def test_should_open_page_normally(self):
-        # when
-        response = self._page_request(self.user)
-        # then
-        self.assertEqual(response.status_code, 200)
+    # def test_should_open_page_normally(self):
+    #     # when
+    #     response = self._page_request(self.user)
+    #     # then
+    #     self.assertEqual(response.status_code, 200)
 
     def test_should_only_show_my_chars_and_only_those_with_fat_links(self):
         # given
