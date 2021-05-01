@@ -35,8 +35,10 @@ def overview(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    characters = EveCharacter.objects.select_related("character_ownership").filter(
-        character_ownership__user=request.user, afats__isnull=False
+    characters = (
+        EveCharacter.objects.select_related("character_ownership")
+        .filter(character_ownership__user=request.user, afats__isnull=False)
+        .distinct()
     )
 
     context = {"characters": characters, "msg": msg}
