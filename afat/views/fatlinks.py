@@ -788,7 +788,9 @@ def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash) -> JsonResponse
     :rtype:
     """
 
-    fats = AFat.objects.filter(afatlink__hash=fatlink_hash)
+    fats = AFat.objects.select_related("afatlink", "character").filter(
+        afatlink__hash=fatlink_hash
+    )
 
     fat_rows = [convert_fats_to_dict(request=request, fat=fat) for fat in fats]
 

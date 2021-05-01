@@ -83,7 +83,9 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     else:
         data = None
 
-    chars = CharacterOwnership.objects.filter(user=request.user)
+    chars = CharacterOwnership.objects.select_related("character").filter(
+        user=request.user
+    )
     months = list()
 
     for char in chars:

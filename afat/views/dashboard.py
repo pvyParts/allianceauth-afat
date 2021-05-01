@@ -36,7 +36,9 @@ def overview(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    characters_by_user = CharacterOwnership.objects.filter(user=request.user)
+    characters_by_user = CharacterOwnership.objects.select_related("character").filter(
+        user=request.user
+    )
     characters = list()
 
     for users_character in characters_by_user:
