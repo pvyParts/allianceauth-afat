@@ -16,6 +16,7 @@ from allianceauth.authentication.decorators import permissions_required
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.eveonline.providers import provider
 from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 from esi.decorators import token_required
 from esi.models import Token
 
@@ -37,7 +38,7 @@ from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_d
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
 from afat.tasks import get_or_create_character, process_fats
-from afat.utils import LoggerAddTag, write_log
+from afat.utils import write_log
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 

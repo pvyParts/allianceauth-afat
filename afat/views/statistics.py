@@ -16,11 +16,12 @@ from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import EveCharacter, EveCorporationInfo
 from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 
 from afat import __title__
 from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
 from afat.models import AFat
-from afat.utils import LoggerAddTag, get_or_create_alliance_info
+from afat.utils import get_or_create_alliance_info
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 

@@ -4,10 +4,11 @@ views helper
 
 import random
 
-from django.contrib.auth.models import Permission, User
+from app_utils.django import users_with_permission
+
+from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
@@ -267,30 +268,6 @@ def get_random_rgba_color():
         green=random.randint(0, 255),
         blue=random.randint(0, 255),
     )
-
-
-def users_with_permission(permission: Permission) -> models.QuerySet:
-    """
-    returns queryset of users that have the given permission in Auth
-    :param permission:
-    :type permission:
-    :return:
-    :rtype:
-    """
-
-    users_qs = (
-        User.objects.prefetch_related(
-            "user_permissions", "groups", "profile__state__permissions"
-        )
-        .filter(
-            Q(user_permissions=permission)
-            | Q(groups__permissions=permission)
-            | Q(profile__state__permissions=permission)
-        )
-        .distinct()
-    )
-
-    return users_qs
 
 
 def characters_with_permission(permission: Permission) -> models.QuerySet:
