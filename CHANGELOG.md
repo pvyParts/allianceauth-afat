@@ -10,12 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Index to `hash` field in AFatLink model
+- Index to `hash` field in AFatLink model (Thanks @ErikKalkoken)
 
 ### Changed
 - Time period (year and month select) templates refactored
 - FAT link hashes in log are now linked to their respoective FAT link details, as
-  long as the FAT link is not deleted yet
+  long as the FAT link is not deleted yet (Thanks to @ErikKalkoken to let me know
+  how to do so without firing potentially hundreds of queries against the database)
 
 
 ## [2.1.1] - 2021-04-30
