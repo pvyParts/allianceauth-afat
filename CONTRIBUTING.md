@@ -9,7 +9,7 @@ This repository uses [pre-commit](https://github.com/pre-commit/pre-commit) to
 verify compliance with formatting rules. To use:
 
 1. Install `pre-commit`.
-2. From inside the `aa-srp` root directory, run `pre-commit install`.
+2. From inside the `allianceauth-afat` root directory, run `pre-commit install`.
 3. You're all done! Code will be checked automatically using git hooks.
 
 You can check if your code to commit adheres to the given style by simply running:
