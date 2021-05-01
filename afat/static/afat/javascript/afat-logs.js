@@ -26,7 +26,13 @@ $(document).ready(function () {
             },
             {data: 'log_event'},
             {data: 'user'},
-            {data: 'fatlink'},
+            {
+                data: 'fatlink',
+                render: {
+                    display: 'html',
+                    _: 'hash'
+                }
+            },
             {data: 'description'},
         ],
 

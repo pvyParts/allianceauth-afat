@@ -220,11 +220,13 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     return summary
 
 
-def convert_logs_to_dict(log: AFatLog) -> dict:
+def convert_logs_to_dict(log: AFatLog, fatlink_exists: bool = False) -> dict:
     """
     convert AFatLog to dict
     :param log:
     :type log:
+    :param fatlink_exists:
+    :type fatlink_exists:
     :return:
     :rtype:
     """
@@ -235,11 +237,18 @@ def convert_logs_to_dict(log: AFatLog) -> dict:
     # user name
     user_main_character = get_main_character_from_user(user=log.user)
 
+    fatlink_html = _(f"{log.fatlink_hash} (Deleted)")
+    if fatlink_exists is True:
+        fatlink_link = reverse("afat:fatlinks_details_fatlink", args=[log.fatlink_hash])
+        fatlink_html = f'<a href="{fatlink_link}">{log.fatlink_hash}</a>'
+
+    fatlink = {"html": fatlink_html, "hash": log.fatlink_hash}
+
     summary = {
         "log_time": {"time": log_time, "timestamp": log_time_timestamp},
         "log_event": AFatLogEvent(log.log_event).label,
         "user": user_main_character,
-        "fatlink": log.fatlink_hash,
+        "fatlink": fatlink,
         "description": log.log_text,
     }
 

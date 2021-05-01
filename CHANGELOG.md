@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.1.2] - Upcoming
+## [2.2.0] - Upcoming
 
 ### Changed
 - Time period (year and month select) templates refactored
+- FAT link hashes in log are now linked to their respoective FAT link details, as
+  long as the FAT link is not deleted yet
 
 
 ## [2.1.1] - 2021-04-30

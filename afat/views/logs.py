@@ -12,7 +12,7 @@ from allianceauth.services.hooks import get_extension_logger
 from afat import __title__
 from afat.app_settings import AFAT_DEFAULT_LOG_DURATION
 from afat.helper.views_helper import convert_logs_to_dict
-from afat.models import AFatLog
+from afat.models import AFatLink, AFatLog
 from afat.utils import LoggerAddTag
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
@@ -47,7 +47,11 @@ def ajax_get_logs(request: WSGIRequest) -> JsonResponse:
     """
 
     logs = AFatLog.objects.all()
+    fatlink_hashes = set(AFatLink.objects.values_list("hash", flat=True))
 
-    log_rows = [convert_logs_to_dict(log=log) for log in logs]
+    log_rows = [
+        convert_logs_to_dict(log=log, fatlink_exists=log.fatlink_hash in fatlink_hashes)
+        for log in logs
+    ]
 
     return JsonResponse(log_rows, safe=False)
