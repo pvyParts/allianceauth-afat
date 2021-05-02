@@ -26,13 +26,20 @@ from django.contrib.auth.models import User
 from allianceauth.eveonline.models import EveCharacter
 from app_utils.helpers import random_string
 
-from afat.models import AFat, AFatLink, AFatLinkType
+from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent
+from afat.utils import write_log
 
 LINKS_NUMBER = 50
 
+
+class RequestStub:
+    def __init__(self, user) -> None:
+        self.user = user
+
+
 characters = list(EveCharacter.objects.all())
 print(
-    f"Creating {LINKS_NUMBER} FAT links "
+    f"Adding {LINKS_NUMBER} FAT links "
     f"with up to {len(characters)} characters each..."
 )
 user = User.objects.first()
@@ -45,6 +52,15 @@ for _ in range(LINKS_NUMBER):
         creator=user,
         character=creator,
         link_type=link_type,
+    )
+    write_log(
+        request=RequestStub(user),
+        log_event=AFatLogEvent.CREATE_FATLINK,
+        log_text=(
+            f'ESI FAT link with name "{fat_link.fleet}"'
+            f"{link_type} was created by {user}"
+        ),
+        fatlink_hash=fat_link.hash,
     )
     for character in random.sample(characters, k=random.randint(1, len(characters))):
         AFat.objects.create(

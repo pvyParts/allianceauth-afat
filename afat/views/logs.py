@@ -46,7 +46,7 @@ def ajax_get_logs(request: WSGIRequest) -> JsonResponse:
     :rtype:
     """
 
-    logs = AFatLog.objects.all()
+    logs = AFatLog.objects.select_related("user", "user__profile__main_character").all()
     fatlink_hashes = set(AFatLink.objects.values_list("hash", flat=True))
 
     log_rows = [
