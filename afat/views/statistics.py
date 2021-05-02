@@ -84,6 +84,24 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     else:
         data = None
 
+    months = calculate_year_stats(request, year)
+
+    context = {
+        "data": data,
+        "charstats": months,
+        "year": year,
+        "year_current": datetime.now().year,
+        "year_prev": int(year) - 1,
+        "year_next": int(year) + 1,
+    }
+
+    logger.info("Statistics overview called by {user}".format(user=request.user))
+
+    return render(request, "afat/view/statistics/statistics_overview.html", context)
+
+
+def calculate_year_stats(request, year) -> list:
+    """Calculate and return year statistics."""
     chars = CharacterOwnership.objects.select_related("character").filter(
         user=request.user
     )
@@ -113,19 +131,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
                 char.character.character_id,
             ]
             months.append(char_l)
-
-    context = {
-        "data": data,
-        "charstats": months,
-        "year": year,
-        "year_current": datetime.now().year,
-        "year_prev": int(year) - 1,
-        "year_next": int(year) + 1,
-    }
-
-    logger.info("Statistics overview called by {user}".format(user=request.user))
-
-    return render(request, "afat/view/statistics/statistics_overview.html", context)
+    return months
 
 
 @login_required()

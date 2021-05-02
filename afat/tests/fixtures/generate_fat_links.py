@@ -29,12 +29,9 @@ from app_utils.helpers import random_string
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent
 from afat.utils import write_log
 
+from .utils import RequestStub
+
 LINKS_NUMBER = 50
-
-
-class RequestStub:
-    def __init__(self, user) -> None:
-        self.user = user
 
 
 characters = list(EveCharacter.objects.all())
