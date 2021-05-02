@@ -59,10 +59,12 @@ class TestStatistics(TestCase):
         )
         AFat.objects.create(character=self.character_1101, afatlink=afat_link_april_1)
         AFat.objects.create(character=self.character_1101, afatlink=afat_link_april_2)
+        AFat.objects.create(character=self.character_1001, afatlink=afat_link_april_1)
         AFat.objects.create(character=self.character_1001, afatlink=afat_link_september)
         # when
         result = calculate_year_stats(RequestStub(self.user), 2020)
         # then
         self.assertListEqual(
-            result, [["Bruce Wayne", {"9": 1}, 1001], ["Lex Luther", {"4": 2}, 1101]]
+            result,
+            [["Bruce Wayne", {"4": 1, "9": 1}, 1001], ["Lex Luther", {"4": 2}, 1101]],
         )

@@ -9,6 +9,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Count, F
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
@@ -102,36 +103,78 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
 def calculate_year_stats(request, year) -> list:
     """Calculate and return year statistics."""
-    chars = CharacterOwnership.objects.select_related("character").filter(
+    character_data = dict()
+    user_character_ids = CharacterOwnership.objects.filter(
         user=request.user
-    )
-    months = list()
-
-    for char in chars:
-        char_fats = AFat.objects.filter(afatlink__afattime__year=year)
-        char_stats = {}
-
-        char_has_fats = False
-
-        for i in range(1, 13):
-            char_fat_count = (
-                char_fats.filter(afatlink__afattime__month=i)
-                .filter(character__id=char.character.id)
-                .count()
+    ).values_list("character_id", flat=True)
+    char_fats = AFat.objects.filter(afatlink__afattime__year=year)
+    for month_num in range(1, 13):
+        char_fat_counts = (
+            char_fats.filter(
+                afatlink__afattime__month=month_num,
+                character_id__in=list(user_character_ids),
             )
+            .values(
+                "character",
+                character_name=F("character__character_name"),
+                character_eve_id=F("character__character_id"),
+            )
+            .annotate(fat_count=Count("character"))
+        )
+        for result in char_fat_counts:
+            if result["fat_count"] > 0:
+                character_id = result["character_eve_id"]
+                if character_id not in character_data:
+                    character_data[character_id] = {
+                        "name": result["character_name"],
+                        "fat_counts": {},
+                    }
+                character_data[character_id]["fat_counts"][str(month_num)] = result[
+                    "fat_count"
+                ]
 
-            if char_fat_count > 0:
-                char_stats[str(i)] = char_fat_count
-                char_has_fats = True
-
-        if char_has_fats is True:
-            char_l = [
-                char.character.character_name,
-                char_stats,
-                char.character.character_id,
-            ]
-            months.append(char_l)
+    months = sorted(
+        [
+            [character["name"], character["fat_counts"], character_id]
+            for character_id, character in character_data.items()
+        ],
+        key=lambda x: x[0],
+    )
     return months
+
+
+# def calculate_year_stats_old(request, year) -> list:
+#     """Calculate and return year statistics."""
+#     chars = CharacterOwnership.objects.select_related("character").filter(
+#         user=request.user
+#     )
+#     months = list()
+
+#     for char in chars:
+#         char_fats = AFat.objects.filter(afatlink__afattime__year=year)
+#         char_stats = {}
+
+#         char_has_fats = False
+
+#         for i in range(1, 13):
+#             char_fat_count = (
+#                 char_fats.filter(afatlink__afattime__month=i)
+#                 .filter(character__id=char.character.id)
+#                 .count()
+#             )
+
+#             if char_fat_count > 0:
+#                 char_stats[str(i)] = char_fat_count
+#                 char_has_fats = True
+
+#         if char_has_fats is True:
+#             char_l = [
+#                 char.character.character_name,
+#                 char_stats,
+#                 char.character.character_id,
+#             ]
+#             months.append(char_l)
+#     return months
 
 
 @login_required()

@@ -19,17 +19,18 @@ django.setup()
 
 #################
 # SCRIPT
+import datetime as dt
 import random
 
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 from allianceauth.eveonline.models import EveCharacter
 from app_utils.helpers import random_string
 
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent
+from afat.tests.fixtures.utils import RequestStub
 from afat.utils import write_log
-
-from .utils import RequestStub
 
 LINKS_NUMBER = 50
 
@@ -49,6 +50,7 @@ for _ in range(LINKS_NUMBER):
         creator=user,
         character=creator,
         link_type=link_type,
+        afattime=now() - dt.timedelta(days=random.randint(0, 180)),
     )
     write_log(
         request=RequestStub(user),
