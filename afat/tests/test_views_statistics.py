@@ -8,7 +8,7 @@ from allianceauth.eveonline.models import EveCharacter
 from app_utils.testing import add_character_to_user, create_user_from_evecharacter
 
 from ..models import AFat, AFatLink
-from ..views.statistics import calculate_year_stats
+from ..views.statistics import _calculate_year_stats
 from .fixtures.load_allianceauth import load_allianceauth
 from .fixtures.utils import RequestStub
 
@@ -62,9 +62,9 @@ class TestStatistics(TestCase):
         AFat.objects.create(character=self.character_1001, afatlink=afat_link_april_1)
         AFat.objects.create(character=self.character_1001, afatlink=afat_link_september)
         # when
-        result = calculate_year_stats(RequestStub(self.user), 2020)
+        result = _calculate_year_stats(RequestStub(self.user), 2020)
         # then
         self.assertListEqual(
             result,
-            [["Bruce Wayne", {"4": 1, "9": 1}, 1001], ["Lex Luther", {"4": 2}, 1101]],
+            [("Bruce Wayne", {"4": 1, "9": 1}, 1001), ("Lex Luther", {"4": 2}, 1101)],
         )

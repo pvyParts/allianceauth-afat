@@ -99,7 +99,6 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
         AFatLink.objects.select_related_default()
         .filter(afattime__year=year)
         .annotate_afats_count()
-        .order_by("-afattime")
     )
 
     fatlink_rows = [
@@ -615,7 +614,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         return redirect("afat:dashboard")
 
     try:
-        link = AFatLink.objects.get(hash=fatlink_hash)
+        link = AFatLink.objects.select_related_default().get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 

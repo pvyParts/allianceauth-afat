@@ -32,13 +32,13 @@ from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent
 from afat.tests.fixtures.utils import RequestStub
 from afat.utils import write_log
 
-LINKS_NUMBER = 50
+LINKS_NUMBER = 1000
 
 
 characters = list(EveCharacter.objects.all())
 print(
-    f"Adding {LINKS_NUMBER} FAT links "
-    f"with up to {len(characters)} characters each..."
+    f"Adding {LINKS_NUMBER:,} FAT links "
+    f"with up to {len(characters)} characters each"
 )
 user = User.objects.first()
 creator = user.profile.main_character
@@ -68,6 +68,8 @@ for _ in range(LINKS_NUMBER):
             system="Jita",
             shiptype="Ibis",
         )
+    print(".", end="", flush=True)
 
 
+print("")
 print("DONE")
