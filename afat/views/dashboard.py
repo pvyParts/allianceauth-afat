@@ -66,7 +66,8 @@ def ajax_recent_get_fats_by_character(
     character = EveCharacter.objects.get(character_id=charid)
 
     fats = (
-        AFat.objects.filter(character=character)
+        AFat.objects.select_related_default()
+        .filter(character=character)
         .order_by("afatlink__afattime")
         .reverse()[:10]
     )
