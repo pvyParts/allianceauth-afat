@@ -19,15 +19,7 @@ class AFatLinkManager(models.Manager):
         )
 
 
-class AFatQuerySet(models.QuerySet):
-    ...
-
-
 class AFatManager(models.Manager):
-    def get_queryset(self) -> models.QuerySet:
-        """Integrate custom QuerySet methods."""
-        return AFatQuerySet(self.model, using=self._db)
-
     def select_related_default(self):
         """Apply select_related for default query optimizations."""
         return self.select_related("afatlink", "afatlink__link_type", "character")
