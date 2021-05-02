@@ -89,9 +89,11 @@ def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     :rtype:
     """
 
-    fatlinks = AFatLink.objects.select_related(
-        "creator", "character", "link_type"
-    ).order_by("-afattime")[:10]
+    fatlinks = (
+        AFatLink.objects.select_related_default()
+        .annotate_afats_count()
+        .order_by("-afattime")[:10]
+    )
 
     fatlink_rows = [
         convert_fatlinks_to_dict(

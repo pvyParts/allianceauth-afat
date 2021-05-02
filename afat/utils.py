@@ -2,9 +2,6 @@
 utilities
 """
 
-import re
-
-from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import lazy
 from django.utils.html import format_html

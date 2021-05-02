@@ -4,8 +4,6 @@ views helper
 
 import random
 
-from app_utils.django import users_with_permission
-
 from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
@@ -13,6 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
+from app_utils.django import users_with_permission
 
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 from afat.utils import get_main_character_from_user
@@ -66,9 +65,6 @@ def convert_fatlinks_to_dict(
     # fleet time
     fleet_time = fatlink.afattime
     fleet_time_timestamp = fleet_time.timestamp()
-
-    # number of FATs
-    fats_number = fatlink.number_of_fats
 
     # action buttons
     actions = ""
@@ -137,7 +133,7 @@ def convert_fatlinks_to_dict(
         "creator_name": creator_main_character,
         "fleet_type": fatlink_type,
         "fleet_time": {"time": fleet_time, "timestamp": fleet_time_timestamp},
-        "fats_number": fats_number,
+        "fats_number": fatlink.afats_count,
         "hash": fatlink.hash,
         "is_esilink": fatlink.is_esilink,
         "esi_fleet_id": fatlink.esi_fleet_id,

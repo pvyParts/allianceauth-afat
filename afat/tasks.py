@@ -238,7 +238,7 @@ def update_esi_fatlinks() -> None:
     required_scopes = ["esi-fleets.read_fleet.v1"]
 
     try:
-        esi_fatlinks = AFatLink.objects.filter(
+        esi_fatlinks = AFatLink.objects.select_related_default().filter(
             is_esilink=True, is_registered_on_esi=True
         )
 

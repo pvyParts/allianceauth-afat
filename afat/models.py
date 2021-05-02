@@ -9,6 +9,8 @@ from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
+from .managers import AFatLinkManager
+
 
 def get_sentinel_user() -> User:
     """
@@ -160,6 +162,8 @@ class AFatLink(models.Model):
         default=False,
         help_text="Has this FAT link being re-opened?",
     )
+
+    objects = AFatLinkManager()
 
     class Meta:  # pylint: disable=too-few-public-methods
         """

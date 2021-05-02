@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
+
+# from django.db.models import Count, F
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -93,7 +95,12 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
     if year is None:
         year = datetime.now().year
 
-    fatlinks = AFatLink.objects.filter(afattime__year=year).order_by("-afattime")
+    fatlinks = (
+        AFatLink.objects.select_related_default()
+        .filter(afattime__year=year)
+        .annotate_afats_count()
+        .order_by("-afattime")
+    )
 
     fatlink_rows = [
         convert_fatlinks_to_dict(
@@ -265,7 +272,7 @@ def create_esi_fatlink_callback(
 
     # check if this character already has a fleet
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
-    registered_fleets_for_creator = AFatLink.objects.filter(
+    registered_fleets_for_creator = AFatLink.objects.select_related_default().filter(
         is_esilink=True,
         is_registered_on_esi=True,
         character__character_name=creator_character.character_name,
