@@ -9,7 +9,11 @@ on:
       - '**'
 
   pull_request:
+    types: [assigned, opened, edited, synchronize, reopened]
     branches:
+      - '**'
+
+    tags-ignore:
       - '**'
 
 jobs:
