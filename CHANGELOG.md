@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Changed
-
-- Reduced load time for all pages incl. admin site
-
-## [2.2.0] - Upcoming
-
 ### Added
 
 - Index to `hash` field in AFatLink model (Thanks @ErikKalkoken)
@@ -22,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - FAT link hashes in log are now linked to their respoective FAT link details, as
   long as the FAT link is not deleted yet (Thanks to @ErikKalkoken to let me know
   how to do so without firing potentially hundreds of queries against the database)
+- Reduced load time for all pages incl. admin site (Thanks @ErikKalkoken)
 
 
 ## [2.1.1] - 2021-04-30
