@@ -9,6 +9,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
@@ -16,11 +17,12 @@ from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import EveCharacter, EveCorporationInfo
 from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 
 from afat import __title__
 from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
 from afat.models import AFat
-from afat.utils import LoggerAddTag, get_or_create_alliance_info
+from afat.utils import get_or_create_alliance_info
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -83,33 +85,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     else:
         data = None
 
-    chars = CharacterOwnership.objects.filter(user=request.user)
-    months = list()
-
-    for char in chars:
-        char_fats = AFat.objects.filter(afatlink__afattime__year=year)
-        char_stats = {}
-
-        char_has_fats = False
-
-        for i in range(1, 13):
-            char_fat_count = (
-                char_fats.filter(afatlink__afattime__month=i)
-                .filter(character__id=char.character.id)
-                .count()
-            )
-
-            if char_fat_count > 0:
-                char_stats[str(i)] = char_fat_count
-                char_has_fats = True
-
-        if char_has_fats is True:
-            char_l = [
-                char.character.character_name,
-                char_stats,
-                char.character.character_id,
-            ]
-            months.append(char_l)
+    months = _calculate_year_stats(request, year)
 
     context = {
         "data": data,
@@ -123,6 +99,28 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     logger.info("Statistics overview called by {user}".format(user=request.user))
 
     return render(request, "afat/view/statistics/statistics_overview.html", context)
+
+
+def _calculate_year_stats(request, year) -> list:
+    """Calculate and return year statistics."""
+    months = list()
+    characters = EveCharacter.objects.filter(character_ownership__user=request.user)
+    for char in characters:
+        fat_counts = (
+            AFat.objects.filter(afatlink__afattime__year=year)
+            .filter(character=char)
+            .values("afatlink__afattime__month")
+            .annotate(fat_count=Count("id"))
+        )
+        fat_counts_2 = {
+            str(result["afatlink__afattime__month"]): result["fat_count"]
+            for result in fat_counts
+            if result["fat_count"]
+        }
+        fat_counts_2 = dict(sorted(fat_counts_2.items(), key=lambda item: item[1]))
+        months.append((char.character_name, fat_counts_2, char.character_id))
+
+    return sorted(months, key=lambda x: x[0])
 
 
 @login_required()

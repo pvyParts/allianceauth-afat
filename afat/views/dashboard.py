@@ -8,14 +8,13 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from allianceauth.authentication.models import CharacterOwnership
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 
 from afat import __title__
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from afat.models import AFat, AFatLink
-from afat.utils import LoggerAddTag
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -36,14 +35,11 @@ def overview(request: WSGIRequest) -> HttpResponse:
     if "msg" in request.session:
         msg = request.session.pop("msg")
 
-    characters_by_user = CharacterOwnership.objects.filter(user=request.user)
-    characters = list()
-
-    for users_character in characters_by_user:
-        character_fat = AFat.objects.filter(character=users_character.character)
-
-        if character_fat.count() > 0:
-            characters.append(users_character.character)
+    characters = (
+        EveCharacter.objects.select_related("character_ownership")
+        .filter(character_ownership__user=request.user, afats__isnull=False)
+        .distinct()
+    )
 
     context = {"characters": characters, "msg": msg}
 
@@ -70,7 +66,8 @@ def ajax_recent_get_fats_by_character(
     character = EveCharacter.objects.get(character_id=charid)
 
     fats = (
-        AFat.objects.filter(character=character)
+        AFat.objects.select_related_default()
+        .filter(character=character)
         .order_by("afatlink__afattime")
         .reverse()[:10]
     )
@@ -93,7 +90,11 @@ def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     :rtype:
     """
 
-    fatlinks = AFatLink.objects.order_by("-afattime")[:10]
+    fatlinks = (
+        AFatLink.objects.select_related_default()
+        .annotate_afats_count()
+        .order_by("-afattime")[:10]
+    )
 
     fatlink_rows = [
         convert_fatlinks_to_dict(

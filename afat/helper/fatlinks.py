@@ -22,9 +22,11 @@ def get_esi_fleet_information_by_user(
 
     has_open_esi_fleets = False
     open_esi_fleets_list = list()
-    open_esi_fleets = AFatLink.objects.filter(
-        creator=user, is_esilink=True, is_registered_on_esi=True
-    ).order_by("character__character_name")
+    open_esi_fleets = (
+        AFatLink.objects.select_related_default()
+        .filter(creator=user, is_esilink=True, is_registered_on_esi=True)
+        .order_by("character__character_name")
+    )
 
     if open_esi_fleets.count() > 0:
         has_open_esi_fleets = True

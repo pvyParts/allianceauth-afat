@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
+
+# from django.db.models import Count, F
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -16,6 +18,7 @@ from allianceauth.authentication.decorators import permissions_required
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.eveonline.providers import provider
 from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 from esi.decorators import token_required
 from esi.models import Token
 
@@ -37,7 +40,7 @@ from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_d
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
 from afat.providers import esi
 from afat.tasks import get_or_create_character, process_fats
-from afat.utils import LoggerAddTag, write_log
+from afat.utils import write_log
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -92,7 +95,11 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
     if year is None:
         year = datetime.now().year
 
-    fatlinks = AFatLink.objects.filter(afattime__year=year).order_by("-afattime")
+    fatlinks = (
+        AFatLink.objects.select_related_default()
+        .filter(afattime__year=year)
+        .annotate_afats_count()
+    )
 
     fatlink_rows = [
         convert_fatlinks_to_dict(
@@ -264,7 +271,7 @@ def create_esi_fatlink_callback(
 
     # check if this character already has a fleet
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
-    registered_fleets_for_creator = AFatLink.objects.filter(
+    registered_fleets_for_creator = AFatLink.objects.select_related_default().filter(
         is_esilink=True,
         is_registered_on_esi=True,
         character__character_name=creator_character.character_name,
@@ -607,7 +614,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         return redirect("afat:dashboard")
 
     try:
-        link = AFatLink.objects.get(hash=fatlink_hash)
+        link = AFatLink.objects.select_related_default().get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
         request.session["msg"] = ["warning", "The hash provided is not valid."]
 
@@ -788,7 +795,7 @@ def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash) -> JsonResponse
     :rtype:
     """
 
-    fats = AFat.objects.filter(afatlink__hash=fatlink_hash)
+    fats = AFat.objects.select_related_default().filter(afatlink__hash=fatlink_hash)
 
     fat_rows = [convert_fats_to_dict(request=request, fat=fat) for fat in fats]
 

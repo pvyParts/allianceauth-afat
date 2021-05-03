@@ -5,7 +5,7 @@ our app setting
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from afat.utils import clean_setting
+from app_utils.django import clean_setting
 
 # set default expiry time in minutes
 AFAT_DEFAULT_FATLINK_EXPIRY_TIME = clean_setting("AFAT_DEFAULT_FATLINK_EXPIRY_TIME", 60)

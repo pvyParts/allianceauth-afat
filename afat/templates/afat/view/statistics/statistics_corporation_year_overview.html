@@ -14,9 +14,9 @@
 {% endblock %}
 
 {% block afat_body %}
-    {% url 'afat:statistics_corporation' corporationid year_prev as url_previous_year %}
-    {% url 'afat:statistics_corporation' corporationid year_next as url_next_year %}
-    {% url 'afat:statistics_corporation' corporationid year_current as url_current_year %}
+    {% url 'afat:statistics_corporation' corpid year_prev as url_previous_year %}
+    {% url 'afat:statistics_corporation' corpid year_next as url_next_year %}
+    {% url 'afat:statistics_corporation' corpid year_current as url_current_year %}
     {% include "afat/partials/year_navigation.html" with url_previous_year=url_previous_year url_next_year=url_next_year url_current_year=url_current_year %}
 
     <div class="panel panel-default">
@@ -47,7 +47,7 @@
 
                             <td class="text-right">
                                 {% if corporation != 'No Alliance' %}
-                                    <a href="{% url 'afat:statistics_corporation' corporationid year month.0 %}" class="btn btn-primary btn-sm">
+                                    <a href="{% url 'afat:statistics_corporation' corpid year month.0 %}" class="btn btn-primary btn-sm">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
                                 {% endif %}

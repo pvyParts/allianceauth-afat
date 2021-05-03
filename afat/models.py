@@ -9,6 +9,8 @@ from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
+from .managers import AFatLinkManager, AFatManager
+
 
 def get_sentinel_user() -> User:
     """
@@ -107,7 +109,7 @@ class AFatLink(models.Model):
     """
 
     afattime = models.DateTimeField(
-        default=timezone.now, help_text="When was this fatlink created"
+        default=timezone.now, db_index=True, help_text="When was this fatlink created"
     )
 
     fleet = models.CharField(
@@ -161,6 +163,8 @@ class AFatLink(models.Model):
         help_text="Has this FAT link being re-opened?",
     )
 
+    objects = AFatLinkManager()
+
     class Meta:  # pylint: disable=too-few-public-methods
         """
         AFatLink :: Meta
@@ -212,14 +216,14 @@ class AFat(models.Model):
 
     character = models.ForeignKey(
         EveCharacter,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="Character who registered this fat",
     )
 
     afatlink = models.ForeignKey(
         AFatLink,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="The fatlink the character registered at",
     )
@@ -229,8 +233,13 @@ class AFat(models.Model):
     )
 
     shiptype = models.CharField(
-        max_length=100, null=True, help_text="The ship the character was flying"
+        max_length=100,
+        null=True,
+        db_index=True,
+        help_text="The ship the character was flying",
     )
+
+    objects = AFatManager()
 
     class Meta:  # pylint: disable=too-few-public-methods
         """
@@ -283,7 +292,7 @@ class AFatLog(models.Model):
     AFatLog
     """
 
-    log_time = models.DateTimeField(default=timezone.now)
+    log_time = models.DateTimeField(default=timezone.now, db_index=True)
     user = models.ForeignKey(
         User,
         related_name="+",
