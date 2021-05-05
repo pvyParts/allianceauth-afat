@@ -2,8 +2,7 @@
 import FAT data from ImicusFAT module
 """
 
-
-from django.conf import settings
+from django.apps import apps
 from django.core.management.base import BaseCommand
 
 from afat import __version__ as afat_version_installed
@@ -36,7 +35,7 @@ def imicusfat_installed() -> bool:
     :rtype:
     """
 
-    return "imicusfat" in settings.INSTALLED_APPS
+    return apps.is_installed("imicusfat")
 
 
 if imicusfat_installed():

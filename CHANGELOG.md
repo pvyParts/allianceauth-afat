@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Using Django application registry instead of directly accessing `INSTALLED_APPS`
+
 ### Added
 
 - Index to `hash` field in AFatLink model (Thanks @ErikKalkoken)
