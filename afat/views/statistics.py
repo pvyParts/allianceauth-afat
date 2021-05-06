@@ -96,7 +96,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
         "year_next": int(year) + 1,
     }
 
-    logger.info("Statistics overview called by {user}".format(user=request.user))
+    logger.info(f"Statistics overview called by {request.user}")
 
     return render(request, "afat/view/statistics/statistics_overview.html", context)
 

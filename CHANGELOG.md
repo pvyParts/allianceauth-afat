@@ -326,6 +326,7 @@ that were previously "deleted" as active again.
   - _Remove the modules old permissions:_
     ```python
     from django.contrib.auth.models import Permission
+
     Permission.objects.filter(content_type__app_label="afat").delete()
     exit()
     ```

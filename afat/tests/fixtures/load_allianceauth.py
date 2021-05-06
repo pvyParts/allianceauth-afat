@@ -10,7 +10,7 @@ from allianceauth.eveonline.models import (
 
 
 def _load_allianceauth_data():
-    with open(Path(__file__).parent / "allianceauth.json", "r", encoding="utf-8") as fp:
+    with open(Path(__file__).parent / "allianceauth.json", encoding="utf-8") as fp:
         return json.load(fp)
 
 

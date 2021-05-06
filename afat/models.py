@@ -176,7 +176,7 @@ class AFatLink(models.Model):
         verbose_name_plural = "FAT Links"
 
     def __str__(self):
-        return "{} - {}".format(self.fleet, self.hash)
+        return f"{self.fleet} - {self.hash}"
 
     @property
     def number_of_fats(self):
@@ -252,7 +252,7 @@ class AFat(models.Model):
         verbose_name_plural = "FATs"
 
     def __str__(self):
-        return "{} - {}".format(self.afatlink, self.character)
+        return f"{self.afatlink} - {self.character}"
 
 
 # ManualAFat Model
@@ -283,7 +283,7 @@ class ManualAFat(models.Model):
 
     # Add property for getting the user for a character.
     def __str__(self):
-        return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
+        return f"{self.afatlink} - {self.character} ({self.creator})"
 
 
 # AFat Log Model

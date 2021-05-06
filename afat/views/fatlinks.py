@@ -184,9 +184,7 @@ def create_clickable_fatlink(
             dur.duration = form.cleaned_data["duration"]
             dur.save()
 
-            request.session[
-                "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
-            ] = 201
+            request.session[f"{fatlink_hash}-creation-code"] = 201
 
             # writing DB log
             fleet_type = ""
@@ -204,12 +202,10 @@ def create_clickable_fatlink(
             )
 
             logger.info(
-                (
-                    f'FAT link "{fatlink_hash}" with name '
-                    f'"{form.cleaned_data["name"]}"{fleet_type} and a duration '
-                    f'of {form.cleaned_data["duration"]} minutes was created '
-                    f"by {request.user}"
-                )
+                f'FAT link "{fatlink_hash}" with name '
+                f'"{form.cleaned_data["name"]}"{fleet_type} and a duration '
+                f'of {form.cleaned_data["duration"]} minutes was created '
+                f"by {request.user}"
             )
 
             return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
@@ -322,11 +318,9 @@ def create_esi_fatlink_callback(
             )
 
             logger.info(
-                (
-                    f"Closing ESI FAT link with hash "
-                    f'"{registered_fleet_to_close["registered_fleet"].hash}". '
-                    f"Reason: {reason}"
-                )
+                f"Closing ESI FAT link with hash "
+                f'"{registered_fleet_to_close["registered_fleet"].hash}". '
+                f"Reason: {reason}"
             )
 
             registered_fleet_to_close["registered_fleet"].is_registered_on_esi = False
@@ -385,11 +379,9 @@ def create_esi_fatlink_callback(
     )
 
     logger.info(
-        (
-            f'ESI FAT link "{fatlink_hash}" with name '
-            f'"{request.session["fatlink_form__name"]}"{fleet_type} '
-            f"was created by {request.user}"
-        )
+        f'ESI FAT link "{fatlink_hash}" with name '
+        f'"{request.session["fatlink_form__name"]}"{fleet_type} '
+        f"was created by {request.user}"
     )
 
     # clear session
@@ -401,9 +393,7 @@ def create_esi_fatlink_callback(
         data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
     )
 
-    request.session[
-        "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
-    ] = 200
+    request.session[f"{fatlink_hash}-creation-code"] = 200
 
     return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
@@ -647,9 +637,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                 )
             )
 
-            request.session[
-                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-            ] = 1
+            request.session[f"{fatlink_hash}-task-code"] = 1
         elif manual_fat_form.is_valid():
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
@@ -664,9 +652,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                     shiptype=shiptype,
                 ).save()
 
-                request.session[
-                    "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-                ] = 3
+                request.session[f"{fatlink_hash}-task-code"] = 3
 
                 # writing DB log
                 write_log(
@@ -693,13 +679,9 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                     )
                 )
             else:
-                request.session[
-                    "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-                ] = 4
+                request.session[f"{fatlink_hash}-task-code"] = 4
         else:
-            request.session[
-                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-            ] = 2
+            request.session[f"{fatlink_hash}-task-code"] = 2
 
     logger.info(
         'FAT link "{fatlink_hash}" details view called by {user}'.format(
@@ -713,19 +695,10 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     if "msg" in request.session:
         msg_code = 0
         message = request.session.pop("msg")
-    elif (
-        "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
-        in request.session
-    ):
-        msg_code = request.session.pop(
-            "{fatlink_hash}-creation-code".format(fatlink_hash=fatlink_hash)
-        )
-    elif (
-        "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash) in request.session
-    ):
-        msg_code = request.session.pop(
-            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-        )
+    elif f"{fatlink_hash}-creation-code" in request.session:
+        msg_code = request.session.pop(f"{fatlink_hash}-creation-code")
+    elif f"{fatlink_hash}-task-code" in request.session:
+        msg_code = request.session.pop(f"{fatlink_hash}-task-code")
 
     # let's see if the link is still valid or has expired already and can be re-opened
     # and FATs can be manually added
@@ -1032,23 +1005,15 @@ def reopen_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedir
             )
 
             logger.info(
-                (
-                    f'FAT link with hash "{fatlink_hash}" '
-                    f"re-opened by {request.user} for a "
-                    f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
-                )
+                f'FAT link with hash "{fatlink_hash}" '
+                f"re-opened by {request.user} for a "
+                f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
             )
 
-            request.session[
-                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-            ] = 5
+            request.session[f"{fatlink_hash}-task-code"] = 5
         else:
-            request.session[
-                "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-            ] = 7
+            request.session[f"{fatlink_hash}-task-code"] = 7
     except ClickAFatDuration.DoesNotExist:
-        request.session[
-            "{fatlink_hash}-task-code".format(fatlink_hash=fatlink_hash)
-        ] = 6
+        request.session[f"{fatlink_hash}-task-code"] = 6
 
     return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)

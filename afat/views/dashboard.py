@@ -43,7 +43,7 @@ def overview(request: WSGIRequest) -> HttpResponse:
 
     context = {"characters": characters, "msg": msg}
 
-    logger.info("Module called by {user}".format(user=request.user))
+    logger.info(f"Module called by {request.user}")
 
     return render(request, "afat/view/dashboard/dashboard.html", context)
 
