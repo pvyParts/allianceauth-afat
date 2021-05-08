@@ -14,7 +14,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext
 
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
@@ -156,7 +156,7 @@ def character(
         messages.warning(
             request,
             mark_safe(
-                _(
+                gettext(
                     "<h4>Warning!</h4>"
                     "<p>You do not have permission to view "
                     "statistics for this character.</p>"
@@ -169,7 +169,9 @@ def character(
     if not month or not year:
         messages.error(
             request,
-            mark_safe(_("<h4>Warning!</h4><p>Date information not complete!</p>")),
+            mark_safe(
+                gettext("<h4>Warning!</h4><p>Date information not complete!</p>")
+            ),
         )
 
         return redirect("afat:dashboard")
@@ -191,7 +193,7 @@ def character(
 
     colors = []
 
-    for ship_type_key in data_ship_type.keys():
+    for _ in data_ship_type.keys():
         bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
@@ -269,7 +271,7 @@ def corporation(
             messages.warning(
                 request,
                 mark_safe(
-                    _(
+                    gettext(
                         "<h4>Warning!</h4>"
                         "<p>You do not have permission to view statistics "
                         "for that corporation.</p>"
@@ -491,7 +493,7 @@ def alliance(
     if not month or not year:
         messages.error(
             request,
-            mark_safe(_("<h4>Error!</h4><p>Date information incomplete.</p>")),
+            mark_safe(gettext("<h4>Error!</h4><p>Date information incomplete.</p>")),
         )
 
         return redirect("afat:dashboard")
@@ -515,7 +517,7 @@ def alliance(
 
     colors = []
 
-    for ship_type_key in data_ship_type.keys():
+    for _ in data_ship_type.keys():
         bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
