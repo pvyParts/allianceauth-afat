@@ -4,6 +4,7 @@ fatlinks related views
 
 from datetime import datetime, timedelta
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.handlers.wsgi import WSGIRequest
 
@@ -13,6 +14,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.eveonline.models import EveCharacter
@@ -61,13 +64,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     if year is None:
         year = datetime.now().year
 
-    msg = None
-
-    if "msg" in request.session:
-        msg = request.session.pop("msg")
-
     context = {
-        "msg": msg,
         "year": year,
         "year_current": datetime.now().year,
         "year_prev": int(year) - 1,
@@ -124,11 +121,6 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
     :rtype:
     """
 
-    msg = None
-
-    if "msg" in request.session:
-        msg = request.session.pop("msg")
-
     link_types_configured = False
     link_types_count = AFatLinkType.objects.all().count()
 
@@ -137,7 +129,6 @@ def add_fatlink(request: WSGIRequest) -> HttpResponse:
 
     context = {
         "link_types_configured": link_types_configured,
-        "msg": msg,
         "default_expiry_time": AFAT_DEFAULT_FATLINK_EXPIRY_TIME,
         "esi_fleet": get_esi_fleet_information_by_user(request.user),
         "esi_fatlink_form": AFatEsiFatForm(),
@@ -184,8 +175,6 @@ def create_clickable_fatlink(
             dur.duration = form.cleaned_data["duration"]
             dur.save()
 
-            request.session[f"{fatlink_hash}-creation-code"] = 201
-
             # writing DB log
             fleet_type = ""
             if fatlink.link_type:
@@ -208,23 +197,45 @@ def create_clickable_fatlink(
                 f"by {request.user}"
             )
 
+            messages.success(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Success!</h4>"
+                        "<p>Clickable FAT Link Created!</p>"
+                        "<p>Make sure to give your fleet members the link to "
+                        "click so that they get credit for this fleet.</p>"
+                    )
+                ),
+            )
+
             return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
-        request.session["msg"] = [
-            "danger",
-            "Something went wrong when attempting to submit yourclickable FAT Link.",
-        ]
-        return redirect("afat:dashboard")
+        messages.error(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Error!</h4>"
+                    "<p>Something went wrong when attempting "
+                    "to submit your clickable FAT Link.</p>"
+                )
+            ),
+        )
 
-    request.session["msg"] = [
-        "warning",
-        (
-            'You must fill out the form on the "Add FAT Link" '
-            "page to create a clickable FAT Link"
+        return redirect("afat:fatlinks_add_fatlink")
+
+    messages.warning(
+        request,
+        mark_safe(
+            _(
+                "<h4>Warning!</h4>"
+                '<p>You must fill out the form on the "Add FAT Link" '
+                "page to create a clickable FAT Link</p>"
+            )
         ),
-    ]
+    )
 
-    return redirect("afat:dashboard")
+    return redirect("afat:fatlinks_add_fatlink")
 
 
 @login_required()
@@ -255,12 +266,17 @@ def create_esi_fatlink_callback(
         ).result()
     except Exception:
         # not in a fleet
-        request.session["msg"] = [
-            "warning",
-            "To use the ESI function, you neeed to be in fleet and you need to be "
-            "the fleet boss! You can create a clickable FAT link and share it, "
-            "if you like.",
-        ]
+        messages.warning(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Warning!</h4>"
+                    "<p>To use the ESI function, you need to be in fleet and you need "
+                    "to be the fleet boss! You can create a clickable FAT link and "
+                    "share it, if you like.</p>"
+                )
+            ),
+        )
 
         # return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
@@ -292,15 +308,18 @@ def create_esi_fatlink_callback(
     # if the FC already has a fleet and it is the same as already registered,
     # just throw a warning
     if fleet_already_registered is True:
-        request.session["msg"] = [
-            "warning",
-            "Fleet with ID {fleet_id} for your character {character_name} "
-            "has already been registered and pilots joining this "
-            "fleet are automatically tracked.".format(
-                fleet_id=fleet_from_esi["fleet_id"],
-                character_name=creator_character.character_name,
+        messages.warning(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Warning!</h4>"
+                    f'<p>Fleet with ID "{fleet_from_esi["fleet_id"]}" for your '
+                    f"character {creator_character.character_name} has already been "
+                    f"registered and pilots joining this fleet are automatically "
+                    f"tracked.</p>"
+                )
             ),
-        ]
+        )
 
         # return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
@@ -333,11 +352,17 @@ def create_esi_fatlink_callback(
             token=esi_token.valid_access_token(),
         ).result()
     except Exception:
-        request.session["msg"] = [
-            "warning",
-            "Not Fleet Boss! Only the fleet boss can utilize the ESI function. "
-            "You can create a clickable FAT link and share it, if you like.",
-        ]
+        messages.warning(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Warning!</h4>"
+                    "<p>Not Fleet Boss! Only the fleet boss can utilize the ESI "
+                    "function. You can create a clickable FAT link and share it, "
+                    "if you like.</p>"
+                )
+            ),
+        )
 
         # return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
@@ -393,7 +418,18 @@ def create_esi_fatlink_callback(
         data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
     )
 
-    request.session[f"{fatlink_hash}-creation-code"] = 200
+    messages.success(
+        request,
+        mark_safe(
+            _(
+                "<h4>Success!</h4>"
+                "<p>FAT Link Created!</p>"
+                "<p>FATs have been queued, they may take a few mins to show up.</p>"
+                "<p>Pilots who join later will be automatically added until you "
+                "close or leave the fleet in-game.</p>"
+            )
+        ),
+    )
 
     return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
 
@@ -427,12 +463,18 @@ def create_esi_fatlink(
             "afat:fatlinks_create_esi_fatlink_callback", fatlink_hash=fatlink_hash
         )
 
-    request.session["msg"] = [
-        "danger",
-        "Something went wrong when attempting to submit your ESI FAT Link.",
-    ]
+    messages.error(
+        request,
+        mark_safe(
+            _(
+                "<h4>Error!</h4>"
+                "<p>Something went wrong when attempting to "
+                "submit your ESI FAT Link.</p>"
+            )
+        ),
+    )
 
-    return redirect("afat:dashboard")
+    return redirect("afat:fatlinks_add_fatlink")
 
 
 @login_required()
@@ -460,7 +502,10 @@ def add_fat(
     """
 
     if fatlink_hash is None:
-        request.session["msg"] = ["warning", "No FAT link hash provided."]
+        messages.warning(
+            request,
+            mark_safe(_("<h4>Warning!</h4><p>No FAT link hash provided.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
@@ -468,7 +513,10 @@ def add_fat(
         try:
             fleet = AFatLink.objects.get(hash=fatlink_hash)
         except AFatLink.DoesNotExist:
-            request.session["msg"] = ["warning", "The hash provided is not valid."]
+            messages.warning(
+                request,
+                mark_safe(_("<h4>Warning!</h4><p>The hash provided is not valid.</p>")),
+            )
 
             return redirect("afat:dashboard")
 
@@ -476,13 +524,17 @@ def add_fat(
         now = timezone.now() - timedelta(minutes=dur.duration)
 
         if now >= fleet.afattime:
-            request.session["msg"] = [
-                "warning",
-                (
-                    "Sorry, that FAT Link is expired. If you were on that fleet, "
-                    "contact your FC about having your FAT manually added."
+            messages.warning(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Warning!</h4>"
+                        "<p>Sorry, that FAT Link is expired. "
+                        "If you were on that fleet, contact your FC about "
+                        "having your FAT manually added.</p>"
+                    )
                 ),
-            ]
+            )
 
             return redirect("afat:dashboard")
 
@@ -531,56 +583,78 @@ def add_fat(
                     fat.save()
 
                     if fleet.fleet is not None:
-                        name = fleet.fleet
+                        fleet_name = fleet.fleet
                     else:
-                        name = fleet.hash
+                        fleet_name = fleet.hash
 
-                    request.session["msg"] = [
-                        "success",
-                        f"FAT registered for {character.character_name} at {name}",
-                    ]
+                    messages.success(
+                        request,
+                        mark_safe(
+                            _(
+                                "<h4>Success!</h4>"
+                                f"<p>FAT registered for {character.character_name} "
+                                f"at {fleet_name}</p>"
+                            )
+                        ),
+                    )
 
                     logger.info(
-                        f'Participation for fleet "{name}" registered '
+                        f'Participation for fleet "{fleet_name}" registered '
                         f"for pilot {character.character_name}"
                     )
 
                     return redirect("afat:dashboard")
                 except Exception:
-                    request.session["msg"] = [
-                        "warning",
-                        (
-                            "A FAT already exists for the selected character "
-                            f"({character.character_name}) and fleet combination."
+                    messages.warning(
+                        request,
+                        mark_safe(
+                            _(
+                                "<h4>Warning!</h4>"
+                                f"<p>A FAT already exists for the selected "
+                                f"character ({character.character_name}) and fleet "
+                                f"combination.</p>"
+                            )
                         ),
-                    ]
+                    )
 
                     return redirect("afat:dashboard")
             else:
-                request.session["msg"] = [
-                    "warning",
-                    (
-                        "Cannot register the fleet participation for "
-                        f"{character.character_name}. The character needs to be online."
+                messages.warning(
+                    request,
+                    mark_safe(
+                        _(
+                            "<h4>Warning!</h4>"
+                            f"<p>Cannot register the fleet participation "
+                            f"for {character.character_name}. "
+                            f"The character needs to be online.</p>"
+                        )
                     ),
-                ]
+                )
 
                 return redirect("afat:dashboard")
         except Exception:
-            request.session["msg"] = [
-                "warning",
-                (
-                    "There was an issue with the token for "
-                    f"{character.character_name}. Please try again."
+            messages.warning(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Warning!</h4>"
+                        f"<p>There was an issue with the ESI token "
+                        f"for {character.character_name}. Please try again.</p>"
+                    )
                 ),
-            ]
+            )
 
             return redirect("afat:dashboard")
     except Exception:
-        request.session["msg"] = [
-            "warning",
-            "The hash provided is not for a clickable FAT Link.",
-        ]
+        messages.warning(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Warning!</h4>"
+                    "<p>The hash provided is not for a clickable FAT Link.</p>"
+                )
+            ),
+        )
 
         return redirect("afat:dashboard")
 
@@ -599,14 +673,20 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     """
 
     if fatlink_hash is None:
-        request.session["msg"] = ["warning", "No FAT Link hash provided."]
+        messages.warning(
+            request,
+            mark_safe(_("<h4>Warning!</h4><p>No FAT Link hash provided.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
     try:
         link = AFatLink.objects.select_related_default().get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
-        request.session["msg"] = ["warning", "The hash provided is not valid."]
+        messages.warning(
+            request,
+            mark_safe(_("<h4>Warning!</h4><p>The hash provided is not valid.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
@@ -622,22 +702,22 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             write_log(
                 request=request,
                 log_event=AFatLogEvent.CHANGE_FATLINK,
-                log_text=(
-                    'FAT link changed. Fleet name was set to "{fleet_name}"'
-                ).format(fleet_name=link.fleet),
+                log_text=f'FAT link changed. Fleet name was set to "{link.fleet}"',
                 fatlink_hash=link.hash,
             )
 
             logger.info(
-                (
-                    'FAT link with hash "{fatlink_hash}" changed. '
-                    'Fleet name was set to "{fleet_name}" by {user}'
-                ).format(
-                    fatlink_hash=link.hash, fleet_name=link.fleet, user=request.user
-                )
+                f'FAT link with hash "{link.hash}" changed. '
+                f'Fleet name was set to "{link.fleet}" by {request.user}'
             )
 
-            request.session[f"{fatlink_hash}-task-code"] = 1
+            messages.success(
+                request,
+                mark_safe(
+                    _("<h4>Success!</h4><p>Fleet name successfully changed.</p>")
+                ),
+            )
+
         elif manual_fat_form.is_valid():
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
@@ -652,53 +732,45 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                     shiptype=shiptype,
                 ).save()
 
-                request.session[f"{fatlink_hash}-task-code"] = 3
+                messages.success(
+                    request,
+                    mark_safe(_("<h4>Success!</h4><p>Manual FAT processed.</p>")),
+                )
 
                 # writing DB log
                 write_log(
                     request=request,
                     log_event=AFatLogEvent.MANUAL_FAT,
                     log_text=(
-                        "Pilot {pilot_name} flying a {ship_type} was manually added"
-                    ).format(
-                        pilot_name=character.character_name,
-                        ship_type=shiptype,
+                        f"Pilot {character.character_name} "
+                        f"flying a {shiptype} was manually added"
                     ),
                     fatlink_hash=link.hash,
                 )
 
                 logger.info(
-                    (
-                        "Pilot {pilot_name} flying a {ship_type} was manually added to "
-                        'FAT link with hash "{fatlink_hash}" by {user}'
-                    ).format(
-                        fatlink_hash=link.hash,
-                        pilot_name=character.character_name,
-                        ship_type=shiptype,
-                        user=request.user,
-                    )
+                    f"Pilot {character.character_name} flying a {shiptype} was"
+                    f" manually added to FAT link with "
+                    f'hash "{link.hash}" by {request.user}'
                 )
             else:
-                request.session[f"{fatlink_hash}-task-code"] = 4
+                messages.error(
+                    request,
+                    mark_safe(
+                        _(
+                            "<h4>Oh No!</h4>"
+                            "<p>Manual FAT processing failed! "
+                            "The character name you entered was not found.</p>"
+                        )
+                    ),
+                )
         else:
-            request.session[f"{fatlink_hash}-task-code"] = 2
+            messages.error(
+                request,
+                mark_safe(_("<h4>Oh No!</h4><p>Something went wrong!</p>")),
+            )
 
-    logger.info(
-        'FAT link "{fatlink_hash}" details view called by {user}'.format(
-            fatlink_hash=fatlink_hash, user=request.user
-        )
-    )
-
-    msg_code = None
-    message = None
-
-    if "msg" in request.session:
-        msg_code = 0
-        message = request.session.pop("msg")
-    elif f"{fatlink_hash}-creation-code" in request.session:
-        msg_code = request.session.pop(f"{fatlink_hash}-creation-code")
-    elif f"{fatlink_hash}-task-code" in request.session:
-        msg_code = request.session.pop(f"{fatlink_hash}-task-code")
+    logger.info(f'FAT link "{fatlink_hash}" details view called by {request.user}')
 
     # let's see if the link is still valid or has expired already and can be re-opened
     # and FATs can be manually added
@@ -739,8 +811,6 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
         is_clickable_link = True
 
     context = {
-        "msg_code": str(msg_code),
-        "message": message,
         "link": link,
         "is_esi_link": link.is_esilink,
         "is_clickable_link": is_clickable_link,
@@ -791,18 +861,26 @@ def delete_fatlink(
     """
 
     if fatlink_hash is None:
-        request.session["msg"] = ["warning", "No FAT Link hash provided."]
+        messages.warning(
+            request,
+            mark_safe(_("<h4>Warning!</h4><p>No FAT Link hash provided.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
     try:
         link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
-        request.session["msg"] = [
-            "danger",
-            "The fatlink hash provided is either invalid or "
-            "the fatlink has already been deleted.",
-        ]
+        messages.error(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Error!</h4>"
+                    "<p>The fatlink hash provided is either invalid "
+                    "or the fatlink has already been deleted.</p>"
+                )
+            ),
+        )
 
         return redirect("afat:dashboard")
 
@@ -817,17 +895,20 @@ def delete_fatlink(
         fatlink_hash=link.hash,
     )
 
-    request.session["msg"] = [
-        "success",
-        'The FAT Link "{fatlink_hash}" and all associated FATs '
-        "have been successfully deleted.".format(fatlink_hash=fatlink_hash),
-    ]
+    messages.success(
+        request,
+        mark_safe(
+            _(
+                "<h4>Success!</h4>"
+                f'<p>The FAT Link "{fatlink_hash}" and all associated FATs '
+                f"have been successfully deleted.</p>"
+            )
+        ),
+    )
 
     logger.info(
-        (
-            'Fat link "{fatlink_hash}" and all associated '
-            "FATs have been deleted by {user}"
-        ).format(fatlink_hash=fatlink_hash, user=request.user)
+        f'Fat link "{fatlink_hash}" and all associated '
+        f"FATs have been deleted by {request.user}"
     )
 
     return redirect("afat:fatlinks_overview")
@@ -851,20 +932,25 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat) -> HttpResponseRedi
     try:
         link = AFatLink.objects.get(hash=fatlink_hash)
     except AFatLink.DoesNotExist:
-        request.session["msg"] = [
-            "danger",
-            "The hash provided is either invalid or has been deleted.",
-        ]
+        messages.error(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Error!</h4>"
+                    "<p>The hash provided is either invalid or has been deleted.</p>"
+                )
+            ),
+        )
 
         return redirect("afat:dashboard")
 
     try:
         fat_details = AFat.objects.get(pk=fat, afatlink_id=link.pk)
     except AFat.DoesNotExist:
-        request.session["msg"] = [
-            "danger",
-            "The hash and FAT ID do not match.",
-        ]
+        messages.error(
+            request,
+            mark_safe(_("<h4>Error!</h4><p>The hash and FAT ID do not match.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
@@ -873,32 +959,24 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat) -> HttpResponseRedi
     write_log(
         request=request,
         log_event=AFatLogEvent.DELETE_FAT,
-        log_text="The FAT for {character_name} has been deleted".format(
-            character_name=fat_details.character.character_name,
-        ),
+        log_text=f"The FAT for {fat_details.character.character_name} has been deleted",
         fatlink_hash=link.hash,
     )
 
-    request.session["msg"] = [
-        "success",
-        (
-            "The FAT for {character_name} has been successfully "
-            'deleted from FAT link "{fatlink_hash}".'
-        ).format(
-            character_name=fat_details.character.character_name,
-            fatlink_hash=fatlink_hash,
+    messages.success(
+        request,
+        mark_safe(
+            _(
+                "<h4>Success!</h4>"
+                f"<p>The FAT for {fat_details.character.character_name} "
+                f'has been successfully deleted from FAT link "{fatlink_hash}".</p>'
+            )
         ),
-    ]
+    )
 
     logger.info(
-        (
-            "The FAT for {character_name} has been deleted "
-            'from FAT link "{fatlink_hash}" by {user}.'
-        ).format(
-            character_name=fat_details.character.character_name,
-            fatlink_hash=fatlink_hash,
-            user=request.user,
-        )
+        f"The FAT for {fat_details.character.character_name} has "
+        f'been deleted from FAT link "{fatlink_hash}" by {request.user}.'
     )
 
     return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)
@@ -921,19 +999,14 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRe
         fatlink = AFatLink.objects.get(hash=fatlink_hash)
 
         logger.info(
-            'Closing ESI FAT link with hash "{fatlink_hash}". Reason: {reason}'.format(
-                fatlink_hash=fatlink_hash, reason="Closed by manual request"
-            )
+            f'Closing ESI FAT link with hash "{fatlink_hash}". '
+            f"Reason: Closed by manual request"
         )
 
         fatlink.is_registered_on_esi = False
         fatlink.save()
     except AFatLink.DoesNotExist:
-        logger.info(
-            'ESI FAT link with hash "{fatlink_hash}" does not exist'.format(
-                fatlink_hash=fatlink_hash
-            )
-        )
+        logger.info(f'ESI FAT link with hash "{fatlink_hash}" does not exist')
 
     default_redirect = reverse("afat:dashboard")
     next_view = request.GET.get("next", default_redirect)
@@ -1010,10 +1083,35 @@ def reopen_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedir
                 f"duration of {AFAT_DEFAULT_FATLINK_REOPEN_DURATION} minutes"
             )
 
-            request.session[f"{fatlink_hash}-task-code"] = 5
+            messages.success(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Success!</h4>"
+                        "<p>The FAT link has been successfully re-opened.</p>"
+                    )
+                ),
+            )
         else:
-            request.session[f"{fatlink_hash}-task-code"] = 7
+            messages.warning(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Warning!</h4>"
+                        "<p>This FAT link has already been re-opened. "
+                        "FAT links can be re-opened only once!</p>"
+                    )
+                ),
+            )
     except ClickAFatDuration.DoesNotExist:
-        request.session[f"{fatlink_hash}-task-code"] = 6
+        messages.error(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Error!</h4>"
+                    "<p>The hash you provided does not match with any FAT link.</p>"
+                )
+            ),
+        )
 
     return redirect("afat:fatlinks_details_fatlink", fatlink_hash=fatlink_hash)

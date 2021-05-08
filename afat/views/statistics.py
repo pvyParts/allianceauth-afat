@@ -6,12 +6,15 @@ import calendar
 from collections import OrderedDict
 from datetime import datetime
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from allianceauth.authentication.decorators import permissions_required
 from allianceauth.authentication.models import CharacterOwnership
@@ -150,15 +153,24 @@ def character(
     if eve_character not in valid and not request.user.has_perm(
         "afat.stats_char_other"
     ):
-        request.session["msg"] = (
-            "warning",
-            "You do not have permission to view statistics for this character.",
+        messages.warning(
+            request,
+            mark_safe(
+                _(
+                    "<h4>Warning!</h4>"
+                    "<p>You do not have permission to view "
+                    "statistics for this character.</p>"
+                )
+            ),
         )
 
         return redirect("afat:dashboard")
 
     if not month or not year:
-        request.session["msg"] = ("danger", "Date information not complete!")
+        messages.error(
+            request,
+            mark_safe(_("<h4>Warning!</h4><p>Date information not complete!</p>")),
+        )
 
         return redirect("afat:dashboard")
 
@@ -179,7 +191,7 @@ def character(
 
     colors = []
 
-    for _ in data_ship_type.keys():
+    for ship_type_key in data_ship_type.keys():
         bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
@@ -254,9 +266,15 @@ def corporation(
     # Check character has permission to view other corp stats
     if int(request.user.profile.main_character.corporation_id) != int(corpid):
         if not request.user.has_perm("afat.stats_corporation_other"):
-            request.session["msg"] = (
-                "warning",
-                "You do not have permission to view statistics for that corporation.",
+            messages.warning(
+                request,
+                mark_safe(
+                    _(
+                        "<h4>Warning!</h4>"
+                        "<p>You do not have permission to view statistics "
+                        "for that corporation.</p>"
+                    )
+                ),
             )
 
             return redirect("afat:dashboard")
@@ -471,7 +489,10 @@ def alliance(
         )
 
     if not month or not year:
-        request.session["msg"] = ("danger", "Date information incomplete.")
+        messages.error(
+            request,
+            mark_safe(_("<h4>Error!</h4><p>Date information incomplete.</p>")),
+        )
 
         return redirect("afat:dashboard")
 
@@ -494,7 +515,7 @@ def alliance(
 
     colors = []
 
-    for _ in data_ship_type.keys():
+    for ship_type_key in data_ship_type.keys():
         bg_color_str = get_random_rgba_color()
         colors.append(bg_color_str)
 
