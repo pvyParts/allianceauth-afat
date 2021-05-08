@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Using Django application registry instead of directly accessing `INSTALLED_APPS`
-- Using Django messages API
+- Using Django messages API (#86)
 
 ### Added
 
