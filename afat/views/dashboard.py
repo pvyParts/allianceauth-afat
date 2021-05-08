@@ -30,18 +30,13 @@ def overview(request: WSGIRequest) -> HttpResponse:
     :rtype:
     """
 
-    msg = None
-
-    if "msg" in request.session:
-        msg = request.session.pop("msg")
-
     characters = (
         EveCharacter.objects.select_related("character_ownership")
         .filter(character_ownership__user=request.user, afats__isnull=False)
         .distinct()
     )
 
-    context = {"characters": characters, "msg": msg}
+    context = {"characters": characters}
 
     logger.info(f"Module called by {request.user}")
 

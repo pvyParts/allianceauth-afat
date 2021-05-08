@@ -18,24 +18,6 @@
     {% url 'afat:fatlinks_overview' year_current as url_current_year %}
     {% include "afat/partials/year_navigation.html" with url_previous_year=url_previous_year url_next_year=url_next_year url_current_year=url_current_year %}
 
-    {% if msg %}
-        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                <span aria-hidden="true">&times</span>
-            </button>
-
-            <h4>
-                {% if msg.0 == 'danger' %}
-                    {% translate "Oh No!" %}
-                {% elif msg.0 == 'success' %}
-                    {% translate "Success!" %}
-                {% endif %}
-            </h4>
-
-            <p>{{ msg.1 }}</p>
-        </div>
-    {% endif %}
-
     <div class="panel panel-default">
         <div class="panel-body">
             <table class="table table-striped table-hover" id="link-list" style="width: 100%;">
