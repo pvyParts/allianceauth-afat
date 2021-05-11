@@ -2,7 +2,7 @@
 import FAT data from alliance auth fat module
 """
 
-from django.conf import settings
+from django.apps import apps
 from django.core.management.base import BaseCommand
 
 from allianceauth.fleetactivitytracking.models import Fat, Fatlink
@@ -29,7 +29,7 @@ def aa_fat_installed() -> bool:
     :rtype:
     """
 
-    return "allianceauth.fleetactivitytracking" in settings.INSTALLED_APPS
+    return apps.is_installed("allianceauth.fleetactivitytracking")
 
 
 class Command(BaseCommand):

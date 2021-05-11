@@ -7,7 +7,7 @@ from bfat.models import Fat as BfatFat
 from bfat.models import FatLink as BfatFatLink
 from bfat.models import ManualFat as BfatManualFat
 
-from django.conf import settings
+from django.apps import apps
 from django.core.management.base import BaseCommand
 
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent, ClickAFatDuration
@@ -32,7 +32,7 @@ def bfat_installed() -> bool:
     :rtype:
     """
 
-    return "bfat" in settings.INSTALLED_APPS
+    return apps.is_installed("bfat")
 
 
 class Command(BaseCommand):

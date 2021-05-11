@@ -14,16 +14,10 @@
 {% endblock %}
 
 {% block afat_body %}
-    <h4>
-        <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_prev }}/" title='{% translate "Previous Month" %}'><i class="fas fa-backward"></i></a>
-
-        <span class="afat-label-statistics">{{ year }}</span>
-
-        {% if year_next <= year_current %}
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_next }}/" title='{% translate "Next Month" %}'><i class="fas fa-forward"></i></a>
-            <a class="btn btn-primary btn-sm" href="{% url 'afat:statistics_overview' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year_current }}/" title='{% translate "Current Month" %}'><i class="fas fa-fast-forward"></i></a>
-        {% endif %}
-    </h4>
+    {% url 'afat:statistics_corporation' corpid year_prev as url_previous_year %}
+    {% url 'afat:statistics_corporation' corpid year_next as url_next_year %}
+    {% url 'afat:statistics_corporation' corpid year_current as url_current_year %}
+    {% include "afat/partials/year_navigation.html" with url_previous_year=url_previous_year url_next_year=url_next_year url_current_year=url_current_year %}
 
     <div class="panel panel-default">
         <div class="panel-body">
@@ -32,9 +26,11 @@
                     <tr>
                         <th>{% translate "Month" %}</th>
                         <th>{% translate "FATs" %}</th>
+
                         {% if type == 0 %}
                             <th>{% translate "Avg FATs" %}</th>
                         {% endif %}
+
                         <th></th>
                     </tr>
                 </thead>
@@ -44,12 +40,14 @@
                         <tr>
                             <td>{{ month.0|month_name }}</td>
                             <td>{{ month.1 }}</td>
+
                             {% if type == 0 %}
                                 <td>{{ month.2 }}</td>
                             {% endif %}
+
                             <td class="text-right">
                                 {% if corporation != 'No Alliance' %}
-                                    <a href="{% url 'afat:statistics_overview' %}{% if type == 0 %}corporation{% elif type == 1 %}alliance{% endif %}/{{ corpid }}/{{ year }}/{{ month.0 }}/" class="btn btn-primary btn-sm">
+                                    <a href="{% url 'afat:statistics_corporation' corpid year month.0 %}" class="btn btn-primary btn-sm">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
                                 {% endif %}

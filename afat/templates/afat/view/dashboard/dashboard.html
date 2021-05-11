@@ -14,26 +14,6 @@
 {% endblock %}
 
 {% block afat_body %}
-    {% if msg %}
-        <div class="alert alert-{{ msg.0 }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                <span aria-hidden="true">&times</span>
-            </button>
-
-            {% if msg.0 != 'warning' %}
-                <h4>
-                    {% if msg.0 == 'danger' %}
-                        {% translate "Oh No!" %}
-                    {% elif msg.0 == 'success' %}
-                        {% translate "Success!" %}
-                    {% endif %}
-                </h4>
-            {% endif %}
-
-            <p>{{ msg.1 }}</p>
-        </div>
-    {% endif %}
-
     {% include "afat/partials/dashboard/tabs_navigation.html" %}
 
     <div class="tab-content">

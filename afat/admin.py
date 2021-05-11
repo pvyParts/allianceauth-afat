@@ -65,6 +65,7 @@ class AFatLinkAdmin(admin.ModelAdmin):
     config for fat link model
     """
 
+    list_select_related = ("link_type",)
     list_display = ("afattime", "creator", "fleet", "_link_type", "is_esilink", "hash")
     list_filter = ("is_esilink", ("link_type__name", custom_filter(title="fleet type")))
     ordering = ("-afattime",)
@@ -191,6 +192,7 @@ class ManualAFatAdmin(admin.ModelAdmin):
     manual fat log config
     """
 
+    list_select_related = ("afatlink",)
     list_display = ("creator", "_character", "_afatlink", "created_at")
     exclude = ("creator", "character", "afatlink", "created_at")
     readonly_fields = ("creator", "character", "afatlink", "created_at")

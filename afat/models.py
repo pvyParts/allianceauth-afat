@@ -9,6 +9,8 @@ from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
+from .managers import AFatLinkManager, AFatManager
+
 
 def get_sentinel_user() -> User:
     """
@@ -107,7 +109,7 @@ class AFatLink(models.Model):
     """
 
     afattime = models.DateTimeField(
-        default=timezone.now, help_text="When was this fatlink created"
+        default=timezone.now, db_index=True, help_text="When was this fatlink created"
     )
 
     fleet = models.CharField(
@@ -116,7 +118,9 @@ class AFatLink(models.Model):
         help_text="The fatlinks fleet name",
     )
 
-    hash = models.CharField(max_length=254, help_text="The fatlinks hash")
+    hash = models.CharField(
+        max_length=254, db_index=True, help_text="The fatlinks hash"
+    )
 
     creator = models.ForeignKey(
         User,
@@ -159,6 +163,8 @@ class AFatLink(models.Model):
         help_text="Has this FAT link being re-opened?",
     )
 
+    objects = AFatLinkManager()
+
     class Meta:  # pylint: disable=too-few-public-methods
         """
         AFatLink :: Meta
@@ -170,7 +176,7 @@ class AFatLink(models.Model):
         verbose_name_plural = "FAT Links"
 
     def __str__(self):
-        return "{} - {}".format(self.fleet, self.hash)
+        return f"{self.fleet} - {self.hash}"
 
     @property
     def number_of_fats(self):
@@ -210,14 +216,14 @@ class AFat(models.Model):
 
     character = models.ForeignKey(
         EveCharacter,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="Character who registered this fat",
     )
 
     afatlink = models.ForeignKey(
         AFatLink,
-        related_name="+",
+        related_name="afats",
         on_delete=models.CASCADE,
         help_text="The fatlink the character registered at",
     )
@@ -227,8 +233,13 @@ class AFat(models.Model):
     )
 
     shiptype = models.CharField(
-        max_length=100, null=True, help_text="The ship the character was flying"
+        max_length=100,
+        null=True,
+        db_index=True,
+        help_text="The ship the character was flying",
     )
+
+    objects = AFatManager()
 
     class Meta:  # pylint: disable=too-few-public-methods
         """
@@ -241,7 +252,7 @@ class AFat(models.Model):
         verbose_name_plural = "FATs"
 
     def __str__(self):
-        return "{} - {}".format(self.afatlink, self.character)
+        return f"{self.afatlink} - {self.character}"
 
 
 # ManualAFat Model
@@ -272,7 +283,7 @@ class ManualAFat(models.Model):
 
     # Add property for getting the user for a character.
     def __str__(self):
-        return "{} - {} ({})".format(self.afatlink, self.character, self.creator)
+        return f"{self.afatlink} - {self.character} ({self.creator})"
 
 
 # AFat Log Model
@@ -281,7 +292,7 @@ class AFatLog(models.Model):
     AFatLog
     """
 
-    log_time = models.DateTimeField(default=timezone.now)
+    log_time = models.DateTimeField(default=timezone.now, db_index=True)
     user = models.ForeignKey(
         User,
         related_name="+",

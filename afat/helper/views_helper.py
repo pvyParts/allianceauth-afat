@@ -4,14 +4,14 @@ views helper
 
 import random
 
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import Permission
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
+from app_utils.django import users_with_permission
 
 from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 from afat.utils import get_main_character_from_user
@@ -65,9 +65,6 @@ def convert_fatlinks_to_dict(
     # fleet time
     fleet_time = fatlink.afattime
     fleet_time_timestamp = fleet_time.timestamp()
-
-    # number of FATs
-    fats_number = fatlink.number_of_fats
 
     # action buttons
     actions = ""
@@ -136,7 +133,7 @@ def convert_fatlinks_to_dict(
         "creator_name": creator_main_character,
         "fleet_type": fatlink_type,
         "fleet_time": {"time": fleet_time, "timestamp": fleet_time_timestamp},
-        "fats_number": fats_number,
+        "fats_number": fatlink.afats_count,
         "hash": fatlink.hash,
         "is_esilink": fatlink.is_esilink,
         "esi_fleet_id": fatlink.esi_fleet_id,
@@ -220,11 +217,13 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     return summary
 
 
-def convert_logs_to_dict(log: AFatLog) -> dict:
+def convert_logs_to_dict(log: AFatLog, fatlink_exists: bool = False) -> dict:
     """
     convert AFatLog to dict
     :param log:
     :type log:
+    :param fatlink_exists:
+    :type fatlink_exists:
     :return:
     :rtype:
     """
@@ -235,11 +234,18 @@ def convert_logs_to_dict(log: AFatLog) -> dict:
     # user name
     user_main_character = get_main_character_from_user(user=log.user)
 
+    fatlink_html = _(f"{log.fatlink_hash} (Deleted)")
+    if fatlink_exists is True:
+        fatlink_link = reverse("afat:fatlinks_details_fatlink", args=[log.fatlink_hash])
+        fatlink_html = f'<a href="{fatlink_link}">{log.fatlink_hash}</a>'
+
+    fatlink = {"html": fatlink_html, "hash": log.fatlink_hash}
+
     summary = {
         "log_time": {"time": log_time, "timestamp": log_time_timestamp},
         "log_event": AFatLogEvent(log.log_event).label,
         "user": user_main_character,
-        "fatlink": log.fatlink_hash,
+        "fatlink": fatlink,
         "description": log.log_text,
     }
 
@@ -258,30 +264,6 @@ def get_random_rgba_color():
         green=random.randint(0, 255),
         blue=random.randint(0, 255),
     )
-
-
-def users_with_permission(permission: Permission) -> models.QuerySet:
-    """
-    returns queryset of users that have the given permission in Auth
-    :param permission:
-    :type permission:
-    :return:
-    :rtype:
-    """
-
-    users_qs = (
-        User.objects.prefetch_related(
-            "user_permissions", "groups", "profile__state__permissions"
-        )
-        .filter(
-            Q(user_permissions=permission)
-            | Q(groups__permissions=permission)
-            | Q(profile__state__permissions=permission)
-        )
-        .distinct()
-    )
-
-    return users_qs
 
 
 def characters_with_permission(permission: Permission) -> models.QuerySet:

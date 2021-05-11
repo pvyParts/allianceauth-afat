@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] - 2021-05-11
+
+### Fixed
+
+- Using Django application registry instead of directly accessing `INSTALLED_APPS`
+- Using Django messages API (#86)
+
+### Added
+
+- Index to `hash` field in AFatLink model (Thanks @ErikKalkoken)
+
+### Changed
+- Time period (year and month select) templates refactored
+- FAT link hashes in log are now linked to their respective FAT link details, as
+  long as the FAT link is not deleted yet (Thanks to @ErikKalkoken to let me know
+  how to do so without firing potentially hundreds of queries against the database)
+- Reduced load time for all pages incl. admin site (Thanks @ErikKalkoken)
+
 
 ## [2.1.1] - 2021-04-30
 
@@ -309,6 +327,7 @@ that were previously "deleted" as active again.
   - _Remove the modules old permissions:_
     ```python
     from django.contrib.auth.models import Permission
+
     Permission.objects.filter(content_type__app_label="afat").delete()
     exit()
     ```

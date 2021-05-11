@@ -1,5 +1,0 @@
-{% if msg_code %}
-    {% with "afat/partials/fatlinks/details/messages/msg-code-"|add:msg_code|add:".html" as message_template %}
-        {% include ""|add:message_template %}
-    {% endwith %}
-{% endif %}

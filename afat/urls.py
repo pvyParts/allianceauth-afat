@@ -35,7 +35,10 @@ urlpatterns = [
         name="statistics_corporation",
     ),
     url(
-        r"^statistics/corporation/(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
+        (
+            r"^statistics/corporation/"
+            r"(?P<corpid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$"
+        ),
         statistics.corporation,
         name="statistics_corporation",
     ),
@@ -47,7 +50,10 @@ urlpatterns = [
         name="statistics_character",
     ),
     url(
-        r"^statistics/character/(?P<charid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
+        (
+            r"^statistics/character/"
+            r"(?P<charid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$"
+        ),
         statistics.character,
         name="statistics_character",
     ),
@@ -64,7 +70,10 @@ urlpatterns = [
         name="statistics_alliance",
     ),
     url(
-        r"^statistics/alliance/(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$",
+        (
+            r"^statistics/alliance/"
+            r"(?P<allianceid>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)/$"
+        ),
         statistics.alliance,
         name="statistics_alliance",
     ),
