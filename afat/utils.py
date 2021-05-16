@@ -69,6 +69,8 @@ def get_or_create_character(name: str = None, character_id: int = None):
     :rtype:
     """
 
+    eve_character = None
+
     if name:
         # If a name is passed we have to check it on ESI
         result = esi.client.Search.get_search(
@@ -86,7 +88,7 @@ def get_or_create_character(name: str = None, character_id: int = None):
     elif not name and not character_id:
         raise NoDataError("No character name or character id provided.")
 
-    if len(eve_character) == 0:
+    if eve_character is not None and len(eve_character) == 0:
         # Create Character
         character = EveCharacter.objects.create_character(character_id)
         character = EveCharacter.objects.get(pk=character.pk)

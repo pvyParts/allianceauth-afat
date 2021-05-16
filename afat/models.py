@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
 
-from .managers import AFatLinkManager, AFatManager
+from afat.managers import AFatLinkManager, AFatManager
 
 
 def get_sentinel_user() -> User:

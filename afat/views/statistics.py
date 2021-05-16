@@ -105,9 +105,13 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
 
 def _calculate_year_stats(request, year) -> list:
-    """Calculate and return year statistics."""
+    """
+    Calculate and return year statistics.
+    """
+
     months = list()
     characters = EveCharacter.objects.filter(character_ownership__user=request.user)
+
     for char in characters:
         fat_counts = (
             AFat.objects.filter(afatlink__afattime__year=year)
@@ -121,6 +125,7 @@ def _calculate_year_stats(request, year) -> list:
             if result["fat_count"]
         }
         fat_counts_2 = dict(sorted(fat_counts_2.items(), key=lambda item: item[1]))
+
         months.append((char.character_name, fat_counts_2, char.character_id))
 
     return sorted(months, key=lambda x: x[0])
