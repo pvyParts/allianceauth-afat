@@ -1,5 +1,5 @@
 """
-tasks
+Tasks
 """
 
 from datetime import timedelta
@@ -47,12 +47,12 @@ CACHE_KEY_NO_FLEETBOSS_ERROR = (
 )
 CACHE_MAX_ERROR_COUNT = 3
 
-# params for all tasks
+# Params for all tasks
 TASK_DEFAULT_KWARGS = {
-    "time_limit": 120,  # stop after 2 minutes
+    "time_limit": 120,  # Stop after 2 minutes
 }
 
-# params for tasks that make ESI calls
+# Params for tasks that make ESI calls
 TASK_ESI_KWARGS = {
     **TASK_DEFAULT_KWARGS,
     **{
@@ -72,7 +72,7 @@ TASK_ESI_KWARGS = {
 def process_fats(data_list, data_source, fatlink_hash):
     """
     Due to the large possible size of fatlists,
-    this process will be scheduled in order to process esi data
+    this process will be scheduled to process esi data
     and possible other sources in the future.
     :param data_list:
     :type data_list:
@@ -97,7 +97,7 @@ def process_fats(data_list, data_source, fatlink_hash):
 @shared_task
 def process_character(char, fatlink_hash):
     """
-    process_character
+    Process character
     :param char:
     :type char:
     :param fatlink_hash:
@@ -110,7 +110,7 @@ def process_character(char, fatlink_hash):
     char_id = char["character_id"]
     character = get_or_create_character(character_id=char_id)
 
-    # only process if the character is not already registered for this FAT
+    # Only process if the character is not already registered for this FAT
     if AFat.objects.filter(character=character, afatlink_id=link.pk).exists() is False:
         solar_system_id = char["solar_system_id"]
         ship_type_id = char["ship_type_id"]
@@ -207,7 +207,7 @@ def esi_fatlinks_error_handling(
 
 def initialize_caches(fatlink: AFatLink) -> None:
     """
-    initializing caches
+    Initializing caches
     :param fatlink:
     :type fatlink:
     :return:
@@ -230,7 +230,7 @@ def initialize_caches(fatlink: AFatLink) -> None:
 @shared_task(**{**TASK_ESI_KWARGS}, **{"base": QueueOnce})
 def update_esi_fatlinks() -> None:
     """
-    checking ESI fat links for changes
+    Checking ESI fat links for changes
     :return:
     :rtype:
     """
@@ -270,7 +270,7 @@ def update_esi_fatlinks() -> None:
                                 ).result()
                             )
 
-                            # process fleet members
+                            # Process fleet members
                             process_fats.delay(
                                 data_list=esi_fleet_member,
                                 data_source="esi",
@@ -317,7 +317,7 @@ def update_esi_fatlinks() -> None:
 @shared_task
 def logrotate():
     """
-    remove logs older than AFAT_DEFAULT_LOG_DURATION
+    Remove logs older than AFAT_DEFAULT_LOG_DURATION
     :return:
     :rtype:
     """

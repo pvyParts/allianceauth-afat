@@ -1,5 +1,5 @@
 """
-helper functions for fatlinks view
+Helper functions for fat links view
 """
 
 from typing import Dict, List, Union
@@ -13,7 +13,7 @@ def get_esi_fleet_information_by_user(
     user: User,
 ) -> Dict[str, Union[bool, List[Dict[int, AFatLink]]]]:
     """
-    get ESI fleet information by a given FC (user)
+    Get ESI fleet information by a given FC (user)
     :param user:
     :type user:
     :return:

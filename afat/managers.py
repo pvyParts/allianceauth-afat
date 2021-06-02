@@ -1,5 +1,5 @@
 """
-managers for our models
+Managers for our models
 """
 
 from django.db import models
@@ -13,7 +13,7 @@ class AFatLinkQuerySet(models.QuerySet):
 
     def annotate_afats_count(self):
         """
-        annotate the number of fats per fat link
+        Annotate the amount fats per fat link
         :return:
         :rtype:
         """

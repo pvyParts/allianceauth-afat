@@ -1,5 +1,5 @@
 """
-url configuration
+URL configuration
 """
 
 from django.conf.urls import url
@@ -9,16 +9,16 @@ from afat.views import dashboard, fatlinks, logs, statistics
 app_name: str = "afat"
 
 urlpatterns = [
-    # dashboard
+    # Dashboard
     url(r"^$", dashboard.overview, name="dashboard"),
-    # stats main page
+    # Stats main page
     url(r"^statistics/$", statistics.overview, name="statistics_overview"),
     url(
         r"^statistics/(?P<year>[0-9]+)/$",
         statistics.overview,
         name="statistics_overview",
     ),
-    # stats corp
+    # Stats corp
     url(
         r"^statistics/corporation/$",
         statistics.corporation,
@@ -42,7 +42,7 @@ urlpatterns = [
         statistics.corporation,
         name="statistics_corporation",
     ),
-    # stats char
+    # Stats char
     url(r"^statistics/character/$", statistics.character, name="statistics_character"),
     url(
         r"^statistics/character/(?P<charid>[0-9]+)/$",
@@ -57,7 +57,7 @@ urlpatterns = [
         statistics.character,
         name="statistics_character",
     ),
-    # stats alliance
+    # Stats alliance
     url(r"^statistics/alliance/$", statistics.alliance, name="statistics_alliance"),
     url(
         r"^statistics/alliance/(?P<allianceid>[0-9]+)/$",
@@ -77,10 +77,10 @@ urlpatterns = [
         statistics.alliance,
         name="statistics_alliance",
     ),
-    # fatlinks list actions
+    # Fat links list actions
     url(r"^fatlinks/$", fatlinks.overview, name="fatlinks_overview"),
     url(r"^fatlinks/(?P<year>[0-9]+)/$", fatlinks.overview, name="fatlinks_overview"),
-    # fatlink actions
+    # Fat link actions
     url(r"^fatlink/add/$", fatlinks.add_fatlink, name="fatlinks_add_fatlink"),
     url(
         r"^fatlinks/link/create/esi-fatlink/$",
@@ -117,7 +117,7 @@ urlpatterns = [
         fatlinks.reopen_fatlink,
         name="fatlinks_reopen_fatlink",
     ),
-    # fat actions
+    # Fat actions
     url(
         r"^fatlink/(?P<fatlink_hash>[a-zA-Z0-9]+)/register/$",
         fatlinks.add_fat,
@@ -128,9 +128,9 @@ urlpatterns = [
         fatlinks.delete_fat,
         name="fatlinks_delete_fat",
     ),
-    # log actions
+    # Log actions
     url(r"^logs/$", logs.overview, name="logs_overview"),
-    # ajax calls :: dashboard
+    # Ajax calls :: Dashboard
     url(
         r"^ajax/dashboard/fatlinks/recent/$",
         dashboard.ajax_get_recent_fatlinks,
@@ -141,7 +141,7 @@ urlpatterns = [
         dashboard.ajax_recent_get_fats_by_character,
         name="dashboard_ajax_get_recent_fats_by_character",
     ),
-    # ajax calls :: fatlinks
+    # Ajax calls :: Fat links
     url(
         r"^ajax/fatlinks/fatlinks/year/(?P<year>[0-9]+)/$",
         fatlinks.ajax_get_fatlinks_by_year,
@@ -152,6 +152,6 @@ urlpatterns = [
         fatlinks.ajax_get_fats_by_fatlink,
         name="fatlinks_ajax_get_fats_by_fatlink",
     ),
-    # ajax calls :: logs
+    # Ajax calls :: Logs
     url(r"^ajax/logs/$", logs.ajax_get_logs, name="logs_ajax_get_logs"),
 ]

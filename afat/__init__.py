@@ -1,5 +1,5 @@
 """
-app config
+App config
 """
 
 default_app_config: str = "afat.apps.AfatConfig"

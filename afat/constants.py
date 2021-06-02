@@ -1,5 +1,5 @@
 """
-constants used in this module
+Constants used in this module
 """
 
 from django.utils.text import slugify

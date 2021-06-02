@@ -1,5 +1,5 @@
 """
-app config
+App config
 """
 
 from django.apps import AppConfig
@@ -9,7 +9,7 @@ from afat import __version__
 
 class AfatConfig(AppConfig):
     """
-    general config
+    General config
     """
 
     name = "afat"

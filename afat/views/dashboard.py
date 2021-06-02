@@ -1,5 +1,5 @@
 """
-dashboard related views
+Dashboard related views
 """
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -23,7 +23,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 @permission_required("afat.basic_access")
 def overview(request: WSGIRequest) -> HttpResponse:
     """
-    dashboard view
+    Dashboard view
     :param request:
     :type request:
     :return:
@@ -49,7 +49,7 @@ def ajax_recent_get_fats_by_character(
     request: WSGIRequest, charid: int
 ) -> JsonResponse:
     """
-    ajax call :: get all FATs for a given character
+    Ajax call :: get all FATs for a given character
     :param request:
     :type request:
     :param charid:
@@ -78,7 +78,7 @@ def ajax_recent_get_fats_by_character(
 @permission_required("afat.basic_access")
 def ajax_get_recent_fatlinks(request: WSGIRequest) -> JsonResponse:
     """
-    ajax call :: get recent fat links for the dashboard datatable
+    Ajax call :: get recent fat links for the dashboard datatable
     :param request:
     :type request:
     :return:

@@ -1,5 +1,5 @@
 """
-the models
+The models
 """
 
 from django.contrib.auth.models import User
@@ -14,7 +14,7 @@ from afat.managers import AFatLinkManager, AFatManager
 
 def get_sentinel_user() -> User:
     """
-    get user or create one
+    Get user or create one
     :return:
     :rtype:
     """
@@ -51,7 +51,7 @@ class AaAfat(models.Model):
         permissions = (
             # can access and register his own participation to a FAT link
             ("basic_access", "Can access the AFAT module"),
-            # Can manage the whole FAT module
+            # Can manage the FAT module
             # Has:
             #   » add_fatlink
             #   » change_fatlink
@@ -181,7 +181,7 @@ class AFatLink(models.Model):
     @property
     def number_of_fats(self):
         """
-        returns the number of registered FATs
+        Returns the number of registered FATs
         :return:
         :rtype:
         """

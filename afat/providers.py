@@ -1,5 +1,5 @@
 """
-providers
+Providers
 """
 
 from esi.clients import EsiClientProvider

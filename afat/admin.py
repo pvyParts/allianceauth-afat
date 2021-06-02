@@ -1,5 +1,5 @@
 """
-admin pages configuration
+Admin pages configuration
 """
 
 from django.contrib import admin
@@ -9,7 +9,7 @@ from afat.models import AFat, AFatLink, AFatLinkType, AFatLog, ManualAFat
 
 def custom_filter(title):
     """
-    defining custom filter titles
+    Defining custom filter titles
     :param title:
     :type title:
     :return:
@@ -23,7 +23,7 @@ def custom_filter(title):
 
         def expected_parameters(self):
             """
-            expected parameters
+            Expected parameters
             :return:
             :rtype:
             """
@@ -32,7 +32,7 @@ def custom_filter(title):
 
         def choices(self, changelist):
             """
-            choices
+            Choices
             :param changelist:
             :type changelist:
             :return:
@@ -62,7 +62,7 @@ def custom_filter(title):
 @admin.register(AFatLink)
 class AFatLinkAdmin(admin.ModelAdmin):
     """
-    config for fat link model
+    Config for fat link model
     """
 
     list_select_related = ("link_type",)
@@ -83,7 +83,7 @@ class AFatLinkAdmin(admin.ModelAdmin):
 @admin.register(AFat)
 class AFatAdmin(admin.ModelAdmin):
     """
-    config for fat model
+    Config for fat model
     """
 
     list_display = ("character", "system", "shiptype", "afatlink")
@@ -94,7 +94,7 @@ class AFatAdmin(admin.ModelAdmin):
 @admin.register(AFatLinkType)
 class AFatLinkTypeAdmin(admin.ModelAdmin):
     """
-    config for fatlinktype model
+    Config for fatlinktype model
     """
 
     list_display = ("id", "_name", "_is_enabled")
@@ -103,7 +103,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
 
     def _name(self, obj):
         """
-        rewrite name
+        Rewrite name
         :param obj:
         :type obj:
         :return:
@@ -117,7 +117,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
 
     def _is_enabled(self, obj):
         """
-        rewrite is_enabled
+        Rewrite is_enabled
         :param obj:
         :type obj:
         :return:
@@ -189,7 +189,7 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
 @admin.register(ManualAFat)
 class ManualAFatAdmin(admin.ModelAdmin):
     """
-    manual fat log config
+    Manual fat log config
     """
 
     list_select_related = ("afatlink",)
@@ -205,7 +205,7 @@ class ManualAFatAdmin(admin.ModelAdmin):
 
     def _afatlink(self, obj):
         """
-        rewrite afatlink
+        Rewrite afatlink
         :param obj:
         :type obj:
         :return:
@@ -219,7 +219,7 @@ class ManualAFatAdmin(admin.ModelAdmin):
 
     def _character(self, obj):
         """
-        reqrite character
+        Rewrite character
         :param obj:
         :type obj:
         :return:
@@ -235,7 +235,7 @@ class ManualAFatAdmin(admin.ModelAdmin):
 @admin.register(AFatLog)
 class AFatLogAdmin(admin.ModelAdmin):
     """
-    config for admin log
+    Config for admin log
     """
 
     list_display = ("log_time", "log_event", "user", "fatlink_hash", "log_text")

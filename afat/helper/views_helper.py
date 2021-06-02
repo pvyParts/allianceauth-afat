@@ -21,26 +21,28 @@ def convert_fatlinks_to_dict(
     request: WSGIRequest, fatlink: AFatLink, close_esi_redirect: str = None
 ) -> dict:
     """
-    converts a AFatLink object into a dictionary
+    Converts an AFatLink object into a dictionary
     :param request:
     :type request:
     :param fatlink:
     :type fatlink:
+    :param close_esi_redirect:
+    :type close_esi_redirect:
     :return:
     :rtype:
     """
 
-    # fleet name
+    # Fleet name
     fatlink_fleet = fatlink.hash
 
     if fatlink.fleet:
         fatlink_fleet = fatlink.fleet
 
-    # esi marker
+    # ESI marker
     via_esi = "No"
     esi_fleet_marker = ""
 
-    # check for ESI link
+    # Check for ESI link
     if fatlink.is_esilink:
         via_esi = "Yes"
         esi_fleet_marker_classes = "label label-default afat-label afat-label-via-esi"
@@ -53,20 +55,20 @@ def convert_fatlinks_to_dict(
             f'<span class="{esi_fleet_marker_classes}">{marker_text}</span>'
         )
 
-    # fleet type
+    # Fleet type
     fatlink_type = ""
 
     if fatlink.link_type:
         fatlink_type = fatlink.link_type.name
 
-    # creator name
+    # Creator name
     creator_main_character = get_main_character_from_user(user=fatlink.creator)
 
-    # fleet time
+    # Fleet time
     fleet_time = fatlink.afattime
     fleet_time_timestamp = fleet_time.timestamp()
 
-    # action buttons
+    # Action buttons
     actions = ""
     if (
         fatlink.is_esilink
@@ -82,8 +84,8 @@ def convert_fatlinks_to_dict(
             close_esi_redirect_parameter = f"?next={close_esi_redirect}"
 
         button_title = _(
-            "Clicking here will stop the automatic tracking through ESI for "
-            "this fleet and close the associated FAT link."
+            "Clicking here will stop the automatic tracking through ESI for this "
+            "fleet and close the associated FAT link. "
         )
         modal_body_text = _(
             "<p>Are you sure you want to close ESI fleet with "
@@ -147,7 +149,7 @@ def convert_fatlinks_to_dict(
 
 def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
     """
-    converts a afat object into a dictionary
+    Converts an AFat object into a dictionary
     :param request:
     :type request:
     :param fat:
@@ -219,7 +221,7 @@ def convert_fats_to_dict(request: WSGIRequest, fat: AFat) -> dict:
 
 def convert_logs_to_dict(log: AFatLog, fatlink_exists: bool = False) -> dict:
     """
-    convert AFatLog to dict
+    Convert AFatLog to dict
     :param log:
     :type log:
     :param fatlink_exists:
@@ -231,7 +233,7 @@ def convert_logs_to_dict(log: AFatLog, fatlink_exists: bool = False) -> dict:
     log_time = log.log_time
     log_time_timestamp = log_time.timestamp()
 
-    # user name
+    # User name
     user_main_character = get_main_character_from_user(user=log.user)
 
     fatlink_html = _(f"{log.fatlink_hash} (Deleted)")
@@ -254,7 +256,7 @@ def convert_logs_to_dict(log: AFatLog, fatlink_exists: bool = False) -> dict:
 
 def get_random_rgba_color():
     """
-    get a random RGB(a) color
+    Get a random RGB(a) color
     :return:
     :rtype:
     """
@@ -268,7 +270,7 @@ def get_random_rgba_color():
 
 def characters_with_permission(permission: Permission) -> models.QuerySet:
     """
-    returns queryset of characters that have the given permission
+    Returns queryset of characters that have the given permission
     in Auth through due to their associated user
     :param permission:
     :type permission:
@@ -276,10 +278,10 @@ def characters_with_permission(permission: Permission) -> models.QuerySet:
     :rtype:
     """
 
-    # first we need the users that have the permission
+    # First we need the users that have the permission
     users_qs = users_with_permission(permission)
 
-    # now get their characters ...
+    # Now get their characters ...
     charater_qs = EveCharacter.objects.filter(character_ownership__user__in=users_qs)
 
     return charater_qs
