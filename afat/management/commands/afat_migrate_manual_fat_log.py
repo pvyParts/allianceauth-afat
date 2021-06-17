@@ -1,5 +1,5 @@
 """
-migrate the old manual FAT log into the new log table
+Migrate the old manual FAT log into the new log table
 """
 
 from django.core.management.base import BaseCommand
@@ -9,7 +9,7 @@ from afat.models import AFatLog, AFatLogEvent, ManualAFat
 
 def get_input(text) -> str:
     """
-    wrapped input to enable import
+    Wrapped input to enable import
     :param text:
     :type text:
     :return:
@@ -21,14 +21,14 @@ def get_input(text) -> str:
 
 class Command(BaseCommand):
     """
-    migrate manual FAT log
+    Migrate manual FAT log
     """
 
     help = "Migrating the old Manual FAT log into the new log table"
 
     def _migrate_manual_fat_log(self) -> None:
         """
-        start the migration
+        Start the migration
         :return:
         :rtype:
         """
@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        ask before running ...
+        Ask before running ...
         :param args:
         :type args:
         :param options:

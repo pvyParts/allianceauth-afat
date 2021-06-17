@@ -1,3 +1,7 @@
+"""
+Template tags
+"""
+
 import calendar
 
 from django.template.defaulttags import register
@@ -6,7 +10,7 @@ from django.template.defaulttags import register
 @register.filter
 def month_name(value):
     """
-    template tag :: get month name from month number
+    Template tag :: get month name from month number
     example: {{ event.month|month_name }}
     :param value:
     :type value:

@@ -1,5 +1,5 @@
 """
-import FAT data from bFAT module
+Import FAT data from bFAT module
 """
 
 from bfat.models import ClickFatDuration as BfatClickFatDuration
@@ -15,7 +15,7 @@ from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent, ClickAFatDuration
 
 def get_input(text) -> str:
     """
-    wrapped input to enable import
+    Wrapped input to enable import
     :param text:
     :type text:
     :return:
@@ -27,7 +27,7 @@ def get_input(text) -> str:
 
 def bfat_installed() -> bool:
     """
-    check if bfat is installed
+    Check if bfat is installed
     :return:
     :rtype:
     """
@@ -44,18 +44,18 @@ class Command(BaseCommand):
 
     def _import_from_imicusfat(self) -> None:
         """
-        start the import
+        Start the import
         :return:
         :rtype:
         """
 
-        # check if AA FAT is active
+        # Check if AA FAT is active
         if bfat_installed():
             self.stdout.write(
                 self.style.SUCCESS("ImicusFAT module is active, let's go!")
             )
 
-            # first we check if the target tables are really empty ...
+            # First, we check if the target tables are empty ...
             current_afat_count = AFat.objects.all().count()
             current_afat_links_count = AFatLink.objects.all().count()
             current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
@@ -74,7 +74,7 @@ class Command(BaseCommand):
 
                 return
 
-            # import FAT links
+            # Import FAT links
             bfat_fatlinks = BfatFatLink.objects.all()
             for bfat_fatlink in bfat_fatlinks:
                 self.stdout.write(
@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
                 afatlink.save()
 
-                # write to log table
+                # Write to log table
                 try:
                     fleet_duration = BfatClickFatDuration.objects.get(
                         fleet_id=bfat_fatlink.id
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     afatlog.user_id = bfat_fatlink.creator_id
                     afatlog.save()
 
-            # import FATs
+            # Import FATs
             bfat_fats = BfatFat.objects.all()
             for bfat_fat in bfat_fats:
                 self.stdout.write(f"Importing FATs for FAT link ID {bfat_fat.id}.")
@@ -133,7 +133,7 @@ class Command(BaseCommand):
 
                 afat.save()
 
-            # import click FAT durations
+            # Import click FAT durations
             bfat_clickfatdurations = BfatClickFatDuration.objects.all()
             for bfat_clickfatduration in bfat_clickfatdurations:
                 self.stdout.write(
@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
                 afat_clickfatduration.save()
 
-            # import manual fat
+            # Import manual fat
             bfat_manualfats = BfatManualFat.objects.all()
             for bfat_manualfat in bfat_manualfats:
                 self.stdout.write(f"Importing manual FAT with ID {bfat_manualfat.id}.")
@@ -183,7 +183,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        ask before running ...
+        Ask before running ...
         :param args:
         :type args:
         :param options:

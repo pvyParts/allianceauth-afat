@@ -1,5 +1,5 @@
 """
-logs related views
+Logs related views
 """
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -22,7 +22,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 @permission_required("afat.log_view")
 def overview(request: WSGIRequest) -> HttpResponse:
     """
-    logs view
+    Logs view
     :param request:
     :type request:
     :return:
@@ -39,7 +39,7 @@ def overview(request: WSGIRequest) -> HttpResponse:
 @permission_required("afat.log_view")
 def ajax_get_logs(request: WSGIRequest) -> JsonResponse:
     """
-    ajax call :: get all log entries
+    Ajax call :: get all log entries
     :param request:
     :type request:
     :return:

@@ -1,5 +1,5 @@
 """
-statistics related views
+Statistics related views
 """
 
 import calendar
@@ -34,7 +34,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 @permission_required("afat.basic_access")
 def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
-    statistics main view
+    Statistics main view
     :param request:
     :type request:
     :param year:
@@ -56,14 +56,14 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
         data = {"No Alliance": [1]}
         sanity_check = dict()
 
-        # first create the alliance keys in our dict
+        # First create the alliance keys in our dict
         for character_with_access in characters_with_access:
             if character_with_access.alliance_name is not None:
                 data[character_with_access.alliance_name] = [
                     character_with_access.alliance_id
                 ]
 
-        # now append the alliance keys
+        # Now append the alliance keys
         for character_with_access in characters_with_access:
             corp_id = character_with_access.corporation_id
             corp_name = character_with_access.corporation_name
@@ -105,9 +105,13 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
 
 def _calculate_year_stats(request, year) -> list:
-    """Calculate and return year statistics."""
+    """
+    Calculate and return year statistics.
+    """
+
     months = list()
     characters = EveCharacter.objects.filter(character_ownership__user=request.user)
+
     for char in characters:
         fat_counts = (
             AFat.objects.filter(afatlink__afattime__year=year)
@@ -121,6 +125,7 @@ def _calculate_year_stats(request, year) -> list:
             if result["fat_count"]
         }
         fat_counts_2 = dict(sorted(fat_counts_2.items(), key=lambda item: item[1]))
+
         months.append((char.character_name, fat_counts_2, char.character_id))
 
     return sorted(months, key=lambda x: x[0])
@@ -132,7 +137,7 @@ def character(
     request: WSGIRequest, charid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
-    character statistics view
+    Character statistics view
     :param request:
     :type request:
     :param charid:
@@ -198,7 +203,7 @@ def character(
         colors.append(bg_color_str)
 
     data_ship_type = [
-        # ship type can be None, so we need to convert to string here
+        # Ship type can be None, so we need to convert to string here
         list(str(key) for key in data_ship_type.keys()),
         list(data_ship_type.values()),
         colors,
@@ -249,7 +254,7 @@ def corporation(
     request: WSGIRequest, corpid: int = 0000, year: int = None, month: int = None
 ) -> HttpResponse:
     """
-    corp statistics view
+    Corp statistics view
     :param request:
     :type request:
     :param corpid:
@@ -434,7 +439,7 @@ def alliance(
     request: WSGIRequest, allianceid: int, year: int = None, month: int = None
 ) -> HttpResponse:
     """
-    alliance statistics view
+    Alliance statistics view
     :param request:
     :type request:
     :param allianceid:
@@ -522,7 +527,7 @@ def alliance(
         colors.append(bg_color_str)
 
     data_ship_type = [
-        # ship type can be None, so we need to convert to string here
+        # Ship type can be None, so we need to convert to string here
         list(str(key) for key in data_ship_type.keys()),
         list(data_ship_type.values()),
         colors,

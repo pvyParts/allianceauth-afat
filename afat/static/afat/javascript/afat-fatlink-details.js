@@ -55,7 +55,7 @@ $(document).ready(function () {
     });
 
     /**
-     * refresh the datatable information every 15 seconds
+     * Refresh the datatable information every 15 seconds
      */
     let intervalReloadDatatable = 15000; // ms
     let expectedReloadDatatable = Date.now() + intervalReloadDatatable;
@@ -68,8 +68,10 @@ $(document).ready(function () {
         let dt = Date.now() - expectedReloadDatatable;
 
         if (dt > intervalReloadDatatable) {
-            // something really bad happened. Maybe the browser (tab) was inactive?
-            // possibly special handling to avoid futile "catch up" run
+            /**
+             * Something really bad happened. Maybe the browser (tab) was inactive?
+             * Possibly special handling to avoid futile "catch up" run
+             */
             window.location.replace(
                 window.location.pathname + window.location.search + window.location.hash
             );

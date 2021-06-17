@@ -1,5 +1,5 @@
 """
-import FAT data from alliance auth fat module
+Import FAT data from alliance auth fat module
 """
 
 from django.apps import apps
@@ -12,7 +12,7 @@ from afat.models import AFat, AFatLink, AFatLog, AFatLogEvent
 
 def get_input(text) -> str:
     """
-    wrapped input to enable import
+    Wrapped input to enable import
     :param text:
     :type text:
     :return:
@@ -24,7 +24,7 @@ def get_input(text) -> str:
 
 def aa_fat_installed() -> bool:
     """
-    check if native fat is installed
+    Check if native fat is installed
     :return:
     :rtype:
     """
@@ -41,18 +41,18 @@ class Command(BaseCommand):
 
     def _import_from_aa_fat(self) -> None:
         """
-        start the import
+        Start the import
         :return:
         :rtype:
         """
 
-        # check if AA FAT is active
+        # Check if AA FAT is active
         if aa_fat_installed():
             self.stdout.write(
                 self.style.SUCCESS("Alliance Auth FAT module is active, let's go!")
             )
 
-            # first we check if the target tables are really empty ...
+            # First, we check if the target tables are empty ...
             current_afat_links_count = AFatLink.objects.all().count()
             current_afat_count = AFat.objects.all().count()
 
@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
                 afatlink.save()
 
-                # write to log table
+                # Write to log table
                 log_text = (
                     "FAT link {fatlink_hash} with name {name} was created by {user}"
                 ).format(
@@ -137,7 +137,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        ask before running ...
+        Ask before running ...
         :param args:
         :type args:
         :param options:

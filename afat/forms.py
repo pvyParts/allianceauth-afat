@@ -1,5 +1,5 @@
 """
-the forms we use
+The forms we use
 """
 
 from django import forms
@@ -12,7 +12,7 @@ from afat.models import AFatLinkType
 
 def get_mandatory_form_label_text(text):
     """
-    label text for mandatory form fields
+    Label text for mandatory form fields
     :param text:
     :type text:
     :return:
@@ -31,7 +31,7 @@ def get_mandatory_form_label_text(text):
 
 class AFatEsiFatForm(forms.Form):
     """
-    fatlink form
+    Fat link form
     used to create ESI fatlinks
     """
 
@@ -51,7 +51,7 @@ class AFatEsiFatForm(forms.Form):
 
 class AFatManualFatForm(forms.Form):
     """
-    manual fat form
+    Manual fat form
     """
 
     character = forms.CharField(
@@ -73,7 +73,7 @@ class AFatManualFatForm(forms.Form):
 
 class AFatClickFatForm(forms.Form):
     """
-    fatlink form
+    Fat link form
     used to create clickable fatlinks
     """
 
@@ -100,8 +100,8 @@ class AFatClickFatForm(forms.Form):
 
 class FatLinkEditForm(forms.Form):
     """
-    fatlink edit form
-    used in edit view to change the fatlink name
+    Fat link edit form
+    Used in edit view to change the fat link name
     """
 
     fleet = forms.CharField(
@@ -113,7 +113,7 @@ class FatLinkEditForm(forms.Form):
 
 # class ExtendFatLinkDuration(forms.Form):
 #     """
-#     extending the duration time of a fatlink
+#     Extending the duration time of a fatlink
 #     """
 #
 #     duration = forms.IntegerField(label=_("Re-open for (in minutes)"), min_value=1)

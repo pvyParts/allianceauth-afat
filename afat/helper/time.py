@@ -1,5 +1,5 @@
 """
-helper for time related functions
+Helper for time related functions
 """
 
 from datetime import datetime
@@ -8,7 +8,7 @@ from datetime import datetime
 def get_time_delta(then, now=datetime.now(), interval="default"):
     """
     Returns a duration as specified by variable interval
-    Functions, except total_duration, returns [quotient, remainder]
+    functions, except total_duration, returns [quotient, remainder]
     :param then:
     :type then:
     :param now:
@@ -24,16 +24,16 @@ def get_time_delta(then, now=datetime.now(), interval="default"):
 
     def years():
         """
-        return years
+        Return years
         :return:
         :rtype:
         """
 
-        return divmod(duration_in_seconds, 31536000)  # Seconds in a year=31536000.
+        return divmod(duration_in_seconds, 31536000)  # Seconds in a year = 31536000.
 
     def days(from_seconds=None):
         """
-        return days
+        Return days
         :param from_seconds:
         :type from_seconds:
         :return:
@@ -46,7 +46,7 @@ def get_time_delta(then, now=datetime.now(), interval="default"):
 
     def hours(from_seconds=None):
         """
-        return hours
+        Return hours
         :param from_seconds:
         :type from_seconds:
         :return:
@@ -59,7 +59,7 @@ def get_time_delta(then, now=datetime.now(), interval="default"):
 
     def minutes(from_seconds=None):
         """
-        return minutes
+        Return minutes
         :param from_seconds:
         :type from_seconds:
         :return:
@@ -72,7 +72,7 @@ def get_time_delta(then, now=datetime.now(), interval="default"):
 
     def seconds(from_seconds=None):
         """
-        return seconds
+        Return seconds
         :param from_seconds:
         :type from_seconds:
         :return:
@@ -85,7 +85,7 @@ def get_time_delta(then, now=datetime.now(), interval="default"):
 
     def total_duration():
         """
-        return total time difference
+        Return total time difference
         :return:
         :rtype:
         """

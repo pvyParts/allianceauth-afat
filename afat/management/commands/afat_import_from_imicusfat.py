@@ -1,5 +1,5 @@
 """
-import FAT data from ImicusFAT module
+Import FAT data from ImicusFAT module
 """
 
 from django.apps import apps
@@ -18,7 +18,7 @@ from afat.models import (
 
 def get_input(text) -> str:
     """
-    wrapped input to enable import
+    Wrapped input to enable import
     :param text:
     :type text:
     :return:
@@ -30,7 +30,7 @@ def get_input(text) -> str:
 
 def imicusfat_installed() -> bool:
     """
-    check if imicusfat is installed
+    Check if imicusfat is installed
     :return:
     :rtype:
     """
@@ -63,7 +63,7 @@ class Command(BaseCommand):
 
     def latest_version_available(self, package_name):
         """
-        checking for the latest available version of a package on Pypi
+        Checking for the latest available version of a package on Pypi
         :param package_name:
         :type package_name:
         :return:
@@ -133,12 +133,12 @@ class Command(BaseCommand):
 
     def _import_from_imicusfat(self) -> None:
         """
-        start the import
+        Start the import
         :return:
         :rtype:
         """
 
-        # first we check if the target tables are really empty ...
+        # First, we check if the target tables are empty ...
         current_afat_count = AFat.objects.all().count()
         current_afat_links_count = AFatLink.objects.all().count()
         current_afat_linktype_count = AFatLinkType.objects.all().count()
@@ -159,7 +159,7 @@ class Command(BaseCommand):
 
             return
 
-        # import fatlinktype
+        # Import fat link type
         imicusfat_fleettypes = IFatLinkType.objects.all()
         for imicusfat_fleettype in imicusfat_fleettypes:
             self.stdout.write(
@@ -176,7 +176,7 @@ class Command(BaseCommand):
 
             afat_fleettype.save()
 
-        # import FAT links
+        # Import FAT links
         imicusfat_fatlinks = IFatLink.objects.all()
         for imicusfat_fatlink in imicusfat_fatlinks:
             self.stdout.write(
@@ -199,7 +199,7 @@ class Command(BaseCommand):
 
             afatlink.save()
 
-            # write to log table
+            # Write to log table
             if imicusfat_fatlink.is_esilink:
                 log_text = (
                     "ESI FAT link {fatlink_hash} with name {name} was created by {user}"
@@ -239,7 +239,7 @@ class Command(BaseCommand):
             afatlog.user_id = imicusfat_fatlink.creator_id
             afatlog.save()
 
-        # import FATs
+        # Import FATs
         imicustaf_fats = IFat.objects.all()
         for imicusfat_fat in imicustaf_fats:
             self.stdout.write(
@@ -258,7 +258,7 @@ class Command(BaseCommand):
 
             afat.save()
 
-        # import click FAT durations
+        # Import click FAT durations
         imicusfat_clickfatdurations = ClickIFatDuration.objects.all()
         for imicusfat_clickfatduration in imicusfat_clickfatdurations:
             self.stdout.write(
@@ -275,7 +275,7 @@ class Command(BaseCommand):
 
             afat_clickfatduration.save()
 
-        # import manual fat to log table
+        # Import manual fat to log table
         imicusfat_manualfats = ManualIFat.objects.all()
         for imicusfat_manualfat in imicusfat_manualfats:
             self.stdout.write(
@@ -310,7 +310,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        ask before running ...
+        Ask before running ...
         :param args:
         :type args:
         :param options:
@@ -336,7 +336,7 @@ class Command(BaseCommand):
                 package_name="allianceauth-afat"
             )
 
-            # check if updates for ImicusFAT are available
+            # Check if updates for ImicusFAT are available
             if ifat_version_available is not None:
                 if version_parse(ifat_version_installed) < version_parse(
                     ifat_version_available
@@ -370,7 +370,7 @@ class Command(BaseCommand):
             else:
                 has_conflict = True
 
-            # check if updates for aFAT are available
+            # Check if updates for aFAT are available
             if afat_version_available is not None:
                 if version_parse(afat_version_installed) < version_parse(
                     afat_version_available

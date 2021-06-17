@@ -1,5 +1,5 @@
 /**
- * convert a string to a slug
+ * Convert a string to a slug
  * @param {string} text
  * @returns {string}
  */
@@ -10,7 +10,7 @@ let convertStringToSlug = function (text) {
 };
 
 /**
- * sorting a table by its first columns alphabetically
+ * Sorting a table by its first columns alphabetically
  * @param {element} table
  * @param {string} order
  */
@@ -30,7 +30,7 @@ let sortTable = function (table, order) {
 };
 
 /**
- * manage a modal window
+ * Manage a modal window
  * @param {element} modalElement
  */
 let manageModal = function (modalElement) {

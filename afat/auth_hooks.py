@@ -1,5 +1,5 @@
 """
-auth hooks
+Auth hooks
 """
 
 from allianceauth import hooks
@@ -15,7 +15,7 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self):
-        # setup menu entry for sidebar
+        # Setup menu entry for sidebar
         MenuItemHook.__init__(
             self,
             AFAT_APP_NAME,
@@ -26,7 +26,7 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
 
     def render(self, request):
         """
-        only if the user has access to this app
+        Only if the user has access to this app
         :param request:
         :type request:
         :return:
@@ -42,7 +42,7 @@ class AaAfatMenuItem(MenuItemHook):  # pylint: disable=too-few-public-methods
 @hooks.register("menu_item_hook")
 def register_menu():
     """
-    register our menu
+    Register our menu
     :return:
     :rtype:
     """
@@ -53,7 +53,7 @@ def register_menu():
 @hooks.register("url_hook")
 def register_url():
     """
-    register our menu link
+    Register our menu link
     :return:
     :rtype:
     """

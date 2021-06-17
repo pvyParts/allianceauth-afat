@@ -1,5 +1,5 @@
 """
-utilities
+Utilities
 """
 
 from django.core.handlers.wsgi import WSGIRequest
@@ -32,7 +32,7 @@ class NoDataError(Exception):
 
 def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text: str):
     """
-    write the log
+    Write the log
     :param request:
     :type request:
     :param log_event:
@@ -69,8 +69,10 @@ def get_or_create_character(name: str = None, character_id: int = None):
     :rtype:
     """
 
+    eve_character = None
+
     if name:
-        # If a name is passed we have to check it on ESI
+        # If a name is passed to this function, we have to check it on ESI
         result = esi.client.Search.get_search(
             categories=["character"], search=name, strict=True
         ).result()
@@ -81,13 +83,13 @@ def get_or_create_character(name: str = None, character_id: int = None):
         character_id = result["character"][0]
         eve_character = EveCharacter.objects.filter(character_id=character_id)
     elif character_id:
-        # If an ID is passed we can just check the db for it.
+        # If an ID is passed to this function, we can just check the db for it.
         eve_character = EveCharacter.objects.filter(character_id=character_id)
     elif not name and not character_id:
         raise NoDataError("No character name or character id provided.")
 
-    if len(eve_character) == 0:
-        # Create Character
+    if eve_character is not None and len(eve_character) == 0:
+        # Create character
         character = EveCharacter.objects.create_character(character_id)
         character = EveCharacter.objects.get(pk=character.pk)
 
@@ -113,7 +115,7 @@ def get_or_create_character(name: str = None, character_id: int = None):
 
 def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
     """
-    get or create alliance info
+    Get or create alliance info
     :param alliance_id:
     :type alliance_id:
     :return:
@@ -132,7 +134,7 @@ def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
 
 def get_main_character_from_user(user: User) -> str:
     """
-    get the main character from a user
+    Get the main character from a user
     :param user:
     :type user:
     :return:

@@ -1,5 +1,5 @@
 """
-fatlinks related views
+Fat links related views
 """
 
 from datetime import datetime, timedelta
@@ -13,7 +13,6 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
@@ -40,7 +39,14 @@ from afat.forms import (  # ExtendFatLinkDuration,
 from afat.helper.fatlinks import get_esi_fleet_information_by_user
 from afat.helper.time import get_time_delta
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
+from afat.models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLogEvent,
+    ClickAFatDuration,
+    get_hash_on_save,
+)
 from afat.providers import esi
 from afat.tasks import get_or_create_character, process_fats
 from afat.utils import write_log
@@ -52,7 +58,7 @@ logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 @permission_required("afat.basic_access")
 def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
     """
-    fatlinks view
+    Fat links view
     :param request:
     :type request:
     :param year:
@@ -80,7 +86,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 @permission_required("afat.basic_access")
 def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonResponse:
     """
-    ajax call :: get all FAT links for a given year
+    Ajax call :: get all FAT links for a given year
     :param request:
     :type request:
     :param year:
@@ -114,7 +120,7 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def add_fatlink(request: WSGIRequest) -> HttpResponse:
     """
-    add fatlink view
+    Add fat link view
     :param request:
     :type request:
     :return:
@@ -146,7 +152,7 @@ def create_clickable_fatlink(
     request: WSGIRequest,
 ) -> HttpResponseRedirect:
     """
-    create clickable fat link
+    Create clickable fat link
     :param request:
     :type request:
     :return:
@@ -157,7 +163,8 @@ def create_clickable_fatlink(
         form = AFatClickFatForm(request.POST)
 
         if form.is_valid():
-            fatlink_hash = get_random_string(length=30)
+            fatlink_hash = get_hash_on_save()
+            # fatlink_hash = get_random_string(length=30)
 
             fatlink = AFatLink()
             fatlink.fleet = form.cleaned_data["name"]
@@ -175,7 +182,7 @@ def create_clickable_fatlink(
             dur.duration = form.cleaned_data["duration"]
             dur.save()
 
-            # writing DB log
+            # Writing DB log
             fleet_type = ""
             if fatlink.link_type:
                 fleet_type = f" (Fleet Type: {fatlink.link_type.name})"
@@ -245,7 +252,7 @@ def create_esi_fatlink_callback(
     request: WSGIRequest, token, fatlink_hash: str
 ) -> HttpResponseRedirect:
     """
-    helper: create ESI link (callback, used when coming back from character selection)
+    Helper :: create ESI link (callback, used when coming back from character selection)
     :param request:
     :type request:
     :param token:
@@ -256,7 +263,7 @@ def create_esi_fatlink_callback(
     :rtype:
     """
 
-    # check if there is a fleet
+    # Check if there is a fleet
     try:
         required_scopes = ["esi-fleets.read_fleet.v1"]
         esi_token = Token.get_token(token.character_id, required_scopes)
@@ -265,7 +272,7 @@ def create_esi_fatlink_callback(
             character_id=token.character_id, token=esi_token.valid_access_token()
         ).result()
     except Exception:
-        # not in a fleet
+        # Not in a fleet
         messages.warning(
             request,
             mark_safe(
@@ -278,7 +285,7 @@ def create_esi_fatlink_callback(
             ),
         )
 
-        # return to "Add FAT Link" view
+        # Return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
 
     # check if this character already has a fleet
@@ -305,7 +312,7 @@ def create_esi_fatlink_callback(
                     {"registered_fleet": registered_fleet}
                 )
 
-    # if the FC already has a fleet and it is the same as already registered,
+    # If the FC already has a fleet, and it is the same as already registered,
     # just throw a warning
     if fleet_already_registered is True:
         messages.warning(
@@ -321,10 +328,10 @@ def create_esi_fatlink_callback(
             ),
         )
 
-        # return to "Add FAT Link" view
+        # Return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
 
-    # if it's a new fleet, remove all former registered fleets if there are any
+    # If it's a new fleet, remove all former registered fleets, if there are any
     if (
         character_has_registered_fleets is True
         and fleet_already_registered is False
@@ -345,7 +352,7 @@ def create_esi_fatlink_callback(
             registered_fleet_to_close["registered_fleet"].is_registered_on_esi = False
             registered_fleet_to_close["registered_fleet"].save()
 
-    # check if we deal with the fleet boss here
+    # Check if we deal with the fleet boss here
     try:
         esi_fleet_member = esi.client.Fleets.get_fleets_fleet_id_members(
             fleet_id=fleet_from_esi["fleet_id"],
@@ -364,12 +371,12 @@ def create_esi_fatlink_callback(
             ),
         )
 
-        # return to "Add FAT Link" view
+        # Return to "Add FAT Link" view
         return redirect("afat:fatlinks_add_fatlink")
 
     creator_character = EveCharacter.objects.get(character_id=token.character_id)
 
-    # create the fatlink
+    # Create the fat link
     fatlink = AFatLink(
         afattime=timezone.now(),
         fleet=request.session["fatlink_form__name"],
@@ -381,14 +388,14 @@ def create_esi_fatlink_callback(
         esi_fleet_id=fleet_from_esi["fleet_id"],
     )
 
-    # add fleet type if there is any
+    # Add fleet type, if there is any
     if request.session["fatlink_form__type"] is not None:
         fatlink.link_type_id = request.session["fatlink_form__type"]
 
-    # save it
+    # Save it
     fatlink.save()
 
-    # writing DB log
+    # Writing DB log
     fleet_type = ""
     if fatlink.link_type:
         fleet_type = f" (Fleet Type: {fatlink.link_type.name})"
@@ -409,11 +416,11 @@ def create_esi_fatlink_callback(
         f"was created by {request.user}"
     )
 
-    # clear session
+    # Clear session
     del request.session["fatlink_form__name"]
     del request.session["fatlink_form__type"]
 
-    # process fleet members in the background
+    # Process fleet members in background
     process_fats.delay(
         data_list=esi_fleet_member, data_source="esi", fatlink_hash=fatlink_hash
     )
@@ -439,7 +446,7 @@ def create_esi_fatlink(
     request: WSGIRequest,
 ) -> HttpResponseRedirect:
     """
-    create ESI fat link
+    Create ESI fat link
     :param request:
     :type request:
     :return:
@@ -449,7 +456,8 @@ def create_esi_fatlink(
     fatlink_form = AFatEsiFatForm(request.POST)
 
     if fatlink_form.is_valid():
-        fatlink_hash = get_random_string(length=30)
+        fatlink_hash = get_hash_on_save()
+        # fatlink_hash = get_random_string(length=30)
 
         fatlink_type = None
         if fatlink_form.cleaned_data["type_esi"]:
@@ -490,7 +498,7 @@ def add_fat(
     request: WSGIRequest, token, fatlink_hash: str = None
 ) -> HttpResponseRedirect:
     """
-    click fatlink helper
+    Click fat link helper
     :param request:
     :type request:
     :param token:
@@ -548,25 +556,25 @@ def add_fat(
             ]
             esi_token = Token.get_token(token.character_id, required_scopes)
 
-            # check if character is online
+            # Check if character is online
             character_online = esi.client.Location.get_characters_character_id_online(
                 character_id=token.character_id, token=esi_token.valid_access_token()
             ).result()
 
             if character_online["online"] is True:
-                # character location
+                # Character location
                 location = esi.client.Location.get_characters_character_id_location(
                     character_id=token.character_id,
                     token=esi_token.valid_access_token(),
                 ).result()
 
-                # current ship
+                # Current ship
                 ship = esi.client.Location.get_characters_character_id_ship(
                     character_id=token.character_id,
                     token=esi_token.valid_access_token(),
                 ).result()
 
-                # system information
+                # System information
                 system = esi.client.Universe.get_universe_systems_system_id(
                     system_id=location["solar_system_id"]
                 ).result()["name"]
@@ -663,7 +671,7 @@ def add_fat(
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
     """
-    fatlink view
+    Fat link view
     :param request:
     :type request:
     :param fatlink_hash:
@@ -698,7 +706,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             link.fleet = fatlink_edit_form.cleaned_data["fleet"]
             link.save()
 
-            # writing DB log
+            # Writing DB log
             write_log(
                 request=request,
                 log_event=AFatLogEvent.CHANGE_FATLINK,
@@ -737,7 +745,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
                     mark_safe(_("<h4>Success!</h4><p>Manual FAT processed.</p>")),
                 )
 
-                # writing DB log
+                # Writing DB log
                 write_log(
                     request=request,
                     log_event=AFatLogEvent.MANUAL_FAT,
@@ -772,7 +780,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
 
     logger.info(f'FAT link "{fatlink_hash}" details view called by {request.user}')
 
-    # let's see if the link is still valid or has expired already and can be re-opened
+    # Let's see if the link is still valid or has expired already and can be re-opened
     # and FATs can be manually added
     # (only possible for 24 hours after creating the FAT link)
     link_ongoing = True
@@ -780,14 +788,14 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     link_expires = None
     manual_fat_can_be_added = False
 
-    # time dependant settings
+    # Time dependant settings
     try:
         dur = ClickAFatDuration.objects.get(fleet=link)
         link_expires = link.afattime + timedelta(minutes=dur.duration)
         now = timezone.now()
 
         if link_expires <= now:
-            # link expired
+            # Link expired
             link_ongoing = False
 
             if (
@@ -797,8 +805,8 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
             ):
                 link_can_be_reopened = True
 
-        # manual fat still possible?
-        # only possible if the FAT link has not been re-opened
+        # Manual fat still possible?
+        # Only possible if the FAT link has not been re-opened
         # and has been created within the last 24 hours
         if link.reopened is False and get_time_delta(link.afattime, now, "hours") < 24:
             manual_fat_can_be_added = True
@@ -829,7 +837,7 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def ajax_get_fats_by_fatlink(request: WSGIRequest, fatlink_hash) -> JsonResponse:
     """
-    ajax call :: get all FATs for a given FAT link hash
+    Ajax call :: get all FATs for a given FAT link hash
     :param request:
     :type request:
     :param fatlink_hash:
@@ -851,7 +859,7 @@ def delete_fatlink(
     request: WSGIRequest, fatlink_hash: str = None
 ) -> HttpResponseRedirect:
     """
-    delete fatlink helper
+    Delete fat link helper
     :param request:
     :type request:
     :param fatlink_hash:
@@ -918,7 +926,7 @@ def delete_fatlink(
 @permissions_required(("afat.manage_afat", "afat.delete_afat"))
 def delete_fat(request: WSGIRequest, fatlink_hash: str, fat) -> HttpResponseRedirect:
     """
-    delete fat helper
+    Delete fat helper
     :param request:
     :type request:
     :param fatlink_hash:
@@ -986,7 +994,7 @@ def delete_fat(request: WSGIRequest, fatlink_hash: str, fat) -> HttpResponseRedi
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedirect:
     """
-    ajax call to close an ESI fat link
+    Ajax call to close an ESI fat link
     :param request:
     :type request:
     :param fatlink_hash:
@@ -1018,7 +1026,7 @@ def close_esi_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRe
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
 def reopen_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponseRedirect:
     """
-    re-open fat link
+    Re-open fat link
     :param request:
     :type request:
     :param fatlink_hash:
