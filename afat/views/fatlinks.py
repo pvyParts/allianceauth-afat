@@ -13,7 +13,6 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
@@ -40,7 +39,14 @@ from afat.forms import (  # ExtendFatLinkDuration,
 from afat.helper.fatlinks import get_esi_fleet_information_by_user
 from afat.helper.time import get_time_delta
 from afat.helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from afat.models import AFat, AFatLink, AFatLinkType, AFatLogEvent, ClickAFatDuration
+from afat.models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLogEvent,
+    ClickAFatDuration,
+    get_hash_on_save,
+)
 from afat.providers import esi
 from afat.tasks import get_or_create_character, process_fats
 from afat.utils import write_log
@@ -157,7 +163,8 @@ def create_clickable_fatlink(
         form = AFatClickFatForm(request.POST)
 
         if form.is_valid():
-            fatlink_hash = get_random_string(length=30)
+            fatlink_hash = get_hash_on_save()
+            # fatlink_hash = get_random_string(length=30)
 
             fatlink = AFatLink()
             fatlink.fleet = form.cleaned_data["name"]
@@ -449,7 +456,8 @@ def create_esi_fatlink(
     fatlink_form = AFatEsiFatForm(request.POST)
 
     if fatlink_form.is_valid():
-        fatlink_hash = get_random_string(length=30)
+        fatlink_hash = get_hash_on_save()
+        # fatlink_hash = get_random_string(length=30)
 
         fatlink_type = None
         if fatlink_form.cleaned_data["type_esi"]:

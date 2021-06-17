@@ -3,8 +3,10 @@ The models
 """
 
 from django.contrib.auth.models import User
-from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models, transaction
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext as _
 
 from allianceauth.eveonline.models import EveCharacter
@@ -20,6 +22,23 @@ def get_sentinel_user() -> User:
     """
 
     return User.objects.get_or_create(username="deleted")[0]
+
+
+def get_hash_on_save() -> str:
+    """
+    Get the slug
+    :param subject:
+    :type subject:
+    :return:
+    :rtype:
+    """
+
+    fatlink_hash = get_random_string(length=30)
+
+    while AFatLink.objects.filter(hash=fatlink_hash).exists():
+        fatlink_hash = get_random_string(length=30)
+
+    return fatlink_hash
 
 
 class AFatLogEvent(models.TextChoices):
@@ -86,7 +105,7 @@ class AFatLinkType(models.Model):
     is_enabled = models.BooleanField(
         default=True,
         db_index=True,
-        help_text="Whether this fleettype is active or not",
+        help_text="Whether this fleet type is active or not",
     )
 
     class Meta:  # pylint: disable=too-few-public-methods
@@ -109,24 +128,24 @@ class AFatLink(models.Model):
     """
 
     afattime = models.DateTimeField(
-        default=timezone.now, db_index=True, help_text="When was this fatlink created"
+        default=timezone.now, db_index=True, help_text="When was this FAT link created"
     )
 
     fleet = models.CharField(
         max_length=254,
         null=True,
-        help_text="The fatlinks fleet name",
+        help_text="The FAT link fleet name",
     )
 
     hash = models.CharField(
-        max_length=254, db_index=True, help_text="The fatlinks hash"
+        max_length=254, db_index=True, unique=True, help_text="The FAT link hash"
     )
 
     creator = models.ForeignKey(
         User,
         related_name="+",
         on_delete=models.SET(get_sentinel_user),
-        help_text="Who created the fatlink?",
+        help_text="Who created the FAT link?",
     )
 
     character = models.ForeignKey(
@@ -135,7 +154,7 @@ class AFatLink(models.Model):
         on_delete=models.CASCADE,
         default=None,
         null=True,
-        help_text="Character this fatlink has been created with",
+        help_text="Character this FAT link has been created with",
     )
 
     link_type = models.ForeignKey(
@@ -143,17 +162,17 @@ class AFatLink(models.Model):
         related_name="+",
         on_delete=models.CASCADE,
         null=True,
-        help_text="The fatlinks fleet type, if it's set",
+        help_text="The FAT link fleet type, if it's set",
     )
 
     is_esilink = models.BooleanField(
         default=False,
-        help_text="Whether this fatlink was created via ESI or not",
+        help_text="Whether this FAT link was created via ESI or not",
     )
 
     is_registered_on_esi = models.BooleanField(
         default=False,
-        help_text="Whether this is an ESI fat link is registered on ESI",
+        help_text="Whether this is an ESI fat link is registered on ESI or not",
     )
 
     esi_fleet_id = models.BigIntegerField(blank=True, null=True)
@@ -177,6 +196,22 @@ class AFatLink(models.Model):
 
     def __str__(self):
         return f"{self.fleet} - {self.hash}"
+
+    @transaction.atomic()
+    def save(self, *args, **kwargs):
+        """
+        Add the hash on save
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        """
+
+        try:
+            self.hash
+        except ObjectDoesNotExist:
+            self.hash = get_hash_on_save()
+        super().save(*args, **kwargs)
 
     @property
     def number_of_fats(self):
@@ -218,14 +253,14 @@ class AFat(models.Model):
         EveCharacter,
         related_name="afats",
         on_delete=models.CASCADE,
-        help_text="Character who registered this fat",
+        help_text="Character who registered this FAT",
     )
 
     afatlink = models.ForeignKey(
         AFatLink,
         related_name="afats",
         on_delete=models.CASCADE,
-        help_text="The fatlink the character registered at",
+        help_text="The FAT link the character registered at",
     )
 
     system = models.CharField(
