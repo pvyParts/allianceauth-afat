@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - JS modernized
-- FAT lnk hash creation, to ensure the hash is definitely unique (Not that it wasn't
-  before, but now we it is enforced via its DB table field)
+- FAT link hash creation, to ensure the hash is definitely unique (Not that it
+  wasn't  before, but now it is enforced via its DB table field)
 
 
 ## [2.2.0] - 2021-05-11
