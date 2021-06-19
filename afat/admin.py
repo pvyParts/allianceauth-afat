@@ -5,7 +5,7 @@ Admin pages configuration
 from django.contrib import admin
 from django.db.models import Count
 
-from afat.models import AFat, AFatLink, AFatLinkType, AFatLog, ManualAFat
+from afat.models import AFat, AFatLink, AFatLinkType, AFatLog
 
 
 def custom_filter(title):
@@ -210,52 +210,6 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         )
 
     mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
-
-
-@admin.register(ManualAFat)
-class ManualAFatAdmin(admin.ModelAdmin):
-    """
-    Manual fat log config
-    """
-
-    list_select_related = ("afatlink",)
-    list_display = ("creator", "_character", "_afatlink", "created_at")
-    exclude = ("creator", "character", "afatlink", "created_at")
-    readonly_fields = ("creator", "character", "afatlink", "created_at")
-    ordering = ("-created_at",)
-    list_filter = (
-        ("creator", admin.RelatedOnlyFieldListFilter),
-        ("character", admin.RelatedOnlyFieldListFilter),
-        ("afatlink", admin.RelatedOnlyFieldListFilter),
-    )
-
-    def _afatlink(self, obj):
-        """
-        Rewrite afatlink
-        :param obj:
-        :type obj:
-        :return:
-        :rtype:
-        """
-
-        return f"Fleet: {obj.afatlink.fleet} (FAT link hash: {obj.afatlink.hash})"
-
-    _afatlink.short_description = "FAT Link"
-    _afatlink.admin_order_field = "afatlink"
-
-    def _character(self, obj):
-        """
-        Rewrite character
-        :param obj:
-        :type obj:
-        :return:
-        :rtype:
-        """
-
-        return obj.character
-
-    _character.short_description = "Pilot added"
-    _character.admin_order_field = "character"
 
 
 @admin.register(AFatLog)
