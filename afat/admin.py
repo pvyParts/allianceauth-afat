@@ -3,6 +3,7 @@ Admin pages configuration
 """
 
 from django.contrib import admin
+from django.db.models import Count
 
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLog, ManualAFat
 
@@ -66,18 +67,36 @@ class AFatLinkAdmin(admin.ModelAdmin):
     """
 
     list_select_related = ("link_type",)
-    list_display = ("afattime", "creator", "fleet", "_link_type", "is_esilink", "hash")
+    list_display = (
+        "afattime",
+        "creator",
+        "fleet",
+        "link_type",
+        "is_esilink",
+        "hash",
+        "number_of_fats",
+    )
     list_filter = ("is_esilink", ("link_type__name", custom_filter(title="fleet type")))
     ordering = ("-afattime",)
+    search_fields = (
+        "link_type__name",
+        "hash",
+        "fleet",
+        "creator__profile__main_character__character_name",
+        "creator__username",
+    )
 
-    def _link_type(self, obj):
-        if obj.link_type:
-            return obj.link_type.name
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            _number_of_fats=Count("afats", distinct=True),
+        )
+        return queryset
 
-        return "-"
+    def number_of_fats(self, obj):
+        return obj._number_of_fats
 
-    _link_type.short_description = "Fleet Type"
-    _link_type.admin_order_field = "link_type__name"
+    number_of_fats.admin_order_field = "_number_of_fats"
 
 
 @admin.register(AFat)
@@ -89,6 +108,13 @@ class AFatAdmin(admin.ModelAdmin):
     list_display = ("character", "system", "shiptype", "afatlink")
     list_filter = ("character", "system", "shiptype")
     ordering = ("-character",)
+    search_fields = (
+        "character__character_name",
+        "system",
+        "shiptype",
+        "afatlink__fleet",
+        "afatlink__hash",
+    )
 
 
 @admin.register(AFatLinkType)
@@ -241,5 +267,9 @@ class AFatLogAdmin(admin.ModelAdmin):
     list_display = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
     ordering = ("-log_time",)
     readonly_fields = ("log_time", "log_event", "user", "fatlink_hash", "log_text")
-
     list_filter = ("log_event",)
+    search_fields = (
+        "fatlink_hash",
+        "user__profile__main_character__character_name",
+        "user__username",
+    )

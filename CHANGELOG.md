@@ -6,13 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.2.1] - 2021-06-17
+## [2.2.2] - Unreleased
 
 ### Changed
 
-- JS modernized
-- FAT link hash creation, to ensure the hash is definitely unique (Not that it
-  wasn't  before, but now it is enforced via its DB table field)
+- Admin views are now searchable
 
 
 ## [2.2.0] - 2021-05-11
