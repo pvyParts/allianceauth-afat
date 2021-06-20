@@ -20,9 +20,9 @@ An Improved FAT/PAP System for
 - [Installation](#installation)
 - [Updating](#updating)
 - [Data Migration](#data-migration)
-  - [From Alliance Auth native FAT](#import-from-native-fat)
-  - [From bFAT](#import-from-bfat)
-  - [From ImicusFAT](#import-from-imicusfat)
+    - [From Alliance Auth native FAT](#import-from-native-fat)
+    - [From bFAT](#import-from-bfat)
+    - [From ImicusFAT](#import-from-imicusfat)
 - [Settings](#settings)
 - [Permissions](#permissions)
 - [Changelog](#changelog)
@@ -39,16 +39,17 @@ An Improved FAT/PAP System for
 - Ship type overview per FAT link
 - Graphical statistics views
 - Custom module name
-- Re-open FAT link if the FAT link has expired and is withing the defined grace time
+- Re-open FAT link if the FAT link has expired and is within the defined grace time
   (only for clickable FAT links)
-- Manually add pilots to FAT links, in case they missed to click the link
+- Manually add pilots to clickable FAT links, in case they missed to click the link
+  (for a period of 24 hours after the FAT links original expiry time)
 - Log for the following actions (Logs are kept for a certain time, 60 days per default):
-  - Create FAT link
-  - Change FAT link
-  - Remove FAT link
-  - Re-open FAT link
-  - Manually add pilot to FAT link
-  - Remove pilot from FAT link
+    - Create FAT link
+    - Change FAT link
+    - Remove FAT link
+    - Re-open FAT link
+    - Manually add pilot to FAT link
+    - Remove pilot from FAT link
 
 AFAT will work alongside the built-in native FAT System, bFAT and ImicusFAT.
 However, data does not share, but you can migrate their data to AFAT, for more
