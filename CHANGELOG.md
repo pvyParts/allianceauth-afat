@@ -6,14 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.2.2] - Unreleased
+## [2.2.2] - 2021-06-20
 
 ### Changed
 
 - Admin views are now searchable
 - Manual log removed from admin view. This should be migrated by now to the new
   combined log. If you haven't done so yet, see
-  [update instructions for v2.0.0 please](#-update-instructions-for-v200-) please
+  [update instructions for v2.0.0](#-update-instructions-for-v200-) please
 
 
 ## [2.2.0] - 2021-05-11
