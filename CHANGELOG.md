@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [update instructions for v2.0.0](#-update-instructions-for-v200-) please
 
 
+## [2.2.1] - 2021-06-17
+
+### Changed
+
+- JS modernized
+- FAT link hash creation, to ensure the hash is definitely unique (Not that it
+  wasn't before, but now it is enforced via its DB table field)
+
+
 ## [2.2.0] - 2021-05-11
 
 ### Fixed
