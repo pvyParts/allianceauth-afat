@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.3] - 2021-07-08
+
+### Added
+
+- Checked for compatibility with Python 3.9 and Django 3.2
+
+
 ## [2.2.2] - 2021-06-20
 
 ### Changed
