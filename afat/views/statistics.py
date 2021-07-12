@@ -25,7 +25,7 @@ from app_utils.logging import LoggerAddTag
 from afat import __title__
 from afat.helper.views_helper import characters_with_permission, get_random_rgba_color
 from afat.models import AFat
-from afat.utils import get_or_create_alliance_info
+from afat.utils import get_or_create_alliance_info, get_or_create_corporation_info
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
@@ -286,7 +286,7 @@ def corporation(
 
             return redirect("afat:dashboard")
 
-    corp = EveCorporationInfo.objects.get(corporation_id=corpid)
+    corp = get_or_create_corporation_info(corporation_id=corpid)
     corp_name = corp.corporation_name
 
     if not month:
