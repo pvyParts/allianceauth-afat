@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.4] - 2021-07-12
+
+### Fixed
+
+- Error 500 due to non existent EveCorporationInfo objects
+
+
 ## [2.2.3] - 2021-07-08
 
 ### Added

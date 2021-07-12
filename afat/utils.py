@@ -113,6 +113,27 @@ def get_or_create_character(name: str = None, character_id: int = None):
     return character
 
 
+def get_or_create_corporation_info(corporation_id: int) -> EveCorporationInfo:
+    """
+    Get or create corporation info
+    :param corporation_id:
+    :type corporation_id:
+    :return:
+    :rtype:
+    """
+
+    try:
+        eve_corporation_info = EveCorporationInfo.objects.get(
+            corporation_id=corporation_id
+        )
+    except EveCorporationInfo.DoesNotExist:
+        eve_corporation_info = EveCorporationInfo.objects.create_corporation(
+            corp_id=corporation_id
+        )
+
+    return eve_corporation_info
+
+
 def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
     """
     Get or create alliance info
