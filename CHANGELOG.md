@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Prevent double submit of forms, so manual FAT links are not created multiple times
-  if someone double-clicks on the "Create Link" button
+- Prevent double submit of forms, to stop multiple manual FAT links from being
+  created if someone double-clicks (or more) on the "Create Link" button
 
 
 ## [2.2.5] - 2021-07-12
