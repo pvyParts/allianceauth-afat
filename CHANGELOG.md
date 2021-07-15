@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.6] - 2021-07-15
+
+### Fixed
+
+- Prevent double submit of forms, so manual FAT links are not created multiple times
+  if someone double-clicks on the "Create Link" button
+
+
 ## [2.2.5] - 2021-07-12
 
 ### Fixed

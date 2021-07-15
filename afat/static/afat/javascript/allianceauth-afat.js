@@ -69,3 +69,20 @@ let manageModal = function (modalElement) {
         modal.find('#confirm-action').attr('href', '');
     });
 };
+
+/**
+ * Prevent double form submits
+ */
+document.querySelectorAll('form').forEach(form => {
+    'use strict';
+
+    form.addEventListener('submit', (e) => {
+        // Prevent if already submitting
+        if (form.classList.contains('is-submitting')) {
+            e.preventDefault();
+        }
+
+        // Add class to hook our visual indicator on
+        form.classList.add('is-submitting');
+    });
+});
