@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Only show characters with FATs in statistics overview
+- Sort by month in statistics overview
 
 
 ## [2.2.6] - 2021-07-15
