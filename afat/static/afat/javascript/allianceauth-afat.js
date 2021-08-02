@@ -73,7 +73,7 @@ let manageModal = function (modalElement) {
 /**
  * Prevent double form submits
  */
-document.querySelectorAll('form').forEach(form => {
+document.querySelectorAll('form').forEach((form) => {
     'use strict';
 
     form.addEventListener('submit', (e) => {

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.7] - 2021-08-02
+
+### Fixed
+
+- Only show characters with FATs in statistics overview
+- Sort by month in statistics overview
+- Expected parentheses around arrow function argument
+
+
 ## [2.2.6] - 2021-07-15
 
 ### Fixed
