@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Only show characters with FATs in statistics overview
 - Sort by month in statistics overview
+- Expected parentheses around arrow function argument
 
 
 ## [2.2.6] - 2021-07-15
