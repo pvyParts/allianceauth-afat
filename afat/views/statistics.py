@@ -119,14 +119,17 @@ def _calculate_year_stats(request, year) -> list:
             .values("afatlink__afattime__month")
             .annotate(fat_count=Count("id"))
         )
-        fat_counts_2 = {
-            str(result["afatlink__afattime__month"]): result["fat_count"]
-            for result in fat_counts
-            if result["fat_count"]
-        }
-        fat_counts_2 = dict(sorted(fat_counts_2.items(), key=lambda item: item[1]))
 
-        months.append((char.character_name, fat_counts_2, char.character_id))
+        # Only if there are FATs for this years for the character
+        if fat_counts:
+            fat_counts_2 = {
+                str(result["afatlink__afattime__month"]): result["fat_count"]
+                for result in fat_counts
+            }
+
+            fat_counts_2 = dict(sorted(fat_counts_2.items(), key=lambda item: item[1]))
+
+            months.append((char.character_name, fat_counts_2, char.character_id))
 
     return sorted(months, key=lambda x: x[0])
 

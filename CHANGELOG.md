@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.7] - 2021-08-03
+
+### Fixed
+
+- Only show characters with FATs in statistics overview
+
+
 ## [2.2.6] - 2021-07-15
 
 ### Fixed
