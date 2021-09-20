@@ -24,36 +24,44 @@ class TestStatistics(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         load_allianceauth()
+
         # given
         cls.character_1001 = EveCharacter.objects.get(character_id=1001)
         cls.character_1002 = EveCharacter.objects.get(character_id=1002)
         cls.character_1101 = EveCharacter.objects.get(character_id=1101)
-        cls.user, _ = create_user_from_evecharacter(
+        cls.character_1102 = EveCharacter.objects.get(character_id=1102)
+
+        cls.user_with_basic_access, _ = create_user_from_evecharacter(
             cls.character_1001.character_id, permissions=["afat.basic_access"]
         )
-        add_character_to_user(cls.user, cls.character_1101)
-        create_user_from_evecharacter(cls.character_1002.character_id)
+
+        add_character_to_user(cls.user_with_basic_access, cls.character_1101)
+        add_character_to_user(cls.user_with_basic_access, cls.character_1102)
+
+        cls.user_with_no_access, _ = create_user_from_evecharacter(
+            cls.character_1002.character_id
+        )
 
     def test_should_only_show_my_chars_and_only_those_with_fat_links(self):
         # given
         afat_link_april_1 = AFatLink.objects.create(
             fleet="April Fleet 1",
             hash="1231",
-            creator=self.user,
+            creator=self.user_with_basic_access,
             character=self.character_1001,
             afattime=dt.datetime(2020, 4, 1, tzinfo=utc),
         )
         afat_link_april_2 = AFatLink.objects.create(
             fleet="April Fleet 2",
             hash="1232",
-            creator=self.user,
+            creator=self.user_with_basic_access,
             character=self.character_1001,
             afattime=dt.datetime(2020, 4, 15, tzinfo=utc),
         )
         afat_link_september = AFatLink.objects.create(
             fleet="September Fleet",
             hash="1233",
-            creator=self.user,
+            creator=self.user_with_basic_access,
             character=self.character_1001,
             afattime=dt.datetime(2020, 9, 1, tzinfo=utc),
         )
@@ -61,8 +69,10 @@ class TestStatistics(TestCase):
         AFat.objects.create(character=self.character_1101, afatlink=afat_link_april_2)
         AFat.objects.create(character=self.character_1001, afatlink=afat_link_april_1)
         AFat.objects.create(character=self.character_1001, afatlink=afat_link_september)
+
         # when
-        result = _calculate_year_stats(RequestStub(self.user), 2020)
+        result = _calculate_year_stats(RequestStub(self.user_with_basic_access), 2020)
+
         # then
         self.assertListEqual(
             result,
