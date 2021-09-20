@@ -20,7 +20,7 @@ from .fixtures.load_allianceauth import load_allianceauth
 MODULE_PATH = "afat.views.fatlinks"
 
 
-class TestFatlinksView(TestCase):
+class TestHelpers(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -90,7 +90,7 @@ class TestFatlinksView(TestCase):
             },
         )
 
-    def test_get_time_delta(self):
+    def test_helper_get_time_delta(self):
         # given
         duration = 1812345
         now = timezone.now()
@@ -114,7 +114,7 @@ class TestFatlinksView(TestCase):
         self.assertEqual(minutes, 1812345)
         self.assertEqual(seconds, 108740700)
 
-    def test_convert_fatlinks_to_dict(self):
+    def test_helper_convert_fatlinks_to_dict(self):
         # given
         self.client.force_login(self.user_with_manage_afat)
         request = self.factory.get(reverse("afat:dashboard_ajax_get_recent_fatlinks"))
