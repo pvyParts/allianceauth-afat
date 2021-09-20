@@ -24,6 +24,7 @@ class TestStatistics(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         load_allianceauth()
+
         # given
         cls.character_1001 = EveCharacter.objects.get(character_id=1001)
         cls.character_1002 = EveCharacter.objects.get(character_id=1002)

@@ -24,7 +24,7 @@
 
                         <a data-toggle="tab" href="#{{ character.character_id }}">
                             <img class="img-circle" src="{{ character.character_id|character_portrait_url:32 }}" alt="{{ character.character_name }}" style="margin-right: 0.25rem;">
-                            {{ character.character_name }}
+                            <span id="afat-character-{{ character.character_id }}">{{ character.character_name }}</span>
                         </a>
                     </li>
                 {% endfor %}

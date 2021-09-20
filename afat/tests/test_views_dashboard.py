@@ -22,6 +22,7 @@ class TestDashboard(TestCase):
         super().setUpClass()
         cls.factory = RequestFactory()
         load_allianceauth()
+
         # given
         cls.character_1001 = EveCharacter.objects.get(character_id=1001)
         cls.character_1002 = EveCharacter.objects.get(character_id=1002)
@@ -70,6 +71,15 @@ class TestDashboard(TestCase):
         content = response_content_to_str(response)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(self.character_1101.character_name, content)
-        self.assertIn(self.character_1001.character_name, content)
-        self.assertNotIn(self.character_1002.character_name, content)
+        self.assertIn(
+            f'<span id="afat-character-{self.character_1101.character_id}">{self.character_1101.character_name}</span>',
+            content,
+        )
+        self.assertNotIn(
+            f'<span id="afat-character-{self.character_1001.character_id}">{self.character_1001.character_name}</span>',
+            content,
+        )
+        self.assertNotIn(
+            f'<span id="afat-character-{self.character_1002.character_id}">{self.character_1002.character_name}</span>',
+            content,
+        )
