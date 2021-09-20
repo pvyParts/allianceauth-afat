@@ -669,7 +669,7 @@ def add_fat(
 
 @login_required()
 @permissions_required(("afat.manage_afat", "afat.add_fatlink"))
-def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpResponse:
+def details_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponse:
     """
     Fat link view
     :param request:
@@ -679,14 +679,6 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str = None) -> HttpRespo
     :return:
     :rtype:
     """
-
-    if fatlink_hash is None:
-        messages.warning(
-            request,
-            mark_safe(_("<h4>Warning!</h4><p>No FAT Link hash provided.</p>")),
-        )
-
-        return redirect("afat:dashboard")
 
     try:
         link = AFatLink.objects.select_related_default().get(hash=fatlink_hash)
