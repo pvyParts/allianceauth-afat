@@ -85,7 +85,7 @@ def convert_fatlinks_to_dict(
 
         button_title = _(
             "Clicking here will stop the automatic tracking through ESI for this "
-            "fleet and close the associated FAT link. "
+            "fleet and close the associated FAT link."
         )
         modal_body_text = _(
             "<p>Are you sure you want to close ESI fleet with "
