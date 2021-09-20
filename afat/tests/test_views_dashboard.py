@@ -72,14 +72,14 @@ class TestDashboard(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            f'<span id="afat-character-{self.character_1101.character_id}">{self.character_1101.character_name}</span>',
+            f'<span id="afat-eve-character-id-{self.character_1101.character_id}">{self.character_1101.character_name}</span>',
             content,
         )
         self.assertNotIn(
-            f'<span id="afat-character-{self.character_1001.character_id}">{self.character_1001.character_name}</span>',
+            f'<span id="afat-eve-character-id-{self.character_1001.character_id}">{self.character_1001.character_name}</span>',
             content,
         )
         self.assertNotIn(
-            f'<span id="afat-character-{self.character_1002.character_id}">{self.character_1002.character_name}</span>',
+            f'<span id="afat-eve-character-id-{self.character_1002.character_id}">{self.character_1002.character_name}</span>',
             content,
         )
