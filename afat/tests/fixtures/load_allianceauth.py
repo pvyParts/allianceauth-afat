@@ -1,4 +1,7 @@
-"""Generate AllianceAuth test objects from allianceauth.json."""
+"""
+Generate AllianceAuth test objects from allianceauth.json.
+"""
+
 import json
 from pathlib import Path
 
@@ -18,10 +21,14 @@ _entities_data = _load_allianceauth_data()
 
 
 def load_allianceauth():
-    """Load allianceauth test objects."""
+    """
+    Load allianceauth test objects.
+    """
+
     EveAllianceInfo.objects.all().delete()
     EveCorporationInfo.objects.all().delete()
     EveCharacter.objects.all().delete()
+
     for character_info in _entities_data.get("EveCharacter"):
         if character_info.get("alliance_id"):
             try:
@@ -37,6 +44,7 @@ def load_allianceauth():
                 )
         else:
             alliance = None
+
         try:
             corporation = EveCorporationInfo.objects.get(
                 corporation_id=character_info.get("corporation_id")
@@ -49,6 +57,7 @@ def load_allianceauth():
                 member_count=99,
                 alliance=alliance,
             )
+
         EveCharacter.objects.create(
             character_id=character_info.get("character_id"),
             character_name=character_info.get("character_name"),
