@@ -266,3 +266,51 @@ class TestAccesss(TestCase):
         # then
         self.assertEqual(res.status_code, 302)
         self.assertEqual(res.url, "/fleet-activity-tracking/")
+
+    def test_should_show_all_alliance_stats_with_for_user_with_stats_corporation_other(
+        self,
+    ):
+        # given
+        self.client.force_login(self.user_with_stats_corporation_other)
+
+        # when
+        url = reverse(
+            "afat:statistics_alliance",
+            kwargs={"allianceid": 3001},
+        )
+        res = self.client.get(url)
+
+        # then
+        self.assertEqual(res.status_code, 200)
+
+    def test_should_show_all_alliance_stats_with_year_for_user_with_stats_corporation_other(
+        self,
+    ):
+        # given
+        self.client.force_login(self.user_with_stats_corporation_other)
+
+        # when
+        url = reverse(
+            "afat:statistics_alliance",
+            kwargs={"allianceid": 3001, "year": 2020},
+        )
+        res = self.client.get(url)
+
+        # then
+        self.assertEqual(res.status_code, 200)
+
+    def test_should_show_all_alliance_stats_with_month_for_user_with_stats_corporation_other(
+        self,
+    ):
+        # given
+        self.client.force_login(self.user_with_stats_corporation_other)
+
+        # when
+        url = reverse(
+            "afat:statistics_alliance",
+            kwargs={"allianceid": 3001, "year": 2020, "month": 4},
+        )
+        res = self.client.get(url)
+
+        # then
+        self.assertEqual(res.status_code, 200)
