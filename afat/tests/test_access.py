@@ -209,6 +209,42 @@ class TestAccesss(TestCase):
             res.url, "/account/login/?next=/fleet-activity-tracking/statistics/"
         )
 
+    def test_should_show_own_character_stats(self):
+        # given
+        self.client.force_login(self.user_with_basic_access)
+
+        # when
+        url = reverse(
+            "afat:statistics_character",
+            kwargs={
+                "charid": self.user_with_basic_access.profile.main_character.character_id,
+                "year": 2020,
+                "month": 4,
+            },
+        )
+        res = self.client.get(url)
+
+        # then
+        self.assertEqual(res.status_code, 200)
+
+    # def test_should_show_character_stats_for_user_with_stats_char_other(self):
+    #     # given
+    #     self.client.force_login(self.user_with_stats_corporation_other)
+    #
+    #     # when
+    #     url = reverse(
+    #         "afat:statistics_character",
+    #         kwargs={
+    #             "charid": self.user_with_basic_access.profile.main_character.character_id,
+    #             "year": 2020,
+    #             "month": 4,
+    #         },
+    #     )
+    #     res = self.client.get(url)
+    #
+    #     # then
+    #     self.assertEqual(res.status_code, 200)
+
     def test_should_show_own_corp_stats_for_user_with_stats_corporation_own(self):
         # given
         self.client.force_login(self.user_with_stats_corporation_own)
