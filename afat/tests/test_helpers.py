@@ -1,6 +1,7 @@
 """
 Test afat helpers
 """
+from datetime import timedelta
 
 from django.test import TestCase
 from django.utils import timezone
@@ -9,6 +10,7 @@ from allianceauth.eveonline.models import EveCharacter
 from app_utils.testing import add_character_to_user, create_user_from_evecharacter
 
 from ..helper.fatlinks import get_esi_fleet_information_by_user
+from ..helper.time import get_time_delta
 from ..models import AFatLink, get_hash_on_save
 from .fixtures.load_allianceauth import load_allianceauth
 
@@ -75,3 +77,27 @@ class TestFatlinksView(TestCase):
                 "open_esi_fleets_list": [fatlink_1, fatlink_2],
             },
         )
+
+    def test_get_time_delta(self):
+        # given
+        duration = 1812345
+        now = timezone.now()
+        expires = timedelta(minutes=duration) + now
+
+        self.client.force_login(self.user_with_add_fatlink)
+
+        # when
+        total = get_time_delta(now, expires)
+        years = get_time_delta(now, expires, "years")
+        days = get_time_delta(now, expires, "days")
+        hours = get_time_delta(now, expires, "hours")
+        minutes = get_time_delta(now, expires, "minutes")
+        seconds = get_time_delta(now, expires, "seconds")
+
+        # then
+        self.assertEqual(total, "3 years, 163 days, 13 hours, 45 minutes and 0 seconds")
+        self.assertEqual(years, 3)
+        self.assertEqual(days, 1258)
+        self.assertEqual(hours, 30205)
+        self.assertEqual(minutes, 1812345)
+        self.assertEqual(seconds, 108740700)
