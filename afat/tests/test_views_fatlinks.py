@@ -256,7 +256,6 @@ class TestFatlinksView(TestCase):
         )
 
     def test_ajax_get_fatlinks_by_year(self):
-        self.maxDiff = None
         # given
         self.client.force_login(self.user_with_basic_access)
 
