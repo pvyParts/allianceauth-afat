@@ -24,7 +24,8 @@ pre-commit run --all-files
 The following will be checked by `pre-commit`:
 
 - no trailing whitespaces (excluded are: minified js and css, .po and .mo files)
-- one, and only one, empty line at the end of every file (excluded are: minified js and css, .po and .mo files)
+- one, and only one, empty line at the end of every file (excluded are: minified js
+  and css, .po and .mo files)
 - line ending is LF
 - code formatted according to black code style
 - code conforms with flake8

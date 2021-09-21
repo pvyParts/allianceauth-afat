@@ -4,6 +4,9 @@ Test fatlinks views
 
 import datetime as dt
 
+# import json
+from datetime import datetime
+
 from pytz import utc
 
 from django.contrib.messages import get_messages
@@ -13,7 +16,9 @@ from django.urls import reverse
 from allianceauth.eveonline.models import EveCharacter
 from app_utils.testing import create_user_from_evecharacter
 
-from ..models import AFat, AFatLink, AFatLinkType
+from ..models import AFat, AFatLink, AFatLinkType, ClickAFatDuration, get_hash_on_save
+
+# from ..utils import get_main_character_from_user
 from .fixtures.load_allianceauth import load_allianceauth
 
 MODULE_PATH = "afat.views.fatlinks"
@@ -249,3 +254,70 @@ class TestFatlinksView(TestCase):
             str(messages[0]),
             "<h4>Warning!</h4><p>The hash provided is not valid.</p>",
         )
+
+    def test_ajax_get_fatlinks_by_year(self):
+        # given
+        self.client.force_login(self.user_with_basic_access)
+
+        fatlink_hash = get_hash_on_save()
+        fatlink_type_cta = AFatLinkType.objects.create(name="CTA")
+        fatlink_created = AFatLink.objects.create(
+            fleet="April Fleet 1",
+            creator=self.user_with_manage_afat,
+            character=self.character_1001,
+            hash=fatlink_hash,
+            is_esilink=True,
+            is_registered_on_esi=True,
+            esi_fleet_id=3726458287,
+            link_type=fatlink_type_cta,
+        )
+
+        ClickAFatDuration.objects.create(fleet=fatlink_created, duration=120)
+
+        # when
+        # fatlink = (
+        #     AFatLink.objects.select_related_default()
+        #     .annotate_afats_count()
+        #     .get(hash=fatlink_hash)
+        # )
+
+        url = reverse(
+            "afat:fatlinks_ajax_get_fatlinks_by_year",
+            kwargs={"year": datetime.now().year},
+        )
+        result = self.client.get(url)
+
+        # then
+        self.assertEqual(result.status_code, 200)
+
+        # creator_main_character = get_main_character_from_user(user=fatlink.creator)
+        # fleet_time = fatlink.afattime
+        # fleet_time_timestamp = fleet_time.timestamp()
+        # esi_marker = (
+        #     '<span class="label label-default afat-label afat-label-via-esi '
+        #     'afat-label-active-esi-fleet">via ESI</span>'
+        # )
+        #
+        # self.assertJSONEqual(
+        #     str(result.content, encoding="utf8"),
+        #     [
+        #         {
+        #             "pk": fatlink.pk,
+        #             "fleet_name": fatlink.fleet + esi_marker,
+        #             "creator_name": creator_main_character,
+        #             "fleet_type": "CTA",
+        #             "fleet_time": {
+        #                 "time": fleet_time,
+        #                 "timestamp": fleet_time_timestamp,
+        #             },
+        #             "fats_number": 0,
+        #             "hash": fatlink.hash,
+        #             "is_esilink": True,
+        #             "esi_fleet_id": fatlink.esi_fleet_id,
+        #             "is_registered_on_esi": True,
+        #             # "actions": '<a class="btn btn-afat-action btn-info btn-sm" href="/fleet-activity-tracking/fatlink/ncOsHjnjmYZd9k6hI4us8QShRlqJ17/details/"><span class="fas fa-eye"></span></a><a class="btn btn-afat-action btn-danger btn-sm" data-toggle="modal" data-target="#deleteFatLinkModal" data-url="/fleet-activity-tracking/fatlink/ncOsHjnjmYZd9k6hI4us8QShRlqJ17/delete/" data-confirm-text="Delete"data-body-text="<p>Are you sure you want to delete FAT link M2-XFE Keepstar Kill?</p>"><span class="glyphicon glyphicon-trash"></span></a>',
+        #             "actions": "",
+        #             "via_esi": "Yes",
+        #         }
+        #     ],
+        # )
