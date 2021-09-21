@@ -12,7 +12,7 @@ from app_utils.testing import add_character_to_user, create_user_from_evecharact
 
 from ..helper.fatlinks import get_esi_fleet_information_by_user
 from ..helper.time import get_time_delta
-from ..helper.views_helper import convert_fatlinks_to_dict
+from ..helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
 from ..models import AFat, AFatLink, AFatLinkType, get_hash_on_save
 from ..utils import get_main_character_from_user
 from .fixtures.load_allianceauth import load_allianceauth
@@ -117,7 +117,7 @@ class TestHelpers(TestCase):
     def test_helper_convert_fatlinks_to_dict(self):
         # given
         self.client.force_login(self.user_with_manage_afat)
-        request = self.factory.get(reverse("afat:dashboard_ajax_get_recent_fatlinks"))
+        request = self.factory.get(reverse("afat:dashboard"))
         request.user = self.user_with_manage_afat
 
         fatlink_hash_fleet_1 = get_hash_on_save()
@@ -155,12 +155,19 @@ class TestHelpers(TestCase):
             .annotate_afats_count()
             .get(hash=fatlink_hash_fleet_1)
         )
+        close_esi_tracking_url = reverse(
+            "afat:fatlinks_close_esi_fatlink", args=[fatlink_1.hash]
+        )
+        edit_url_1 = reverse("afat:fatlinks_details_fatlink", args=[fatlink_1.hash])
+        delete_url_1 = reverse("afat:fatlinks_delete_fatlink", args=[fatlink_1.hash])
 
         fatlink_2 = (
             AFatLink.objects.select_related_default()
             .annotate_afats_count()
             .get(hash=fatlink_hash_fleet_2)
         )
+        edit_url_2 = reverse("afat:fatlinks_details_fatlink", args=[fatlink_2.hash])
+        delete_url_2 = reverse("afat:fatlinks_delete_fatlink", args=[fatlink_2.hash])
 
         result_1 = convert_fatlinks_to_dict(request=request, fatlink=fatlink_1)
         result_2 = convert_fatlinks_to_dict(request=request, fatlink=fatlink_2)
@@ -195,19 +202,16 @@ class TestHelpers(TestCase):
                     f"stop the automatic tracking through ESI for this fleet "
                     f'and close the associated FAT link." data-toggle="modal" '
                     f'data-target="#cancelEsiFleetModal" '
-                    f'data-url="/fleet-activity-tracking/fatlink/'
-                    f'{fatlink_1.hash}/stop-esi-tracking/" '
+                    f'data-url="{close_esi_tracking_url}" '
                     f'data-body-text="<p>Are you sure you want to close ESI '
                     f'fleet with ID 3726458287 from Bruce Wayne?</p>" '
                     f'data-confirm-text="Stop Tracking"><i class="fas '
                     f'fa-times"></i></a><a class="btn btn-afat-action btn-info '
-                    f'btn-sm" href="/fleet-activity-tracking/fatlink/'
-                    f'{fatlink_1.hash}/details/"><span class="fas '
+                    f'btn-sm" href="{edit_url_1}"><span class="fas '
                     f'fa-eye"></span></a><a class="btn btn-afat-action '
                     f'btn-danger btn-sm" data-toggle="modal" '
                     f'data-target="#deleteFatLinkModal" '
-                    f'data-url="/fleet-activity-tracking/fatlink/'
-                    f'{fatlink_1.hash}/delete/" '
+                    f'data-url="{delete_url_1}" '
                     f'data-confirm-text="Delete"data-body-text="<p>Are you '
                     f"sure you want to delete FAT link April Fleet "
                     f'1?</p>"><span class="glyphicon '
@@ -238,18 +242,80 @@ class TestHelpers(TestCase):
                 "is_registered_on_esi": False,
                 "actions": (
                     f'<a class="btn btn-afat-action btn-info btn-sm" '
-                    f'href="/fleet-activity-tracki'
-                    f'ng/fatlink/{fatlink_2.hash}/details/"><span class="fas '
+                    f'href="{edit_url_2}"><span class="fas '
                     f'fa-eye"></span></a><a class="btn btn-afat-action '
                     f'btn-danger btn-sm" data-toggle="modal" '
                     f'data-target="#deleteFatLinkModal" '
-                    f'data-url="/fleet-activity-tracking/fatlink/'
-                    f'{fatlink_2.hash}/delete/" '
+                    f'data-url="{delete_url_2}" '
                     f'data-confirm-text="Delete"data-body-text="<p>Are you '
                     f"sure you want to delete FAT link April Fleet "
                     f'2?</p>"><span class="glyphicon '
                     f'glyphicon-trash"></span></a>'
                 ),
                 "via_esi": "No",
+            },
+        )
+
+    def test_helper_convert_fats_to_dict(self):
+        # given
+        self.client.force_login(self.user_with_manage_afat)
+        request = self.factory.get(reverse("afat:dashboard"))
+        request.user = self.user_with_manage_afat
+
+        fatlink_hash = get_hash_on_save()
+        fatlink_type_cta = AFatLinkType.objects.create(name="CTA")
+        fatlink_created = AFatLink.objects.create(
+            afattime=timezone.now(),
+            fleet="April Fleet 1",
+            creator=self.user_with_manage_afat,
+            character=self.character_1001,
+            hash=fatlink_hash,
+            is_esilink=True,
+            is_registered_on_esi=True,
+            esi_fleet_id="3726458287",
+            link_type=fatlink_type_cta,
+        )
+        fat = AFat.objects.create(
+            character=self.character_1101, afatlink=fatlink_created, shiptype="Omen"
+        )
+
+        # when
+        result = convert_fats_to_dict(request=request, fat=fat)
+
+        esi_marker = (
+            '<span class="label label-default afat-label afat-label-via-esi '
+            'afat-label-active-esi-fleet">via ESI</span>'
+        )
+        fleet_time = fat.afatlink.afattime
+        fleet_time_timestamp = fleet_time.timestamp()
+
+        button_delete_fat = reverse(
+            "afat:fatlinks_delete_fat", args=[fat.afatlink.hash, fat.id]
+        )
+        button_delete_text = "Delete"
+        modal_body_text = (
+            "<p>Are you sure you want to remove "
+            f"{fat.character.character_name} from this FAT link?</p>"
+        )
+
+        # then
+        self.assertDictEqual(
+            result,
+            {
+                "system": fat.system,
+                "ship_type": fat.shiptype,
+                "character_name": fat.character.character_name,
+                "fleet_name": fat.afatlink.fleet + esi_marker,
+                "fleet_time": {"time": fleet_time, "timestamp": fleet_time_timestamp},
+                "fleet_type": "CTA",
+                "via_esi": "Yes",
+                "actions": '<a class="btn btn-danger btn-sm" '
+                'data-toggle="modal" '
+                'data-target="#deleteFatModal" '
+                f'data-url="{button_delete_fat}" '
+                f'data-confirm-text="{button_delete_text}"'
+                f'data-body-text="{modal_body_text}">'
+                '<span class="glyphicon glyphicon-trash"></span>'
+                "</a>",
             },
         )
