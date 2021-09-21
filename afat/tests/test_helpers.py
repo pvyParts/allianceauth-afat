@@ -12,9 +12,21 @@ from app_utils.testing import add_character_to_user, create_user_from_evecharact
 
 from ..helper.fatlinks import get_esi_fleet_information_by_user
 from ..helper.time import get_time_delta
-from ..helper.views_helper import convert_fatlinks_to_dict, convert_fats_to_dict
-from ..models import AFat, AFatLink, AFatLinkType, get_hash_on_save
-from ..utils import get_main_character_from_user
+from ..helper.views_helper import (
+    convert_fatlinks_to_dict,
+    convert_fats_to_dict,
+    convert_logs_to_dict,
+)
+from ..models import (
+    AFat,
+    AFatLink,
+    AFatLinkType,
+    AFatLog,
+    AFatLogEvent,
+    ClickAFatDuration,
+    get_hash_on_save,
+)
+from ..utils import get_main_character_from_user, write_log
 from .fixtures.load_allianceauth import load_allianceauth
 
 MODULE_PATH = "afat.views.fatlinks"
@@ -309,13 +321,71 @@ class TestHelpers(TestCase):
                 "fleet_time": {"time": fleet_time, "timestamp": fleet_time_timestamp},
                 "fleet_type": "CTA",
                 "via_esi": "Yes",
-                "actions": '<a class="btn btn-danger btn-sm" '
-                'data-toggle="modal" '
-                'data-target="#deleteFatModal" '
-                f'data-url="{button_delete_fat}" '
-                f'data-confirm-text="{button_delete_text}"'
-                f'data-body-text="{modal_body_text}">'
-                '<span class="glyphicon glyphicon-trash"></span>'
-                "</a>",
+                "actions": (
+                    '<a class="btn btn-danger btn-sm" '
+                    'data-toggle="modal" '
+                    'data-target="#deleteFatModal" '
+                    f'data-url="{button_delete_fat}" '
+                    f'data-confirm-text="{button_delete_text}"'
+                    f'data-body-text="{modal_body_text}">'
+                    '<span class="glyphicon glyphicon-trash"></span>'
+                    "</a>"
+                ),
+            },
+        )
+
+    def test_helper_convert_logs_to_dict(self):
+        # given
+        self.client.force_login(self.user_with_manage_afat)
+        request = self.factory.get(reverse("afat:dashboard"))
+        request.user = self.user_with_manage_afat
+
+        fatlink_hash = get_hash_on_save()
+        fatlink_type_cta = AFatLinkType.objects.create(name="CTA")
+        fatlink_created = AFatLink.objects.create(
+            afattime=timezone.now(),
+            fleet="April Fleet 1",
+            creator=self.user_with_manage_afat,
+            character=self.character_1001,
+            hash=fatlink_hash,
+            is_esilink=True,
+            is_registered_on_esi=True,
+            esi_fleet_id="3726458287",
+            link_type=fatlink_type_cta,
+        )
+
+        duration = ClickAFatDuration.objects.create(fleet=fatlink_created, duration=120)
+
+        fleet_type = f" (Fleet Type: {fatlink_created.link_type.name})"
+
+        write_log(
+            request=request,
+            log_event=AFatLogEvent.CREATE_FATLINK,
+            log_text=(
+                f'FAT link with name "{fatlink_created.fleet}"{fleet_type} and '
+                f"a duration of {duration.duration} minutes was created"
+            ),
+            fatlink_hash=fatlink_created.hash,
+        )
+
+        # when
+        log = AFatLog.objects.get(fatlink_hash=fatlink_hash)
+        log_time = log.log_time
+        log_time_timestamp = log_time.timestamp()
+        user_main_character = get_main_character_from_user(user=log.user)
+        fatlink_link = reverse("afat:fatlinks_details_fatlink", args=[log.fatlink_hash])
+        fatlink_html = f'<a href="{fatlink_link}">{log.fatlink_hash}</a>'
+
+        result = convert_logs_to_dict(log=log, fatlink_exists=True)
+
+        # then
+        self.assertDictEqual(
+            result,
+            {
+                "log_time": {"time": log_time, "timestamp": log_time_timestamp},
+                "log_event": AFatLogEvent(log.log_event).label,
+                "user": user_main_character,
+                "fatlink": {"html": fatlink_html, "hash": log.fatlink_hash},
+                "description": log.log_text,
             },
         )
