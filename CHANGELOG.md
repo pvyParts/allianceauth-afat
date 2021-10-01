@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.8] - 2021-10-01
+
+### Added
+
+- Basic code coverage test
+- Code of Conduct
+
+### Changed
+
+- GitHub Templates
+
+
 ## [2.2.7] - 2021-08-02
 
 ### Fixed
