@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for AA Forum
+about: Suggest an idea (Keep in mind, this module is not only use by your corp/alliance, so features should not only benefit your group, but all who use this module)
 title: "[Feature Request] "
 labels: ''
 assignees: ''
