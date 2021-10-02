@@ -304,7 +304,9 @@ def corporation(
                 afatlink__afattime__year=year,
             ).count()
 
-            avg_fats = corp_fats / corp.member_count
+            avg_fats = 0
+            if corp.member_count > 0:
+                avg_fats = corp_fats / corp.member_count
 
             if corp_fats > 0:
                 months.append((i, corp_fats, round(avg_fats, 2)))
