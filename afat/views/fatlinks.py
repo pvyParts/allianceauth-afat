@@ -48,8 +48,8 @@ from afat.models import (
     get_hash_on_save,
 )
 from afat.providers import esi
-from afat.tasks import get_or_create_character, process_fats
-from afat.utils import write_log
+from afat.tasks import process_fats
+from afat.utils import get_or_create_character, write_log
 
 logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
