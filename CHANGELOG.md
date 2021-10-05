@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Some checks for ebiject existence improved
+- Some checks for object existence improved
 
 ### Fixed
 
