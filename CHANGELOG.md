@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.10] - Unreleased
 
+### Changed
+
+- Some checks for ebiject existence improved
+
 ### Fixed
 
 - An import from the wrong module
