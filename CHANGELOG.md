@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.10] - 2021-10-05
+
+### Changed
+
+- Some checks for ebiject existence improved
+
+### Fixed
+
+- An import from the wrong module
+
+
 ## [2.2.9] - 2021-10-03
 
 ### Fixed

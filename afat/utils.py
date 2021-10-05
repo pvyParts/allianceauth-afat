@@ -12,8 +12,13 @@ from allianceauth.eveonline.models import (
     EveCharacter,
     EveCorporationInfo,
 )
+from allianceauth.services.hooks import get_extension_logger
+from app_utils.logging import LoggerAddTag
 
+from afat import __title__
 from afat.providers import esi
+
+logger = LoggerAddTag(get_extension_logger(__name__), __title__)
 
 # Format for output of datetime for this app
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
@@ -55,7 +60,7 @@ def write_log(request: WSGIRequest, log_event: str, fatlink_hash: str, log_text:
     afat_log.save()
 
 
-def get_or_create_character(name: str = None, character_id: int = None):
+def get_or_create_character(name: str = None, character_id: int = None) -> EveCharacter:
     """
     This function takes a name or id of a character and checks
     to see if the character already exists.
@@ -93,20 +98,22 @@ def get_or_create_character(name: str = None, character_id: int = None):
         character = EveCharacter.objects.create_character(character_id)
         character = EveCharacter.objects.get(pk=character.pk)
 
-        # Make corp and alliance info objects for future sane
-        if character.alliance_id is not None:
-            test = EveAllianceInfo.objects.filter(alliance_id=character.alliance_id)
+        logger.info(f"EveCharacter Object created: {character.character_name}")
 
-            if len(test) == 0:
+        # Create alliance and corporation info objects if not already exists for
+        # future sanity
+        if character.alliance_id is not None:
+            # Create alliance and corporation info objects if not already exists
+            if not EveAllianceInfo.objects.filter(
+                alliance_id=character.alliance_id
+            ).exists():
                 EveAllianceInfo.objects.create_alliance(character.alliance_id)
         else:
-            test = EveCorporationInfo.objects.filter(
+            # Create corporation info object if not already exists
+            if not EveCorporationInfo.objects.filter(
                 corporation_id=character.corporation_id
-            )
-
-            if len(test) == 0:
+            ).exists():
                 EveCorporationInfo.objects.create_corporation(character.corporation_id)
-
     else:
         character = eve_character[0]
 
@@ -131,6 +138,10 @@ def get_or_create_corporation_info(corporation_id: int) -> EveCorporationInfo:
             corp_id=corporation_id
         )
 
+        logger.info(
+            f"EveCorporationInfo Object created: {eve_corporation_info.corporation_name}"
+        )
+
     return eve_corporation_info
 
 
@@ -148,6 +159,10 @@ def get_or_create_alliance_info(alliance_id: int) -> EveAllianceInfo:
     except EveAllianceInfo.DoesNotExist:
         eve_alliance_info = EveAllianceInfo.objects.create_alliance(
             alliance_id=alliance_id
+        )
+
+        logger.info(
+            f"EveAllianceInfo Object created: {eve_alliance_info.alliance_name}"
         )
 
     return eve_alliance_info
