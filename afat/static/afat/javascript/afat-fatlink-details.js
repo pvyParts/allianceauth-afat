@@ -115,10 +115,12 @@ $(document).ready(function () {
         );
     };
 
-    setTimeout(
-        realoadDataTable,
-        intervalReloadDatatable
-    );
+    if (afatSettings.reloadDatatable === true) {
+        setTimeout(
+            realoadDataTable,
+            intervalReloadDatatable
+        );
+    }
 
     let clipboard = new ClipboardJS('.copy-btn');
 

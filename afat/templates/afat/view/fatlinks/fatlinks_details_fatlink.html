@@ -61,7 +61,8 @@
                 cancelEsiFleetModal: {
                     element: '#cancelEsiFleetModal',
                 }
-            }
+            },
+            reloadDatatable: {{ link_ongoing|yesno:"true,false" }}
         }
     </script>
     <script type="application/javascript" src="{% static 'afat/javascript/afat-fatlink-details.min.js' %}"></script>

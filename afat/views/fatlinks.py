@@ -717,7 +717,6 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponse:
                     _("<h4>Success!</h4><p>Fleet name successfully changed.</p>")
                 ),
             )
-
         elif manual_fat_form.is_valid():
             character_name = manual_fat_form.cleaned_data["character"]
             system = manual_fat_form.cleaned_data["system"]
@@ -809,6 +808,9 @@ def details_fatlink(request: WSGIRequest, fatlink_hash: str) -> HttpResponse:
     is_clickable_link = False
     if link.is_esilink is False:
         is_clickable_link = True
+
+    if link.is_esilink and link.is_registered_on_esi:
+        link_ongoing = True
 
     context = {
         "link": link,
