@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.11] - 2021-10-17
+
+### Changed
+
+- Automatically reload information in fatlink detail view only when the fleet is
+  still tracked/active
+
+
 ## [2.2.10] - 2021-10-05
 
 ### Changed
