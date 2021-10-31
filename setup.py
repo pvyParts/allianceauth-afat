@@ -31,7 +31,7 @@ project_homepage_url = project_git_url
 project_install_requirements = [
     "allianceauth>=2.8.0",
     "django-esi>=2.0.4",
-    "allianceauth-app-utils",
+    "allianceauth-app-utils>=1.8.1",
 ]
 project_python_requires = "~=3.6"
 project_classifiers = [

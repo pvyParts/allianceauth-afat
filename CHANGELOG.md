@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.12] - 2021-10-17
+
+### Changed
+
+- Minimum version for `allianceauth-app-utils` set to 1.8.1
+
+
 ## [2.2.11] - 2021-10-17
 
 ### Changed
