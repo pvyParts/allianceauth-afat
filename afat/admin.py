@@ -2,7 +2,7 @@
 Admin pages configuration
 """
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Count
 
 from afat.models import AFat, AFatLink, AFatLinkType, AFatLog
@@ -157,11 +157,11 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
     _is_enabled.admin_order_field = "is_enabled"
 
     actions = (
-        "mark_as_active",
-        "mark_as_inactive",
+        "activate",
+        "deactivate",
     )
 
-    def mark_as_active(self, request, queryset):
+    def activate(self, request, queryset):
         """
         Mark fleet type as active
         :param request:
@@ -173,20 +173,26 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         """
 
         notifications_count = 0
+        failed = 0
 
         for obj in queryset:
-            obj.is_enabled = True
-            obj.save()
+            try:
+                obj.is_enabled = True
+                obj.save()
 
-            notifications_count += 1
+                notifications_count += 1
+            except:  # noqa: E722
+                failed += 1
 
-        self.message_user(
-            request, f"{notifications_count} fleet types marked as active"
-        )
+        if failed:
+            messages.error(request, f"Failed to activate {failed} fleet types")
 
-    mark_as_active.short_description = "Activate selected fleet type(s)"
+        if queryset.count() - failed > 0:
+            messages.success(request, f"Activated {notifications_count} fleet type(s)")
 
-    def mark_as_inactive(self, request, queryset):
+    activate.short_description = "Activate selected fleet type(s)"
+
+    def deactivate(self, request, queryset):
         """
         Mark fleet type as inactive
         :param request:
@@ -198,18 +204,26 @@ class AFatLinkTypeAdmin(admin.ModelAdmin):
         """
 
         notifications_count = 0
+        failed = 0
 
         for obj in queryset:
-            obj.is_enabled = False
-            obj.save()
+            try:
+                obj.is_enabled = False
+                obj.save()
 
-            notifications_count += 1
+                notifications_count += 1
+            except:  # noqa: E722
+                failed += 1
 
-        self.message_user(
-            request, f"{notifications_count} fleet types marked as inactive"
-        )
+        if failed:
+            messages.error(request, f"Failed to deactivate {failed} fleet types")
 
-    mark_as_inactive.short_description = "Deactivate selected fleet type(s)"
+        if queryset.count() - failed > 0:
+            messages.success(
+                request, f"Deactivated {notifications_count} fleet type(s)"
+            )
+
+    deactivate.short_description = "Deactivate selected fleet type(s)"
 
 
 @admin.register(AFatLog)

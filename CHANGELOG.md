@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.13] - Unreleased
+
+### Added
+
+- Activate and Deactivate actions in admin backend for fleet types now throw
+  an error message if they error out for some reason
+
+
 ## [2.2.12] - 2021-10-31
 
 ### Changed
