@@ -84,7 +84,7 @@ def overview(request: WSGIRequest, year: int = None) -> HttpResponse:
 
 @login_required()
 @permission_required("afat.basic_access")
-def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonResponse:
+def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int) -> JsonResponse:
     """
     Ajax call :: get all FAT links for a given year
     :param request:
@@ -94,9 +94,6 @@ def ajax_get_fatlinks_by_year(request: WSGIRequest, year: int = None) -> JsonRes
     :return:
     :rtype:
     """
-
-    if year is None:
-        year = datetime.now().year
 
     fatlinks = (
         AFatLink.objects.select_related_default()
