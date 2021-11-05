@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.14] - 2021-11-04
+
+### Fixed
+
+- User with `manage_afat` permission now have access to the logs as well, as they
+  should have from the beginning
+
+
 ## [2.2.13] - 2021-11-04
 
 ### Added
