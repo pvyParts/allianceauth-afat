@@ -86,7 +86,7 @@ class Command(BaseCommand):
         )
 
         latest = None
-
+                
         if result.status_code == requests.codes.ok:
             pypi_info = result.json()
 
@@ -144,6 +144,8 @@ class Command(BaseCommand):
         current_afat_linktype_count = AFatLinkType.objects.all().count()
         current_afat_clickduration_count = ClickAFatDuration.objects.all().count()
 
+        hash_set = set()
+        
         if (
             current_afat_count > 0
             or current_afat_links_count > 0
@@ -179,6 +181,18 @@ class Command(BaseCommand):
         # Import FAT links
         imicusfat_fatlinks = IFatLink.objects.all()
         for imicusfat_fatlink in imicusfat_fatlinks:
+            if imicusfat_fatlink.hash in hash_set:
+                self.stdout.write(
+                    "Duplicate FAT link for fleet '{fleet}' with "
+                    "hash '{fatlink_hash}'. Skipping!".format(
+                        fleet=imicusfat_fatlink.fleet,
+                        fatlink_hash=imicusfat_fatlink.hash,
+                    )
+                )
+                continue
+                
+            hash_set.add(imicusfat_fatlink.hash)
+            
             self.stdout.write(
                 "Importing FAT link for fleet '{fleet}' with "
                 "hash '{fatlink_hash}'.".format(
