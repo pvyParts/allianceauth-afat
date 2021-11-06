@@ -269,8 +269,14 @@ class Command(BaseCommand):
             afat.shiptype = imicusfat_fat.shiptype
             afat.character_id = imicusfat_fat.character_id
             afat.afatlink_id = imicusfat_fat.ifatlink_id
-
-            afat.save()
+            try:
+                afat.save()
+            except:
+                self.stdout.write(
+                    "FAILED Import of FATs for FAT link ID '{fatlink_id}'.".format(
+                        fatlink_id=imicusfat_fat.id
+                    )
+                )
 
         # Import click FAT durations
         imicusfat_clickfatdurations = ClickIFatDuration.objects.all()
@@ -286,8 +292,14 @@ class Command(BaseCommand):
             afat_clickfatduration.id = imicusfat_clickfatduration.id
             afat_clickfatduration.duration = imicusfat_clickfatduration.duration
             afat_clickfatduration.fleet_id = imicusfat_clickfatduration.fleet_id
-
-            afat_clickfatduration.save()
+            try:
+                afat_clickfatduration.save()
+            except:
+                self.stdout.write(
+                    "FAILED Importing FAT duration with ID '{duration_id}'.".format(
+                        duration_id=imicusfat_clickfatduration.id
+                    )
+                )
 
         # Import manual fat to log table
         imicusfat_manualfats = ManualIFat.objects.all()
@@ -313,7 +325,10 @@ class Command(BaseCommand):
                 afatlog.log_event = AFatLogEvent.MANUAL_FAT
                 afatlog.log_text = log_text
                 afatlog.user_id = imicusfat_manualfat.creator_id
-                afatlog.save()
+                try:
+                    afatlog.save()
+                except:
+                    pass
 
         self.stdout.write(
             self.style.SUCCESS(
